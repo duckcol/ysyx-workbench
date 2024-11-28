@@ -1,16 +1,22 @@
 CPP_CODE=$(wildcard csrc/*.cpp csrc/*.c)
 VLOG_CODE=$(wildcard vsrc/*.v)
 
-file_confirm:
-	@echo "cpp code is $(CPP_CODE)"
-	@echo "verilog code is $(VLOG_CODE)"	
-
 all:
 	@echo "Write this Makefile by your self."
 	verilator --cc --exe --trace --build -j 0 -Wall $(CPP_CODE) $(VLOG_CODE)
 
+file_comfirm:
+	@echo "cpp code is $(CPP_CODE)"
+	@echo "verilog code is $(VLOG_CODE)"
+
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo "Write this Makefile by yourself."
+	verilator --cc --exe --trace --build -j 0 -Wall $(CPP_CODE) $(VLOG_CODE)
+	
+
+.PYONY: clean
+
+clean:
+	rm -rf obj_dir
 
 include ../Makefile
