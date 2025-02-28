@@ -12,7 +12,6 @@ file_comfirm:
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	verilator --cc --exe --trace --build -j 0 -Wall $(CPP_CODE) $(VLOG_CODE)
-	
 
 .PYONY: clean
 
