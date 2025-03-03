@@ -181,7 +181,7 @@ static int cmd_x(char *args) {
 	printf("%p: ", address);
 	unsigned char *content = (unsigned char *)address;
 	for(int i = 0; i < N; i++) {
-		printf("%04X ", content[i]);	
+		printf("%02X ", content[i]);	
 	}
 
 	free(EXPR);
