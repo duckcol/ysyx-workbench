@@ -171,8 +171,8 @@ static int cmd_x(char *args) {
 	strcpy(EXPR, token); 
 	Log("the EXPR: %s", EXPR);
 	//	reserve EXPR for expression value 
-	uintmax_t expr2mem = strtoull(EXPR, &endptr, 16); 
-	Log("the expr2mem: %p", (void *)(uintptr_t)expr2mem);
+	uintmax_t address = strtoull(EXPR, &endptr, 16);
+	Log("the address: %p", (void *)(uintptr_t)address);
 
 	//	then, print the memory around
 	printf(" ");
