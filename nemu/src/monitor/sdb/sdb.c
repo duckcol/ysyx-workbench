@@ -105,6 +105,11 @@ static int cmd_si(char *args) {
 		Log("You must type one args,plz try again");
 		return 0;
 	}
+	//	check if the args is multiple
+	char *token = strtok(args," ");
+	Log("the token is:%s",token);
+	token = strtok(args," ");
+	Log("the token is:%s",token);
 
 	return 0;
 }
