@@ -58,6 +58,7 @@ static int cmd_q(char *args) {
 static int cmd_help(char *args);
 static int cmd_si(char *args);
 static int cmd_info(char *args);
+static int cmd_x(char *args);
 
 static struct {
   const char *name;
@@ -69,8 +70,9 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-	{ "si" , "execute the N commands and stop", cmd_si },
-	{ "info", "print the status of the program", cmd_info}, 
+	{ "si" , "si N:execute the N commands and stop", cmd_si },
+	{ "info", "info r: print all regs\ninfo w: print all watchpoint", cmd_info}, 
+	{ "x", "x N EXPR: print 4*N bytes starting from EXPR", cmd_x},
 
 };
 
@@ -148,6 +150,10 @@ static int cmd_info(char *args) {
 		Log("invalid arg, plz try again");
 		return 0;
 	}
+}
+
+static int cmd_x(char *args) {
+	return 0;
 }
 
 void sdb_set_batch_mode() {
