@@ -121,7 +121,7 @@ static int cmd_si(char *args) {
 	if(arg == endptr) {Log("no number, try again"); return 0;}
 
 	//	real to step in execution
-	cpu_exec(time);
+	cpu_exec((int)time);
 
 	return 0;
 }
