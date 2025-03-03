@@ -173,6 +173,7 @@ static int cmd_x(char *args) {
 	long expr2mem = strtol(EXPR, &endptr, 16);
 	Log("the EXPR: %lx", expr2mem);
 
+	free(EXPR);
 	return 0;
 }
 
