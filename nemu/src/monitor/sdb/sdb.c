@@ -179,6 +179,7 @@ static int cmd_x(char *args) {
 	//	then, print the memory around
 	printf("address: content\n");
 	printf("%p: ", address);
+	printf("%0x ", *(unsigned int *) address);
 
 	free(EXPR);
 	return 0;
