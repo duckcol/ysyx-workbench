@@ -169,9 +169,9 @@ static int cmd_x(char *args) {
 	token = strtok(NULL, " ");
 	char* EXPR = malloc(sizeof(token)); 
 	strcpy(EXPR, token); 
-	//	reserved for expression value 
-	long expr2mem = strtol(EXPR, &endptr, 16); 
-	Log("the EXPR: %p", (void *) expr2mem);
+	//	reserve EXPR for expression value 
+	uintmax_t expr2mem = strtoull(EXPR, &endptr, 16); 
+	Log("the EXPR: %p", (void *) (uintptr_t)expr2mem);
 
 	//	then, print the memory around
 	printf(" ");
