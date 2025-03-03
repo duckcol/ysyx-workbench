@@ -109,10 +109,10 @@ static int cmd_si(char *args) {
 	//	check if the args is multiple
 	char *arg = strtok(args," ");
 	Log("the arg: %s",arg);
-	char *token = strtok(NULL, " ");// continue to split the args
-	if(token != NULL) {
+	char *exceed = strtok(NULL, " ");// continue to split the args
+	if(exceed != NULL) {
 		Log("exceed args input, the exceeded part will be ignored");
-		Log("the token: %s",token);
+		Log("the exceed: %s",exceed);
 	}
 
 	return 0;
