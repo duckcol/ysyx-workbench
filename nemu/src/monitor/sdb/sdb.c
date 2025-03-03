@@ -171,7 +171,7 @@ static int cmd_x(char *args) {
 	strcpy(EXPR, token); 
 	//	reserved for expression value 
 	long expr2mem = strtol(EXPR, &endptr, 16);
-	Log("the EXPR: %lx", expr2mem);
+	Log("the EXPR: %p", (void*) expr2mem);
 
 	free(EXPR);
 	return 0;
