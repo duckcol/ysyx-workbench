@@ -108,7 +108,7 @@ static int cmd_si(char *args) {
 	//	check if the args is multiple
 	char *token = strtok(args," ");
 	Log("the token is:%s",token);
-	token = strtok(args," ");
+	token = strtok(NULL," ");
 	Log("the token is:%s",token);
 
 	return 0;
