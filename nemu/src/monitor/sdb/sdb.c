@@ -112,7 +112,7 @@ static int cmd_si(char *args) {
 	char *exceed = strtok(NULL, " ");// continue to split the args
 	if(exceed != NULL) {
 		Log("exceed args input, the exceeded part will be ignored");
-		Log("the exceed: %s",exceed);
+		Log("the exceed start at: %s",exceed);
 	}
 
 	return 0;
