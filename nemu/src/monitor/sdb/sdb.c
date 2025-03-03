@@ -177,7 +177,13 @@ static int cmd_x(char *args) {
 	Log("the address: %p", address);
 
 	//	then, print the memory around
-	printf(" ");
+	printf("address: content\n");
+	printf("%p: ", address);
+	int *content;
+	for(int i = 0; i < N; i++) {
+		content = address + 4 * i;
+		printf("%04X ", *content);	
+	}
 
 	free(EXPR);
 	return 0;
