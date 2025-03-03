@@ -171,6 +171,7 @@ static int cmd_x(char *args) {
 	strcpy(EXPR, token); 
 	//	reserved for expression value 
 	void *expr2mem = (void *) strtol(EXPR, &endptr, 16);
+	//	here should be some checks to expr2mem
 	Log("the EXPR: %p", expr2mem);
 
 	//	then, print the memory around
