@@ -115,6 +115,13 @@ static int cmd_si(char *args) {
 		Log("the exceed start at: %s",exceed);
 	}
 
+	//	check if the arg's number is valid
+	char *endptr;
+	long time = strtol(arg, &endptr, 10);
+
+	//	real to step in execution
+	cpu_exec(time);
+
 	return 0;
 }
 
