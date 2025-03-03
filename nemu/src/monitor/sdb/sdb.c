@@ -49,11 +49,14 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
-	cpu_exec(-1);
+	cpu_exec(-1);//added to solve the problem
+							 //when ``make run`` and then type ``q``
+							 //will result in error 1 in make
   return -1;
 }
 
 static int cmd_help(char *args);
+static int cmd_si(char *args);
 
 static struct {
   const char *name;
@@ -65,7 +68,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-	//{ "si" , "execute the N commands and quit", cmd_si },
+	{ "si" , "execute the N commands and stop", cmd_si },
 
 };
 
@@ -94,8 +97,10 @@ static int cmd_help(char *args) {
   return 0;
 }
 
-//static int cmd_si(char *args) {
-
+static int cmd_si(char *args) {
+	Log("the args is:%s",args);
+	return 0;
+}
 
 void sdb_set_batch_mode() {
   is_batch_mode = true;
