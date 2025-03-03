@@ -98,7 +98,7 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-	Log("the args is:%s",args);//	for dbg
+	Log("the args: %s",args);//	for dbg
 
 	//	check if the args is NULL
 	if(args == NULL) {
@@ -108,11 +108,11 @@ static int cmd_si(char *args) {
 
 	//	check if the args is multiple
 	char *arg = strtok(args," ");
-	Log("the arg is:%s",arg);
+	Log("the arg: %s",arg);
 	char *token = strtok(NULL, " ");// continue to split the args
 	if(token != NULL) {
 		Log("exceed args input, the exceeded part will be ignored");
-		Log("the token is:%s",token);
+		Log("the token: %s",token);
 	}
 
 	return 0;
