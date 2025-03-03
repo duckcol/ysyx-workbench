@@ -153,6 +153,26 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
+	//	for now, the EXPR isn't done
+	//	so we restrict it to be an hax number
+	
+	//	first, split the args to be N and EXPR
+	
+	//	the N part
+	char *token = strtok(args, " ");
+	char *endptr;
+	int N = (int) strtol(token, &endptr, 10);
+	Log("the N: %d", N);
+	//	here should be some checks to N
+	
+	//	the EXPR part
+	token = strtok(NULL, " ");
+	char* EXPR = malloc(sizeof(token)); 
+	strcpy(EXPR, token); 
+	//	reserved for expression value 
+	long expr2mem = strtol(EXPR, &endptr, 16);
+	Log("the EXPR: %lx", expr2mem);
+
 	return 0;
 }
 
