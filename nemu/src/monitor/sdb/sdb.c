@@ -179,10 +179,9 @@ static int cmd_x(char *args) {
 	//	then, print the memory around
 	printf("address: content\n");
 	printf("%p: ", address);
-	int *content;
+	unsigned char *content = (unsigned char *)address;
 	for(int i = 0; i < N; i++) {
-		content = address + 4 * i;
-		printf("%04X ", *content);	
+		printf("%04X ", content[i]);	
 	}
 
 	free(EXPR);
