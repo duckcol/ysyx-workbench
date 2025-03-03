@@ -98,9 +98,14 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
+	Log("the args is:%s",args);//	for dbg
+
 	//	check if the args is NULL
-	if(args == NULL) Log("You must type one args");
-	Log("the args is:%s",args);
+	if(args == NULL) {
+		Log("You must type one args,plz try again");
+		return 0;
+	}
+
 	return 0;
 }
 
