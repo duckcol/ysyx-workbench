@@ -118,6 +118,7 @@ static int cmd_si(char *args) {
 	//	check if the arg's number is valid
 	char *endptr;
 	long time = strtol(arg, &endptr, 10);
+	if(arg == endptr) {Log("no number, try again"); return 0;}
 
 	//	real to step in execution
 	cpu_exec(time);
