@@ -24,6 +24,12 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
+	printf("the content of all regs is as follow:\n");
+
+	int length = sizeof(regs)/sizeof(regs[0]);
+	for(int i = 0; i < length; i++) {
+		printf("%s\n", regs[i]);
+	}
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
