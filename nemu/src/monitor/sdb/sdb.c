@@ -57,6 +57,7 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 static int cmd_si(char *args);
+static int cmd_info(char *args);
 
 static struct {
   const char *name;
@@ -69,6 +70,7 @@ static struct {
 
   /* TODO: Add more commands */
 	{ "si" , "execute the N commands and stop", cmd_si },
+	{ "info", "print the status of the program", cmd_info}, 
 
 };
 
@@ -122,6 +124,15 @@ static int cmd_si(char *args) {
 
 	//	real to step in execution
 	cpu_exec((int)time);
+
+	return 0;
+}
+
+static int cmd_info(char *args) {
+	//check args: 
+	//1.NULL or not
+	//2.only "r" and "w" is valid
+	Log("the args: %s", args);
 
 	return 0;
 }
