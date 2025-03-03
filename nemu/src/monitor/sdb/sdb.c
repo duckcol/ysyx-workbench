@@ -167,6 +167,7 @@ static int cmd_x(char *args) {
 	
 	//	the EXPR part
 	token = strtok(NULL, " ");
+	Log("the token: %s",token);
 	char* EXPR = malloc(sizeof(token)); 
 	strcpy(EXPR, token); 
 	Log("the EXPR: %s", EXPR);
