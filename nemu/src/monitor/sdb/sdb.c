@@ -170,8 +170,11 @@ static int cmd_x(char *args) {
 	char* EXPR = malloc(sizeof(token)); 
 	strcpy(EXPR, token); 
 	//	reserved for expression value 
-	long expr2mem = strtol(EXPR, &endptr, 16);
-	Log("the EXPR: %p", (void*) expr2mem);
+	void* expr2mem = (void*)strtol(EXPR, &endptr, 16);
+	Log("the EXPR: %p", expr2mem);
+
+	//	then, print the memory around
+	printf(" ");
 
 	free(EXPR);
 	return 0;
