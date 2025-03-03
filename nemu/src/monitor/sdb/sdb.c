@@ -167,13 +167,14 @@ static int cmd_x(char *args) {
 	
 	//	the EXPR part
 	token = strtok(NULL, " ");
-	Log("the token: %s",token);
 	char* EXPR = malloc(sizeof(char)*20); 
 	strcpy(EXPR, token); 
 	Log("the EXPR: %s", EXPR);
 	//	reserve EXPR for expression value 
-	uintmax_t address = strtoull(EXPR, &endptr, 16);
-	Log("the address: %p", (void *)(uintptr_t)address);
+	
+	// the address
+	void *address = (void *)(uintptr_t)strtoull(EXPR, &endptr, 16);
+	Log("the address: %p", address);
 
 	//	then, print the memory around
 	printf(" ");
