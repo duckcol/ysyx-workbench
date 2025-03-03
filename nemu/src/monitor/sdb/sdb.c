@@ -134,7 +134,20 @@ static int cmd_info(char *args) {
 	//2.only "r" and "w" is valid
 	Log("the args: %s", args);
 
-	return 0;
+	if(args == NULL) {Log("input a arg, plz try again"); return 0;}
+
+	if(strcmp(args, "r") == 0) {
+		isa_reg_display();
+		return 0;
+	}
+
+	if(strcmp(args, "w") == 0) {
+		Log("TODO: display watchpoint");
+		return 0;
+	} else {
+		Log("invalid arg, plz try again");
+		return 0;
+	}
 }
 
 void sdb_set_batch_mode() {
