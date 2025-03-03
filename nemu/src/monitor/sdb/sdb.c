@@ -101,7 +101,7 @@ void sdb_set_batch_mode() {
 }
 
 void sdb_mainloop() {
-	//Log("the is_batch_mode: %s", (is_batch_mode ? "True":"False") );
+	//Log("the is_batch_mode: %s", (is_batch_mode ? "True":"False"));
   if (is_batch_mode) {
     cmd_c(NULL);
     return;
