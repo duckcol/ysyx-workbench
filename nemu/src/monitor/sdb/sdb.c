@@ -180,9 +180,7 @@ static int cmd_x(char *args) {
 	printf("address: content\n");
 	printf("%p: ", address);
 	const unsigned char *content = (const unsigned char *)address;
-	for(int i = 0; i < 4; i++) {
-		printf("%0X ", content[i*4]);
-	}
+	printf("%0X ", *content);
 
 	free(EXPR);
 	return 0;
