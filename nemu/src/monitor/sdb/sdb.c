@@ -71,7 +71,7 @@ static struct {
 
   /* TODO: Add more commands */
 	{ "si" , "si N:execute the N commands and stop", cmd_si },
-	{ "info", "info r: print all regs\ninfo w: print all watchpoint", cmd_info}, 
+	{ "info", "info r: print all regs;info w: print all watchpoint", cmd_info}, 
 	{ "x", "x N EXPR: print 4*N bytes starting from EXPR", cmd_x},
 
 };
