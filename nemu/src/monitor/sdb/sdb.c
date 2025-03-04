@@ -178,7 +178,7 @@ static int cmd_x(char *args) {
 
 	//	then, print the memory around
 	printf("address: content\n");
-	printf("%p: ", (void *)address);
+	//printf("%p: ", (void *)address);
 	
 	//	read address data
 	//const unsigned char test_array[] = {0x00, 0x11, 0x22, 0x33};
