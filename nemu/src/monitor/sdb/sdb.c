@@ -181,9 +181,9 @@ static int cmd_x(char *args) {
 	printf("%p: ", address);
 	
 	//	read address data
-	const unsigned char test_array[] = {0x00, 0x11, 0x22, 0x33};
-	const unsigned char *content = test_array;//(const unsigned char *)test_arrayaddress;
-	for(int i = 0; i < 1; i++) {
+	//const unsigned char test_array[] = {0x00, 0x11, 0x22, 0x33};
+	const unsigned char *content = /*test_array;*/(const unsigned char *)address;
+	for(int i = 0; i < N; i++) {
 		const unsigned char *block = content + 4*i;
 		for(int j = 0; j < 4; j++) {
 			printf("0x%02X ",block[j]);
