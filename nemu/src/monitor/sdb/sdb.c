@@ -186,7 +186,7 @@ static int cmd_x(char *args) {
 	for(int i = 0; i < N; i++) {
 		const unsigned char *block = content + 4*i;
 		for(int j = 0; j < 4; j++) {
-			printf("0x%02X ",block[j]);
+			Log("0x%02X ",block[j]);
 		}
 	}
 	printf("\n");
