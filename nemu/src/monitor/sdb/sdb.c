@@ -53,6 +53,7 @@ static int cmd_q(char *args) {
 	//added to solve the problem
 	//when ``make run`` and then type ``q``
 	//will result in error 1 in make
+	//view nemu-main.c to see is_good_status_bad()
   return -1;
 }
 
