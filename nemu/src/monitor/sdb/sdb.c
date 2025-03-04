@@ -49,9 +49,10 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
-	cpu_exec(-1);//added to solve the problem
-							 //when ``make run`` and then type ``q``
-							 //will result in error 1 in make
+	nemu_state.state = NEMU_QUIT;
+	//added to solve the problem
+	//when ``make run`` and then type ``q``
+	//will result in error 1 in make
   return -1;
 }
 
