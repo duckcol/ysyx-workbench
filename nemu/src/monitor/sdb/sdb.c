@@ -165,7 +165,9 @@ static int cmd_x(char *args) {
 	char *endptr;
 	int N = (int) strtol(token, &endptr, 10);
 	Log("the N: %d", N);
-	//	here should be some checks to N
+	//	here are some checks to N
+	if(token == endptr) {Log("no number, try again"); return 0;}
+	
 	
 	//	the EXPR part
 	token = strtok(NULL, " ");
