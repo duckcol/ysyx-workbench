@@ -167,6 +167,7 @@ static int cmd_x(char *args) {
 	Log("the N: %d", N);
 	//	here are some checks to N
 	if(token == endptr) {Log("no number, try again"); return 0;}
+	if(N <= 0) {Log("N should be lager than zero, plz try again"); return 0;}
 	
 	
 	//	the EXPR part
