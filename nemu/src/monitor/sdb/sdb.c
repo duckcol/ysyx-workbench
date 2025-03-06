@@ -166,9 +166,8 @@ static int cmd_x(char *args) {
 	int N = (int) strtol(token, &endptr, 10);
 	Log("the N: %d", N);
 	//	here are some checks to N
-	if(token == endptr) {Log("no number, try again"); return 0;}
+	if(token == endptr) {Log("no number, try again"); return 0;}//	check if there's a number
 	if(N <= 0) {Log("N should be lager than zero, plz try again"); return 0;}
-	
 	
 	//	the EXPR part
 	token = strtok(NULL, " ");
@@ -177,7 +176,9 @@ static int cmd_x(char *args) {
 	Log("the EXPR: %s", EXPR);
 	//	reserve EXPR for expression value 
 	
-	// the address
+	//	some problem with the print part
+	TODO();
+	/* the address
 	void *address = (void *)(uintptr_t)strtoull(EXPR, &endptr, 16);
 	Log("the address: %p", address);
 
@@ -187,7 +188,7 @@ static int cmd_x(char *args) {
 	
 	//	read address data
 	//const unsigned char test_array[] = {0x00, 0x11, 0x22, 0x33};
-	const unsigned char *content = /*test_array;*/(const unsigned char *)address;
+	const unsigned char *content = (const unsigned char *)address;
 	for(int i = 0; i < N; i++) {
 		const unsigned char *block = content + 4*i;
 		for(int j = 0; j < 4; j++) {
@@ -195,6 +196,7 @@ static int cmd_x(char *args) {
 		}
 	}
 	printf("\n");
+	*/
 
 	free(EXPR);
 	return 0;
