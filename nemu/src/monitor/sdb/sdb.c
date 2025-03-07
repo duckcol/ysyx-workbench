@@ -181,7 +181,7 @@ static int cmd_x(char *args) {
 	//	some problem with the print part
 	// the address
 	paddr_t address = (paddr_t) strtoull(EXPR, &endptr, 16);
-	Log("the address: %x", address);
+	Log("the address: 0x%x", address);
 
 	/*/	then, print the memory around
 	printf("address: content\n");
