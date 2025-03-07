@@ -179,11 +179,11 @@ static int cmd_x(char *args) {
 	//	reserve EXPR for expression value 
 	
 	//	some problem with the print part
-	/* the address
-	void *address = (void *)(uintptr_t)strtoull(EXPR, &endptr, 16);
-	Log("the address: %p", address);
+	// the address
+	paddr_t address = (paddr_t) strtoull(EXPR, &endptr, 16);
+	Log("the address: %x", address);
 
-	//	then, print the memory around
+	/*/	then, print the memory around
 	printf("address: content\n");
 	printf("%p: ", (void *)address);
 	
