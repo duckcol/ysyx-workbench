@@ -27,9 +27,9 @@ void isa_reg_display() {
 	int length = sizeof(regs)/sizeof(regs[0]);
 	for(int i = 0; i < length; i++) {
 		if(i == 0) {
-			printf("%s\t0x%8x\t%8u\n", regs[i], gpr(i), gpr(i));
+			printf("%s\t0x%-8x\t%-8u\n", regs[i], gpr(i), gpr(i));
 		} else {
-			printf("%s\t0x%8x\t0x%8x\n", regs[i], gpr(i), gpr(i));
+			printf("%s\t0x%-8x\t0x%-8x\n", regs[i], gpr(i), gpr(i));
 		}
 	}
 	printf("pc\t0x%x\t0x%x\n", cpu.pc, cpu.pc);
