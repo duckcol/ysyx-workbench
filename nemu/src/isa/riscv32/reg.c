@@ -28,7 +28,7 @@ void isa_reg_display() {
 	printf("Name\tHex\t\tData\n");
 	for(int i = 0; i < length; i++) {
 	//some regs should show as hex some should be in decimal
-		if(i==0 || i==5 || i==6 || i==7) {
+		if(i==0 || (i>=5 && i<=7) || (i>=10 && i<= 17)) {
 			printf("%s\t0x%-8x\t%-8u\n", regs[i], gpr(i), gpr(i));
 		} else {
 			printf("%s\t0x%-8x\t0x%-8x\n", regs[i], gpr(i), gpr(i));
