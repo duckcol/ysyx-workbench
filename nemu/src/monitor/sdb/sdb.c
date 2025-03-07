@@ -178,7 +178,6 @@ static int cmd_x(char *args) {
 	//	reserve EXPR for expression value 
 	
 	//	some problem with the print part
-	panic("the printing have some problem");
 	/* the address
 	void *address = (void *)(uintptr_t)strtoull(EXPR, &endptr, 16);
 	Log("the address: %p", address);
