@@ -43,6 +43,7 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
+	Log("nemu_state: %d",nemu_state.state);
   cpu_exec(-1);
   return 0;
 }
