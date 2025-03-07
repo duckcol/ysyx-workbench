@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
 
@@ -183,11 +184,12 @@ static int cmd_x(char *args) {
 	paddr_t address = (paddr_t) strtoull(EXPR, &endptr, 16);
 	Log("the address: 0x%x", address);
 
-	/*/	then, print the memory around
+	//	then, print the memory around
 	printf("address: content\n");
-	printf("%p: ", (void *)address);
+	word_t content = paddr_read(address, 4);
+	printf("0x%08x: 0x%08x\n", address, content);
 	
-	//	read address data
+	/*/	read address data
 	//const unsigned char test_array[] = {0x00, 0x11, 0x22, 0x33};
 	const unsigned char *content = (const unsigned char *)address;
 	for(int i = 0; i < N; i++) {
