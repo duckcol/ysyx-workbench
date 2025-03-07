@@ -25,7 +25,9 @@ const char *regs[] = {
 
 void isa_reg_display() {
 	int length = sizeof(regs)/sizeof(regs[0]);
+	printf("Name\tHex\tData\n");
 	for(int i = 0; i < length; i++) {
+	//some regs should show as hex some should be in decimal
 		if(i == 0) {
 			printf("%s\t0x%-8x\t%-8u\n", regs[i], gpr(i), gpr(i));
 		} else {
