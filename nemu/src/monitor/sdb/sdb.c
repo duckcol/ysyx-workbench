@@ -194,7 +194,7 @@ static int cmd_x(char *args) {
 	printf("address: content\n");
 	printf(""FMT_PADDR":", address);
 	for(int i = 0; i < N; i++) {
-		printf(" 0x%08x", vaddr_read(address + (paddr_t)i, 4));
+		printf(" 0x%08x", vaddr_read(address + i*4, 4));
 	}
 	printf("\n");
 	
