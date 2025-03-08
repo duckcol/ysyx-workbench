@@ -193,8 +193,8 @@ static int cmd_x(char *args) {
 	//	then, print the memory around
 	printf("address: content\n");
 	printf(""FMT_PADDR":", address);
-	for(uint32_t i = 0; i < N; i++) {
-		printf(" 0x%08x", vaddr_read(address + i, 4));
+	for(int i = 0; i < N; i++) {
+		printf(" 0x%08x", vaddr_read(address + (paddr_t)i, 4));
 	}
 	printf("\n");
 	
