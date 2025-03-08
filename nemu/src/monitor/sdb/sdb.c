@@ -180,9 +180,15 @@ static int cmd_x(char *args) {
 	Log("the EXPR: %s", EXPR);
 	//	reserve EXPR for expression value 
 	
-	// the address is defaultly in guest
+	// the address
 	paddr_t address = (paddr_t) strtoull(EXPR, &endptr, 16);
-	Log("the paddress: "FMT_PADDR"", address);
+	if(in_pmem(address)) {
+		Log("the paddr: "FMT_PADDR"", address);
+	} else {
+		Log("not a valid paddr, consider in pmem");
+		address = CONFIG_MBASE + address;
+		Log("converted to paddr:"FMT_PADDR"", address);
+	}
 
 	//	then, print the memory around
 	printf("address: content\n");
