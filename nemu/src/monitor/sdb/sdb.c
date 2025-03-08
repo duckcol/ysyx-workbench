@@ -187,7 +187,7 @@ static int cmd_x(char *args) {
 	//	then, print the memory around
 	printf("address: content\n");
 	printf(""FMT_PADDR":", address);
-	printf(" 0x%x", vaddr_read(address, 1));
+	printf(" 0x%0x", vaddr_read(address, 2));
 	printf("\n");
 	
 	free(EXPR);
