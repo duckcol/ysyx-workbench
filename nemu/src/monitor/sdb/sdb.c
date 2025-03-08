@@ -182,12 +182,12 @@ static int cmd_x(char *args) {
 	//	some problem with the print part
 	// the address
 	paddr_t address = (paddr_t) strtoull(EXPR, &endptr, 16);
-	Log("the address: 0x"FMT_PADDR"", address);
+	Log("the address: "FMT_PADDR"", address);
 
 	//	then, print the memory around
 	printf("address: content\n");
 	word_t content = paddr_read(address, 4);
-	printf(""FMT_PADDR": 0x%08x\n", address, content);
+	printf(""FMT_PADDR": "FMT_WORD"\n", address, content);
 	
 	/*/	read address data
 	//const unsigned char test_array[] = {0x00, 0x11, 0x22, 0x33};
