@@ -38,6 +38,9 @@ static struct rule {
 
   {" +", TK_NOTYPE},    // spaces
   {"\\+", '+'},         // plus
+	{"-", '-'},					  // sub
+	{"\\*", '*'},					// mul
+	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
 };
 
@@ -95,6 +98,7 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
+
           default: TODO();
         }
 
