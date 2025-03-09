@@ -65,6 +65,7 @@ static int cmd_help(char *args);
 static int cmd_si(char *args);
 static int cmd_info(char *args);
 static int cmd_x(char *args);
+static int cmd_p(char *args); 
 
 static struct {
   const char *name;
@@ -79,6 +80,7 @@ static struct {
 	{ "si" , "si N:execute the N commands and stop", cmd_si },
 	{ "info", "info r: print all regs;info w: print all watchpoint", cmd_info}, 
 	{ "x", "x N EXPR: print 4*N bytes starting from EXPR(paddr, but will auto convert invalid paddr)", cmd_x},
+	{ "p", "p EXPR: cauculate and print the value of EXPR", cmd_p},
 
 };
 
@@ -199,6 +201,12 @@ static int cmd_x(char *args) {
 	printf("\n");
 	
 	free(EXPR);
+	return 0;
+}
+
+static int cmd_p(char *args) {
+	Log("the args: %s",args);
+
 	return 0;
 }
 
