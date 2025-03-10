@@ -84,6 +84,7 @@ static bool make_token(char *e) {
   while (e[position] != '\0') {
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i ++) {
+			Assert((nr_token <= 32), "tokens[32] is full");
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
@@ -98,7 +99,7 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
 
-				Assert((nr_token <= 32), "tokens[32] is full");
+
         switch (rules[i].token_type) {
 					case TK_NOTYPE: break;//	for blank, do nothing
 					case TK_EQ: case '+': case '*': case '-': case '/'://	for sign, record
