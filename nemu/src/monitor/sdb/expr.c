@@ -109,6 +109,8 @@ static bool make_token(char *e) {
 					case TK_DIGIT: 
 						tokens[nr_token].type = rules[i].token_type;
 						strcpy(tokens[nr_token].str, substr_start);
+						Log("tokens[%d].type: %d, str: %s",
+								nr_token,tokens[nr_token].type,tokens[nr_token].str);
 						nr_token++;
 						break;
           default: TODO();
