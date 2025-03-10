@@ -43,8 +43,8 @@ static struct rule {
 	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
 	{"[[:digit:]]+", TK_DIGIT},		// digit
-	{"(", '('},
-	{")", ')'},						//	parenthese
+	{"\\(", '('},
+	{"\\)", ')'},						//	parenthese
 };
 
 #define NR_REGEX ARRLEN(rules)
