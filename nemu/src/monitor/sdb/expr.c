@@ -109,7 +109,7 @@ static bool make_token(char *e) {
 					case '-': 
 					case '/':
 					case ')':
-					case '(':							//	for sign, record
+					case '(':							//	for sign, record in tokens
 						tokens[nr_token].type = rules[i].token_type; 
 						//Log("tokens[%d].type: %d, str: %c",
 								//nr_token,tokens[nr_token].type,(char)tokens[nr_token].type);
