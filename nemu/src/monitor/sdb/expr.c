@@ -42,7 +42,7 @@ static struct rule {
 	{"\\*", '*'},					// mul
 	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
-	{"[[:digit:]]+", TK_DIGIT},		// digit
+	{"[[:digit:]]+", TK_DIGIT},		// digit in POSIX regex
 	{"\\(", '('},
 	{"\\)", ')'},						//	parenthese
 };
