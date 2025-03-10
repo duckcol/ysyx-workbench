@@ -109,7 +109,7 @@ static bool make_token(char *e) {
 					case TK_DIGIT://	for digit, record and turn into str 
 						tokens[nr_token].type = rules[i].token_type;
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
-						Assert((substr_len < 31),"the token digits len is to long");
+						Assert((substr_len > 31),"the token digits len is to long");
 						//Log("tokens[%d].type: %d, str: %s",
 								//nr_token,tokens[nr_token].type,tokens[nr_token].str);
 						nr_token++;
