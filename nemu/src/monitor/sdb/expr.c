@@ -99,18 +99,18 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-					case TK_NOTYPE: break;
-					case TK_EQ: case '+': case '*': case '-': case '/':
+					case TK_NOTYPE: break;//	for blank, do nothing
+					case TK_EQ: case '+': case '*': case '-': case '/'://	for sign, record
 						tokens[nr_token].type = rules[i].token_type; 
-						Log("tokens[%d].type: %d, str: %c",
-								nr_token,tokens[nr_token].type,(char)tokens[nr_token].type);
+						//Log("tokens[%d].type: %d, str: %c",
+								//nr_token,tokens[nr_token].type,(char)tokens[nr_token].type);
 						nr_token++; 
 						break;
-					case TK_DIGIT: 
+					case TK_DIGIT://	for digit, record and turn into str 
 						tokens[nr_token].type = rules[i].token_type;
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
-						Log("tokens[%d].type: %d, str: %s",
-								nr_token,tokens[nr_token].type,tokens[nr_token].str);
+						//Log("tokens[%d].type: %d, str: %s",
+								//nr_token,tokens[nr_token].type,tokens[nr_token].str);
 						nr_token++;
 						break;
           default: TODO();
