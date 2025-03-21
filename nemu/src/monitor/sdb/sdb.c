@@ -80,7 +80,7 @@ static struct {
 	{ "si" , "si N:execute the N commands and stop", cmd_si },
 	{ "info", "info r: print all regs;info w: print all watchpoint", cmd_info}, 
 	{ "x", "x N EXPR: print 4*N bytes starting from EXPR(paddr, but will auto convert invalid paddr)", cmd_x},
-	{ "p", "p EXPR: cauculate and print the value of EXPR", cmd_p},
+	{"p", "p $EXPR: print the compute result of $EXPR", cmd_p},
 
 };
 
@@ -124,7 +124,7 @@ static int cmd_si(char *args) {
 	char *exceed = strtok(NULL, " ");// continue to split the args
 	if(exceed != NULL) {
 		Log("exceed args input, the exceeded part will be ignored");
-		Log("the exceed start at: %s",exceed);
+		Log("the exceed starting at %s", exceed);
 	}
 
 	//	check if the arg's number is valid
