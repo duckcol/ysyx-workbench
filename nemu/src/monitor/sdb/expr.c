@@ -159,8 +159,8 @@ bool check_paretthese(int p, int q) {
 			return false;
 		if(p == q) 
 			return true;
-		else
-			return false;
+		else// p < q
+			return true;
 	} else {
 		return false;
 	}
