@@ -20,6 +20,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 enum {
@@ -146,6 +147,25 @@ static bool make_token(char *e) {
   return true;
 }
 
+bool check_paretthese(int p, int q) {
+	if(tokens[p].type == '(' && tokens[q].type == ')') {
+		p++; q--;
+		while(p <= q) {
+			if(tokens[p].type != '(') p++;
+			if(tokens[q].type != ')') q--;
+			if(tokens[q].type == ')') {p++; q--;};
+		}
+		if(p > q) 
+			return false;
+		if(p == q) 
+			return true;
+		else
+			return false;
+	} else {
+		return false;
+	}
+}
+
 void eval(int p, int q) {
 	if (p > q) {
 		Assert(0, "Bad expr start and end");
@@ -153,9 +173,14 @@ void eval(int p, int q) {
 		//	should add some check
 		if (tokens[p].type == TK_DIGIT) {
 			printf("the result is a number:%d\n", atoi(tokens[p].str));	
+			return;
 		} else {
 			Assert(0, "not a single number");
+			return;
 		}
+	} else if (check_paretthese(p,q) == true) {
+		Assert(0, "find pair matched");
+		eval(p + 1, q - 1);	
 	}
 }
 
