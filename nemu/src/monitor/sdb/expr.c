@@ -151,7 +151,11 @@ void eval(int p, int q) {
 		Assert(0, "Bad expr start and end");
 	} else if (p == q) {
 		//	should add some check
-		printf("the result is a number:%d\n", atoi(tokens[p].str));	
+		if (tokens[p].type == TK_DIGIT) {
+			printf("the result is a number:%d\n", atoi(tokens[p].str));	
+		} else {
+			Assert(0, "not a single number");
+		}
 	}
 }
 
