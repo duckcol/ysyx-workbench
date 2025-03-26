@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "debug.h"
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
@@ -122,8 +123,8 @@ static bool make_token(char *e) {
 						tokens[nr_token].type = rules[i].token_type;
 						Assert(substr_len < 31 ,"the digit's len is to long");
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
-						Log("tokens[%d].type: %d, str: %s",
-								nr_token,tokens[nr_token].type,tokens[nr_token].str);
+						//Log("tokens[%d].type: %d, str: %s",
+								//nr_token,tokens[nr_token].type,tokens[nr_token].str);
 						nr_token++;
 						break;
 
@@ -140,6 +141,7 @@ static bool make_token(char *e) {
     }
   }
 
+	Log("the length of tokens:%d",nr_token);
   return true;
 }
 
