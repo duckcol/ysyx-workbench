@@ -20,6 +20,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stdio.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_DIGIT, TK_PARTH
@@ -145,6 +146,14 @@ static bool make_token(char *e) {
   return true;
 }
 
+void eval(int p, int q) {
+	if (p > q) {
+		Assert(0, "Bad expr start and end");
+	} else if (p == q) {
+		//	should add some check
+		printf("the result is a number:%d", atoi(tokens[p].str));	
+	}
+}
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -153,6 +162,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
+	eval(0, nr_token-1);
   TODO();
 
   return 0;
