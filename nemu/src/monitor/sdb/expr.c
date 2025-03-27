@@ -175,7 +175,7 @@ word_t eval(int p, int q) {
 		/*should be a single number*/
 		if(tokens[p].type == TK_DIGIT) {
 			char* endptr;
-			unsigned long value = strtoul(tokens[p].str, &endptr, 16);
+			unsigned long value = strtoul(tokens[p].str, &endptr, 10);
 			if(*endptr != '\0') Assert(0, "not a number");	
 			return value;
 
@@ -199,6 +199,6 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   //return eval(0, nr_token-1);
-	printf("the result:"FMT_WORD"\n", eval(0, nr_token-1));
+	printf("the result:%08" PRIx32"\n", eval(0, nr_token-1));
 	TODO();
 }
