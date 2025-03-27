@@ -152,9 +152,10 @@ static bool make_token(char *e) {
 
 bool check_parentheses(int p, int q) {
 	int count = 0;
+	Assert(tokens[p].type != ')', "wrong position of parenthese");
 	if(tokens[p].type == '(') {
 		//	in case: "()"
-		if(tokens[q].type == ')' && q == p + 1) return false;
+		if(tokens[q].type == ')' && q == p + 1) return true;
 		for(int i = p + 1; i < q; i++) {
 			if (tokens[i].type == '(') count++;
 			if (tokens[i].type == ')') count--;
@@ -183,9 +184,30 @@ word_t eval(int p, int q) {
 	} else if (check_parentheses(p, q) == true) {
 			//the expr surrounded by a matched parentheses,
 			//remove them and eval
+			if (q == p + 1) return 0;//in case "()"
 			return eval(p+1, q-1);	
+
 	} else {
-			//find the main op and eval	
+			//find the main op and eval, consider "1 + (2 + 3) / 4"
+
+			//find main op
+			int surrounded = 0; int op = 0;
+			for(int i = p; i < q; i++) {
+
+				if (tokens[i].type == '(') surrounded=1;
+				if (tokens[i].type == ')') surrounded=0;
+
+				if (!surrounded) {
+					if (tokens[i].type == '+' || tokens[i].type == '-') op = i;
+					if (tokens[i].type == '*' || tokens[i].type == '/') {
+							if (tokens[op].type != '+' && tokens[op].type != '-') {
+							op = i;	
+						}
+					}
+				}
+			}	
+
+			//do compute
 			return 0;
 	}
 	return 0;
