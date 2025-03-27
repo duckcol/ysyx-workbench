@@ -175,7 +175,7 @@ word_t eval(int p, int q) {
 		/*should be a single number*/
 		if(tokens[p].type == TK_DIGIT) {
 			char* endptr;
-			unsigned long value = strtoul(tokens[p].str, &endptr, 10);
+			unsigned long value = strtoul(tokens[p].str, &endptr, 16);
 			if(*endptr != '\0') Assert(0, "not a number");	
 			return value;
 
