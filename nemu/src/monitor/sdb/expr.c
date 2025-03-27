@@ -13,7 +13,9 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "common.h"
 #include "debug.h"
+#include <stdio.h>
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
@@ -21,6 +23,7 @@
  */
 #include <regex.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 enum {
@@ -147,41 +150,45 @@ static bool make_token(char *e) {
   return true;
 }
 
-bool check_paretthese(int p, int q) {
-	if(tokens[p].type == '(' && tokens[q].type == ')') {
-		p++; q--;
-		while(p <= q) {
-			if(tokens[p].type != '(') p++;
-			if(tokens[q].type != ')') q--;
-			if(tokens[q].type == ')') {p++; q--;};
+bool check_parentheses(int p, int q) {
+	int count = 0;
+	if(tokens[p].type == '(') {
+		//	in case: "()"
+		if(tokens[q].type == ')' && q == p + 1) return false;
+		for(int i = p + 1; i < q; i++) {
+			if (tokens[i].type == '(') count++;
+			if (tokens[i].type == ')') count--;
 		}
-		if(p > q) 
-			return false;
-		if(p == q) 
-			return true;
-		else// p < q
-			return true;
+		if (count == 0) return true;
+		else return false;
 	} else {
 		return false;
 	}
 }
 
-void eval(int p, int q) {
-	if (p > q) {
-		Assert(0, "Bad expr start and end");
-	} else if (p == q) {
-		//	should add some check
-		if (tokens[p].type == TK_DIGIT) {
-			printf("the result is a number:%d\n", atoi(tokens[p].str));	
-			return;
-		} else {
-			Assert(0, "not a single number");
-			return;
+word_t eval(int p, int q) {
+	if(p > q) {
+		/* bad expr*/
+		Assert(0, "bad expr");
+
+	} else if(p == q) {
+		/*should be a single number*/
+		if(tokens[p].type == TK_DIGIT) {
+			char* endptr;
+			unsigned long value = strtoul(tokens[p].str, &endptr, 10);
+			if(*endptr != '\0') Assert(0, "not a number");	
+			return value;
+
 		}
-	} else if (check_paretthese(p,q) == true) {
-		Assert(0, "find pair matched");
-		eval(p + 1, q - 1);	
+	} else if (check_parentheses(p, q) == true) {
+			//the expr surrounded by a matched parentheses,
+			//remove them and eval
+			return eval(p+1, q-1);	
+	} else {
+			//find the main op and eval	
+			return 0;
 	}
+	return 0;
 }
 
 word_t expr(char *e, bool *success) {
@@ -191,8 +198,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-	eval(0, nr_token-1);
-  TODO();
-
-  return 0;
+  //return eval(0, nr_token-1);
+	printf("the result:"FMT_WORD"\n", eval(0, nr_token-1));
+	TODO();
 }

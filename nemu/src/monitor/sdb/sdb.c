@@ -207,7 +207,7 @@ static int cmd_x(char *args) {
 static int cmd_p(char *args) {
 	Log("the args: %s",args);
 	bool *success = malloc(sizeof(bool)); 
-	expr(args, success);
+	printf("the result: "FMT_WORD"\n", expr(args, success));
 
 	return 0;
 }
