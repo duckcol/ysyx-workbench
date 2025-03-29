@@ -182,7 +182,8 @@ word_t eval(int p, int q) {
 			if(*endptr != '\0') Assert(0, "not a number");	
 			return value;
 		} else {
-			Assert(0, "should be a number");
+			//Assert(0, "should be a number");
+			return 0;
 		}
 
 	} else if (check_parentheses(p, q) == true) {
@@ -211,7 +212,7 @@ word_t eval(int p, int q) {
 							  tokens[i-1].type == '*' ||
 							  tokens[i-1].type == '/') {
 							if (i == p) { // when deal with "-1"
-
+								op = i;
 							} else { // when deal with "+-1"
 								op = i-1;
 							}
