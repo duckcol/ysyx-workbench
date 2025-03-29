@@ -121,7 +121,7 @@ static int cmd_si(char *args) {
 
 	//	check if the args is multiple
 	char *arg = strtok(args," ");
-	Log("the arg: %s",arg);
+	Info("the arg: %s",arg);
 	char *exceed = strtok(NULL, " ");// continue to split the args
 	if(exceed != NULL) {
 		Log("exceed args input, the exceeded part will be ignored");
