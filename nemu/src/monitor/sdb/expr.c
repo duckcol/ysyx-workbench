@@ -216,13 +216,7 @@ word_t eval(int p, int q) {
 			word_t val2 = eval(op + 1, q);
 			switch (tokens[op].type) {
 				case '+': return val1 + val2;
-				case '-': if (tokens[op-1].type == '+' ||
-											tokens[op-1].type == '-' || 
-											tokens[op-1].type == '*' ||
-											tokens[op-1].type == '/' ) {
-										return (-1) * val2;	
-									} else 
-										return val1 - val2;
+				case '-': return val1 - val2;
 				case '*': return val1 * val2;
 				case '/': Assert(val2 != 0, "can't div by 0"); return val1 / val2;	
 				default: Assert(0, "wrong in compute");
