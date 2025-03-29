@@ -231,7 +231,7 @@ word_t eval(int p, int q) {
 			}	
 
 			//do compute
-			//in case "-1", which is actually 0-1, but p=0, op=0
+			//in case "-1", which is actually 0-1, but p=0, op=0,
 			//so val1 should be 0 instand of eval(0, 0-1), which Assert program
 			word_t val1 = (p == op) ? 0  : eval(p, op - 1);
 			word_t val2 = eval(op + 1, q);
