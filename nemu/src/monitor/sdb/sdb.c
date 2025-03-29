@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include "debug.h"
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
 
@@ -110,7 +111,7 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-	Log("the args: %s",args);//	for dbg
+	Info("the args: %s",args);//	for dbg
 
 	//	check if the args is NULL
 	if(args == NULL) {
@@ -142,7 +143,7 @@ static int cmd_info(char *args) {
 	//check args: 
 	//1.NULL or not
 	//2.only "r" and "w" is valid
-	Log("the args: %s", args);
+	Info("the args: %s", args);
 
 	if(args == NULL) {Log("need an arg, plz try again"); return 0;}
 
@@ -205,7 +206,7 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-	Log("the args: %s",args);
+	Info("the args: %s",args);
 	bool *success = malloc(sizeof(bool)); 
 	printf("the result: "FMT_WORD"\n", expr(args, success));
 
