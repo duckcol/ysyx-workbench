@@ -24,6 +24,7 @@
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
+//	since it only use to info some data, so on log needed
 #define Info(format, ...) \
 	printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_CYAN) "\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__)
