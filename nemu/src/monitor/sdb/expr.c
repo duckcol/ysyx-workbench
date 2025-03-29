@@ -210,7 +210,11 @@ word_t eval(int p, int q) {
 							  tokens[i-1].type == '-' ||
 							  tokens[i-1].type == '*' ||
 							  tokens[i-1].type == '/') {
-							op = i-1;
+							if (i == p) { // when deal with "-1"
+
+							} else { // when deal with "+-1"
+								op = i-1;
+							}
 						} else {
 							op = i;
 						}
