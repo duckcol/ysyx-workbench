@@ -145,7 +145,7 @@ static int cmd_info(char *args) {
 	//2.only "r" and "w" is valid
 	Info("the args: %s", args);
 
-	if(args == NULL) {Log("need an arg, plz try again"); return 0;}
+	if(args == NULL) {Info("need an arg, plz try again"); return 0;}
 
 	if(strcmp(args, "r") == 0) {
 		isa_reg_display();
