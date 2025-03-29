@@ -202,7 +202,21 @@ word_t eval(int p, int q) {
 				if (tokens[i].type == ')') surrounded=0;
 
 				if (!surrounded) {
-					if (tokens[i].type == '+' || tokens[i].type == '-') op = i;
+					//	find find main op '+' or '-'
+					if (tokens[i].type == '+') op = i;
+					if (tokens[i].type == '-') {
+						// to differ "a-b" and "-a"
+						if (tokens[i-1].type == '+' || 
+							  tokens[i-1].type == '-' ||
+							  tokens[i-1].type == '*' ||
+							  tokens[i-1].type == '/') {
+							op = i-1;
+						} else {
+							op = i;
+						}
+					}
+
+					//	find main op '*' or '/'
 					if (tokens[i].type == '*' || tokens[i].type == '/') {
 							if (tokens[op].type != '+' && tokens[op].type != '-') {
 							op = i;	
