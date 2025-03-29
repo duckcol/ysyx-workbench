@@ -152,7 +152,9 @@ static bool make_token(char *e) {
 
 bool check_parentheses(int p, int q) {
 	int count = 0;
+	//	to deal with ")..."
 	Assert(tokens[p].type != ')', "wrong position of parenthese");
+
 	if(tokens[p].type == '(') {
 		//	in case: "()"
 		if(tokens[q].type == ')' && q == p + 1) return true;
