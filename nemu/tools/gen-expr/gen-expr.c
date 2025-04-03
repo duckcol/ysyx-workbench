@@ -31,8 +31,47 @@ static char *code_format =
 "  return 0; "
 "}";
 
+#define choose(max) rand()%max
+
+#define BUFEND buf+strlen(buf)
+#define INSERT_BLANK for(int i = 0; i < (rand()%10); i++) {sprintf(BUFEND, " ");}
 static void gen_rand_expr() {
-  buf[0] = '\0';
+	//prevent buf from overflowing
+	if (BUFEND - buf >= 65000) {
+		sprintf(BUFEND, "1");
+		return;
+	}
+	switch (choose(3)) {
+		case 0:
+			//gen_num
+			INSERT_BLANK;
+			sprintf(BUFEND, "%u", (unsigned int)rand());
+			INSERT_BLANK;
+			break;
+		case 1:
+			//gen_parenthese :=
+			//gen('('); gen_rand_expr(); gen(')');
+			sprintf(BUFEND, "(");
+			INSERT_BLANK;
+			gen_rand_expr();
+			INSERT_BLANK;
+			sprintf(BUFEND, ")");
+			break;
+		default:
+			//actually it's for case 2
+			//gen_whole_expr :=
+			//gen_rand_expr(); gen_rand_op(); gen_rand_expr();
+			gen_rand_expr();
+			switch (choose(4)) {
+				case 0:sprintf(BUFEND, "+");break;
+				case 1:sprintf(BUFEND, "-");break;
+				case 2:sprintf(BUFEND, "*");break;
+				default:sprintf(BUFEND, "/");break;
+			}
+			gen_rand_expr();
+			break;
+	}
+	//sprintf(buf, "1 + 1");
 }
 
 int main(int argc, char *argv[]) {
@@ -44,6 +83,7 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
+		memset(buf, 0, sizeof(buf));
     gen_rand_expr();
 
     sprintf(code_buf, code_format, buf);

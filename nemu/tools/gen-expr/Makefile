@@ -13,6 +13,9 @@
 # See the Mulan PSL v2 for more details.
 #**************************************************************************************/
 
+run:
+	-@./build/gen-expr 10
+
 NAME = gen-expr
 SRCS = gen-expr.c
 include $(NEMU_HOME)/scripts/build.mk
