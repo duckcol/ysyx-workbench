@@ -13,8 +13,9 @@
 # See the Mulan PSL v2 for more details.
 #**************************************************************************************/
 
-run:
-	-@./build/gen-expr 10
+run: app
+	-@./build/gen-expr 10 > ./input
+	-@cat ./input
 
 NAME = gen-expr
 SRCS = gen-expr.c
