@@ -17,6 +17,7 @@
 #include <common.h>
 #include <stdio.h>
 #include <string.h>
+#include "monitor/sdb/sdb.h"
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
@@ -45,12 +46,14 @@ int main(int argc, char *argv[]) {
 
 		//	deal each line 
 		//	store and change the number
-		word_t num; char *expr;
-		num = strtoull(line , &expr, 10);
-		Assert(expr != line, "first character is not digit");
+		word_t num; char *expression;
+		num = strtoull(line , &expression, 10);
+		Assert(expression != line, "first character is not digit");
 		//	jump to the first non-blank char and deal
-		while(*expr == ' ') expr++;
-		printf("Num: "FMT_WORD"; Line: %s\n", num, expr);
+		while(*expression == ' ') expression++;
+		bool success;
+		word_t result = expr(expression, &success);
+		printf("Num:"FMT_WORD"; Result:"FMT_WORD"; Line:%s;\n", num, result, expression);
 	}
 
 	//	some check
