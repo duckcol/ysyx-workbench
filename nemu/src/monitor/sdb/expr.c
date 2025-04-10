@@ -172,7 +172,7 @@ bool check_parentheses(int p, int q) {
 word_t eval(int p, int q) {
 	if(p > q) {
 		/* bad expr*/
-		Assert(0, "bad expr");
+		Assert(0, "bad expr: p:%d, q:%d", p, q);
 
 	} else if(p == q) {
 		/*should be a single number*/
