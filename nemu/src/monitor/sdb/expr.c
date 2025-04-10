@@ -84,7 +84,6 @@ static Token tokens[65536] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
-	memset(tokens, '0', sizeof(tokens));
   int position = 0;
   int i;
   regmatch_t pmatch;
@@ -181,6 +180,7 @@ word_t eval(int p, int q) {
 		if(tokens[p].type == TK_DIGIT) {
 			char* endptr;
 			unsigned long value = strtoul(tokens[p].str, &endptr, 10);
+			if(*endptr != '\0') Assert(0, "not a number");	
 			return value;
 		} else {
 			//Assert(0, "should be a number");
