@@ -44,7 +44,7 @@ void readin_expr_test() {
 		//	jump to the first non-blank char and deal
 		bool success;
 		word_t result = expr(expression, &success);
-		printf("Num:"FMT_WORD"; Result:"FMT_WORD"; Line:%s;\n", num, result, expression);
+		printf("Num:"FMT_WORD"; Success:%d ;Result:"FMT_WORD"; Expression:%s;\n", num, success, result, expression);
 	}
 
 	//	some check
