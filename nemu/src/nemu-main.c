@@ -44,9 +44,10 @@ int main(int argc, char *argv[]) {
 		}
 
 		//	deal each line 
-		char *num = strtok(line, " ");
-		printf("Num: %s; Line: %s\n",num ,line);
-
+		word_t num; char *endptr;
+		num = strtoull(line , &endptr, 10);
+		Assert(endptr != line, "first character is not digit");
+		printf("Num: "FMT_WORD"; Line: %s\n",num ,endptr);
 	}
 
 	//	some check
