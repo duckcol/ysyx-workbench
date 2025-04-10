@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <sys/wait.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +31,15 @@ static char *code_format =
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
+/*
+static char *test = 
+"#include <stdio.h>\n"
+"int main() { "
+"  unsigned result = 1; "
+"  printf(\"%%u\", result/%u); "
+"  return 0; "
+"}";
+*/
 
 #define choose(max) rand()%max
 
@@ -87,6 +97,7 @@ int main(int argc, char *argv[]) {
     gen_rand_expr();
 
     sprintf(code_buf, code_format, buf);
+		//sprintf(code_buf, test, 0u);
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
@@ -101,9 +112,9 @@ int main(int argc, char *argv[]) {
 
     int result;
     ret = fscanf(fp, "%d", &result);
-    pclose(fp);
-
-    printf("%u %s\n", result, buf);
+    int status = pclose(fp);
+		if (WEXITSTATUS(status) == 136) printf("0\n");
+		else printf("%u %s\n", result, buf);
   }
   return 0;
 }

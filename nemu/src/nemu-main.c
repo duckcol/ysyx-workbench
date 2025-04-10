@@ -13,7 +13,10 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "debug.h"
 #include <common.h>
+#include <stdio.h>
+#include <string.h>
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
@@ -27,6 +30,20 @@ int main(int argc, char *argv[]) {
 #else
   init_monitor(argc, argv);
 #endif
+	
+	/* read expr test samples and check. */
+	FILE *file = fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/input", "r");
+	Assert(file != NULL, "file open failed");
+
+	char line[65536 + 128];
+	while (fgets(line, sizeof(line), file) != NULL) {
+		long len = strlen(line);	
+		if (len > 0 && line[len - 1] == '\n') {
+			line[len - 1] = '\0';	
+		}
+
+		printf("Line: %s\n",line);
+	}
 
   /* Start engine. */
   engine_start();
