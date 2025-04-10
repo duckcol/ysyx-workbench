@@ -43,7 +43,7 @@ void readin_expr_test() {
 		Assert(expression != line, "first character is not digit");
 		bool success;
 		word_t result = expr(expression, &success);
-		printf("Num:"FMT_WORD"; Success:%d ;Result:"FMT_WORD"; Expression:%s;\n", num, success, result, line);
+		printf("Num:"FMT_WORD"; Success:%d ;Result:"FMT_WORD"; Expression:%s;\n", num, success, result, expression);
 	}
 
 	//	some check
