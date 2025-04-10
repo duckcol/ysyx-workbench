@@ -36,15 +36,14 @@ void readin_expr_test() {
 			line[len - 1] = '\0';	
 		}
 
-		//	deal each line 
+		//	deal with each line 
 		//	store and change the number
 		word_t num; char *expression;
 		num = strtoull(line , &expression, 10);
 		Assert(expression != line, "first character is not digit");
-		//	jump to the first non-blank char and deal
 		bool success;
 		word_t result = expr(expression, &success);
-		printf("Num:"FMT_WORD"; Success:%d ;Result:"FMT_WORD"; Expression:%s;\n", num, success, result, expression);
+		printf("Num:"FMT_WORD"; Success:%d ;Result:"FMT_WORD"; Expression:%s;\n", num, success, result, line);
 	}
 
 	//	some check
