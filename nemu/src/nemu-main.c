@@ -50,7 +50,6 @@ int main(int argc, char *argv[]) {
 		num = strtoull(line , &expression, 10);
 		Assert(expression != line, "first character is not digit");
 		//	jump to the first non-blank char and deal
-		while(*expression == ' ') expression++;
 		bool success;
 		word_t result = expr(expression, &success);
 		printf("Num:"FMT_WORD"; Result:"FMT_WORD"; Line:%s;\n", num, result, expression);
