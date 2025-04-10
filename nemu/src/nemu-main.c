@@ -44,10 +44,13 @@ int main(int argc, char *argv[]) {
 		}
 
 		//	deal each line 
-		word_t num; char *endptr;
-		num = strtoull(line , &endptr, 10);
-		Assert(endptr != line, "first character is not digit");
-		printf("Num: "FMT_WORD"; Line: %s\n",num ,endptr);
+		//	store and change the number
+		word_t num; char *expr;
+		num = strtoull(line , &expr, 10);
+		Assert(expr != line, "first character is not digit");
+		//	jump to the first non-blank char and deal
+		while(*expr == ' ') expr++;
+		printf("Num: "FMT_WORD"; Line: %s\n", num, expr);
 	}
 
 	//	some check
