@@ -29,7 +29,6 @@ void readin_expr_test() {
 	Assert(file != NULL, "file open failed");
 
 	char line[65536 + 128];
-	memset(line, 0, 65536+128);
 	while (fgets(line, sizeof(line), file) != NULL) {
 		//	deal with line change
 		long len = strlen(line);	
