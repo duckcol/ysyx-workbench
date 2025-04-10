@@ -24,15 +24,7 @@ void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-  am_init_monitor();
-#else
-  init_monitor(argc, argv);
-#endif
-	
-	/* read expr test samples and check. */
+void readin_expr_test() {
 	FILE *file = fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/input", "r");
 	Assert(file != NULL, "file open failed");
 
@@ -58,6 +50,18 @@ int main(int argc, char *argv[]) {
 	//	some check
 	Assert(ferror(file) == 0, "file reading error");
 	fclose(file);
+};
+
+int main(int argc, char *argv[]) {
+  /* Initialize the monitor. */
+#ifdef CONFIG_TARGET_AM
+  am_init_monitor();
+#else
+  init_monitor(argc, argv);
+#endif
+	
+	/* read expr test samples and check. */
+	readin_expr_test();
 
   /* Start engine. */
   engine_start();
