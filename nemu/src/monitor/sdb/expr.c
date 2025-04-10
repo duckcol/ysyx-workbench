@@ -253,6 +253,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
+	if (nr_token == 0) nr_token++;
   return eval(0, nr_token-1);
 	// for debug
 	//printf("the result:"FMT_WORD"\n", eval(0, nr_token-1));
