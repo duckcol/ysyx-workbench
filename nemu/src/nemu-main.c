@@ -37,13 +37,21 @@ int main(int argc, char *argv[]) {
 
 	char line[65536 + 128];
 	while (fgets(line, sizeof(line), file) != NULL) {
+		//	deal with line change
 		long len = strlen(line);	
 		if (len > 0 && line[len - 1] == '\n') {
 			line[len - 1] = '\0';	
 		}
 
-		printf("Line: %s\n",line);
+		//	deal each line 
+		char *num = strtok(line, " ");
+		printf("Num: %s; Line: %s\n",num ,line);
+
 	}
+
+	//	some check
+	Assert(ferror(file) == 0, "file reading error");
+	fclose(file);
 
   /* Start engine. */
   engine_start();
