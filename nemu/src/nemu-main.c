@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
 #endif
 	
 	/* read expr test samples and check. */
-	return readin_expr_test();
+	readin_expr_test();
 
   /* Start engine. */
   engine_start();
