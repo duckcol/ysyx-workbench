@@ -26,9 +26,14 @@ int is_exit_status_bad();
 
 int readin_expr_test() {
 	FILE *file = fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/input", "r");
-	Assert(file != NULL, "file open failed");
+	FILE *pass = fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/pass", "w");
+	FILE *fail = fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/fail", "w");
+	Assert(file != NULL, "input file open failed");
+	Assert(pass != NULL, "pass file open failed");
+	Assert(fail != NULL, "fail file open failed");
 
 	char line[65536 + 128];
+	int pass_cnt = 0; int fail_cnt = 0;
 	while (fgets(line, sizeof(line), file) != NULL) {
 		//	deal with line change
 		long len = strlen(line);	
@@ -44,11 +49,15 @@ int readin_expr_test() {
 		bool success;
 		word_t result = expr(expression, &success);
 		if (result == num) {
-			CORRECT("Num:"FMT_WORD"; Result:"FMT_WORD"; Success:%d; Expression:%s;\n", num, result, success, expression);
+			pass_cnt++;
+			fprintf(pass, "Num:"FMT_WORD"; Result:"FMT_WORD"; Success:%d; Expression:%s;\n", num, result, success, expression);
 		} else {
-			WARN("Num:"FMT_WORD"; Result:"FMT_WORD"; Success:%d; Expression:%s;\n", num, result, success, expression);
+			fail_cnt++;
+			fprintf(fail, "Num:"FMT_WORD"; Result:"FMT_WORD"; Success:%d; Expression:%s;\n", num, result, success, expression);
 		}
 	}
+	CORRECT("pass example num:%d\n", pass_cnt);
+	WARN("failed example num:%d\n", fail_cnt);
 
 	//	some check
 	Assert(ferror(file) == 0, "file reading error");
