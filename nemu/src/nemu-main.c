@@ -24,7 +24,7 @@ void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-void readin_expr_test() {
+int readin_expr_test() {
 	FILE *file = fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/input", "r");
 	Assert(file != NULL, "file open failed");
 
@@ -53,6 +53,7 @@ void readin_expr_test() {
 	//	some check
 	Assert(ferror(file) == 0, "file reading error");
 	fclose(file);
+	return 0;
 };
 
 int main(int argc, char *argv[]) {
@@ -64,7 +65,7 @@ int main(int argc, char *argv[]) {
 #endif
 	
 	/* read expr test samples and check. */
-	readin_expr_test();
+	return readin_expr_test();
 
   /* Start engine. */
   //engine_start();
