@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
     int result;
     ret = fscanf(fp, "%d", &result);
     int status = pclose(fp);
-		if (WEXITSTATUS(status) == 136) printf("0\n");
+		if (WEXITSTATUS(status) == 136) printf("0 0\n");
 		else printf("%u %s\n", result, buf);
   }
   return 0;
