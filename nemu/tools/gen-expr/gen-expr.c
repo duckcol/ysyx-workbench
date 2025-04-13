@@ -47,7 +47,7 @@ static char *test =
 #define INSERT_BLANK for(int i = 0; i < (rand()%10); i++) {sprintf(BUFEND, " ");}
 static void gen_rand_expr() {
 	//prevent buf from overflowing
-	if (BUFEND - buf >= 65000) {
+	if (BUFEND - buf >= 60000) {
 		sprintf(BUFEND, "1");
 		return;
 	}
@@ -55,7 +55,7 @@ static void gen_rand_expr() {
 		case 0:
 			//gen_num
 			INSERT_BLANK;
-			sprintf(BUFEND, "%u", (unsigned int)choose(10000000));
+			sprintf(BUFEND, "%u", (unsigned int)choose(1000000));
 			INSERT_BLANK;
 			break;
 		case 1:
