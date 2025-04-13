@@ -33,7 +33,7 @@ int readin_expr_test() {
 	Assert(fail != NULL, "fail file open failed");
 
 	char line[65536 + 128];
-	int pass_cnt = 0; int fail_cnt = 0;
+	int pass_cnt = 0; int fail_cnt = 0; int input_line_num = 0;
 	while (fgets(line, sizeof(line), file) != NULL) {
 		//	deal with line change
 		long len = strlen(line);	
@@ -43,6 +43,7 @@ int readin_expr_test() {
 
 		//	deal with each line 
 		//	store and change the number
+		input_line_num++;
 		word_t num; char *expression;
 		num = strtoull(line , &expression, 10);
 		Assert(expression != line, "first character is not digit");
@@ -50,10 +51,10 @@ int readin_expr_test() {
 		word_t result = expr(expression, &success);
 		if (result == num) {
 			pass_cnt++;
-			fprintf(pass, "Num:"FMT_WORD"; Result:"FMT_WORD"; TokensSuccess:%d; Expression:%s;\n", num, result, success, expression);
+			fprintf(pass, "Location: %d; Num:"FMT_WORD"; Result:"FMT_WORD"; TokensSuccess:%d; Expression:%s;\n", input_line_num, num, result, success, expression);
 		} else {
 			fail_cnt++;
-			fprintf(fail, "Num:"FMT_WORD"; Result:"FMT_WORD"; TokensSuccess:%d; Expression:%s;\n", num, result, success, expression);
+			fprintf(fail, "Location: %d; Num:"FMT_WORD"; Result:"FMT_WORD"; TokensSuccess:%d; Expression:%s;\n",input_line_num, num, result, success, expression);
 		}
 	}
 	CORRECT("pass example num:%d\n", pass_cnt);
