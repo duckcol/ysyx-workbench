@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 	readin_expr_test();
 
   /* Start engine. */
-  engine_start();
+  //engine_start();
 
   return is_exit_status_bad();
 }
