@@ -200,14 +200,14 @@ word_t eval(int p, int q) {
 	} else {
 			//find the main op and eval, consider "1 + (2 + 3) / 4"
 
-			//find main op
+			//find main op, for case:"(val) op (val)"
 			int surrounded = 0; int op = 0;
 			for(int i = p; i < q; i++) {
 
-				if (tokens[i].type == '(') surrounded=1;
-				if (tokens[i].type == ')') surrounded=0;
+				if (tokens[i].type == '(') surrounded++;
+				if (tokens[i].type == ')') surrounded--;
 
-				if (!surrounded) {
+				if (surrounded == 0) {
 					//	find find main op '+' or '-'
 					if (tokens[i].type == '+') op = i;
 					if (tokens[i].type == '-') {
