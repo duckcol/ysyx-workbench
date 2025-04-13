@@ -161,7 +161,7 @@ bool check_parentheses(int p, int q) {
 		//	in case: "()"
 		if(tokens[q].type == ')' && q == p + 1) return true;
 		//	for other cases
-		for(int i = p + 1; i < q; i++) {
+		for(int i = p + 1; i < q - 1; i++) {
 			if (tokens[i].type == '(') count++;
 			if (tokens[i].type == ')') count--;
 		}
