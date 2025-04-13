@@ -120,8 +120,8 @@ static bool make_token(char *e) {
 					case ')':
 					case '(':							//	for sign, record in tokens
 						tokens[nr_token].type = rules[i].token_type; 
-						//Log("tokens[%d].type: %d, str: %c",
-								//nr_token,tokens[nr_token].type,(char)tokens[nr_token].type);
+						Log("tokens[%d].type: %d, str: %c",
+								nr_token,tokens[nr_token].type,(char)tokens[nr_token].type);
 						nr_token++; 
 						break;
 
@@ -130,8 +130,8 @@ static bool make_token(char *e) {
 						Assert(substr_len < 31 ,"the digit's len is to long");
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
 						tokens[nr_token].str[substr_len] = '\0';//	really important
-						//Log("tokens[%d].type: %d, str: %s",
-								//nr_token,tokens[nr_token].type,tokens[nr_token].str);
+						Log("tokens[%d].type: %d, str: %s",
+								nr_token,tokens[nr_token].type,tokens[nr_token].str);
 						nr_token++;
 						break;
 
