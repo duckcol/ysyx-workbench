@@ -13,7 +13,6 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "common.h"
 #include <sys/wait.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -56,7 +55,7 @@ static void gen_rand_expr() {
 		case 0:
 			//gen_num
 			INSERT_BLANK;
-			sprintf(BUFEND, "%u", (word_t)choose(1000000));
+			sprintf(BUFEND, "%u", (uint32_t)choose(1000000));
 			INSERT_BLANK;
 			break;
 		case 1:
