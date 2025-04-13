@@ -30,6 +30,14 @@
 	printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_CYAN) "\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
+#define CORRECT(format, ...) \
+	printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_GREEN) "\n", \
+        __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+
+#define WARN(format, ...) \
+	printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_RED) "\n", \
+        __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \
