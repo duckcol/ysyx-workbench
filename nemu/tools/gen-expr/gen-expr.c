@@ -55,7 +55,7 @@ static void gen_rand_expr() {
 		case 0:
 			//gen_num
 			INSERT_BLANK;
-			sprintf(BUFEND, "%u", (unsigned int)rand());
+			sprintf(BUFEND, "%u", (unsigned int)choose(10000000));
 			INSERT_BLANK;
 			break;
 		case 1:
