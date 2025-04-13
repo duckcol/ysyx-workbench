@@ -75,10 +75,10 @@ int main(int argc, char *argv[]) {
 #endif
 	
 	/* read expr test samples and check. */
-	return readin_expr_test();
+	//return readin_expr_test();
 
   /* Start engine. */
-  //engine_start();
+  engine_start();
 
   return is_exit_status_bad();
 }
