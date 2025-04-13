@@ -14,7 +14,7 @@
 #**************************************************************************************/
 
 run: app
-	-@./build/gen-expr 1000 > ./input
+	-@./build/gen-expr 100 > ./input
 	-@cat ./input
 
 NAME = gen-expr
