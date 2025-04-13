@@ -50,10 +50,10 @@ int readin_expr_test() {
 		word_t result = expr(expression, &success);
 		if (result == num) {
 			pass_cnt++;
-			fprintf(pass, "Num:"FMT_WORD"; Result:"FMT_WORD"; Success:%d; Expression:%s;\n", num, result, success, expression);
+			fprintf(pass, "Num:"FMT_WORD"; Result:"FMT_WORD"; TokensSuccess:%d; Expression:%s;\n", num, result, success, expression);
 		} else {
 			fail_cnt++;
-			fprintf(fail, "Num:"FMT_WORD"; Result:"FMT_WORD"; Success:%d; Expression:%s;\n", num, result, success, expression);
+			fprintf(fail, "Num:"FMT_WORD"; Result:"FMT_WORD"; TokensSuccess:%d; Expression:%s;\n", num, result, success, expression);
 		}
 	}
 	CORRECT("pass example num:%d\n", pass_cnt);
@@ -61,7 +61,7 @@ int readin_expr_test() {
 
 	//	some check
 	Assert(ferror(file) == 0, "file reading error");
-	fclose(file);
+	fclose(file);fclose(pass);fclose(fail);
 	return 0;
 };
 
