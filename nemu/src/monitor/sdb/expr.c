@@ -13,7 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "common.h"
+#include "../../../include/common.h"
 #include "debug.h"
 #include <stdio.h>
 #include <isa.h>
@@ -28,7 +28,7 @@
 #include <string.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_DIGIT, TK_PARTH
+  TK_NOTYPE = 256, TK_EQ, TK_DIGIT, TK_PARTH, TK_HEX
 
   /* TODO: Add more token types */
 
@@ -52,6 +52,7 @@ static struct rule {
 	{"[[:digit:]]+", TK_DIGIT},		// digit in POSIX regex
 	{"\\(", '('},
 	{"\\)", ')'},						//	parenthese
+	{"0x[[:digit:]]+", TK_HEX},	//	hex number
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -135,6 +136,15 @@ static bool make_token(char *e) {
 						nr_token++;
 						break;
 
+					case TK_HEX:
+						tokens[nr_token].type = rules[i].token_type;
+						Assert(substr_len < 31 ,"the digit's len is to long");
+						strncpy(tokens[nr_token].str, substr_start, substr_len);
+						tokens[nr_token].str[substr_len] = '\0';//	really important
+						Info("tokens[%d].type: %d, str: %s",
+								nr_token,tokens[nr_token].type,tokens[nr_token].str);
+						nr_token++;
+
           default: TODO();
         }
 
@@ -183,7 +193,12 @@ word_t eval(int p, int q) {
 		/*should be a single number*/
 		if(tokens[p].type == TK_DIGIT) {
 			char* endptr;
-			unsigned long value = strtoul(tokens[p].str, &endptr, 10);
+			word_t value = strtoul(tokens[p].str, &endptr, 10);
+			if(*endptr != '\0') Assert(0, "not a number");	
+			return value;
+		} else if (tokens[p].type == TK_HEX) {
+			char* endptr;
+			word_t value = strtoul(tokens[p].str, &endptr, 16);
 			if(*endptr != '\0') Assert(0, "not a number");	
 			return value;
 		} else {
@@ -211,6 +226,7 @@ word_t eval(int p, int q) {
 					//	find main op '+' 
 					if (tokens[i].type == '+') op = i;
 
+					//	find main op '-'
 					// differ "a-b" and "-a"
 					if (tokens[i].type == '-') {
 						// differ case "p (x + -y)" and "p -x"
@@ -231,17 +247,15 @@ word_t eval(int p, int q) {
 						}
 					}
 
-					//	find main op '*' or '/'
+					//	find main op '/'
 					if (tokens[i].type == '/') {
-							if (tokens[op].type != '+' && tokens[op].type != '-') {
-							op = i;	
-						}
+							if (tokens[op].type != '+' && tokens[op].type != '-') op = i;		
 					}
 
+					//	find main op '*'
+					//	differ "muliple" and "DEREF"
 					if (tokens[i].type == '*') {
-						if (tokens[op].type != '+' && tokens[op].type != '-') {
-							op = i;
-						}
+						if (tokens[op].type != '+' && tokens[op].type != '-') op = i;
 					}
 
 				}
