@@ -73,12 +73,15 @@ static void gen_rand_expr() {
 			gen_rand_expr();
 			break;
 	}
-	//sprintf(buf, "1 - 10");	//for testing single expr
 }
 
 int main(int argc, char *argv[]) {
+	//	some initail
   int seed = time(0);
   srand(seed);
+
+	//	if loop == 1; it will only run test expr
+	//	if loop != 1; then it will gen random expr
   int loop = 1;
   if (argc > 1) {
     sscanf(argv[1], "%d", &loop);
@@ -88,7 +91,12 @@ int main(int argc, char *argv[]) {
 		memset(buf, 0, sizeof(buf));
     gen_rand_expr();
 
-    sprintf(code_buf, code_format, buf);
+		if (loop == 1) {
+			//test ((408-(424)))/269+542
+			sprintf(code_buf, code_format,"1 - 10");	//for testing single expr
+		} else {
+			sprintf(code_buf, code_format, buf);
+		}
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
