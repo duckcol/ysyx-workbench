@@ -117,7 +117,8 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
 					case TK_NOTYPE: break;//	for blank, do nothing
 																
-					case TK_EQ: 
+					case TK_NEQ:TODO();
+					case TK_EQ: TODO();
 					case '+': 
 					case '*': 
 					case '-': 
@@ -237,6 +238,7 @@ word_t eval(int p, int q) {
 				if (tokens[i].type == ')') surrounded--;
 
 				if (surrounded == 0) {
+					//	find mian op "==" and "!="
 					//	find main op '+' 
 					if (tokens[i].type == '+') op = i;
 
