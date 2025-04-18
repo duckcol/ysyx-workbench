@@ -233,12 +233,12 @@ word_t eval(int p, int q) {
 
 					//	find main op '/'
 					if (tokens[i].type == '/') {
-							if (tokens[op].type != '+' || tokens[op].type != '-') {
+							if (tokens[op].type != '+' && tokens[op].type != '-') {
 							op = i;	
 						}
 
 					if (tokens[i].type == '*') {
-						if (tokens[op].type != '+' || tokens[op].type != '-' ) {
+						if (tokens[op].type != '+' && tokens[op].type != '-' ) {
 							op = i;
 						}
 					}
