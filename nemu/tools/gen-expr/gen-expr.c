@@ -91,7 +91,12 @@ int main(int argc, char *argv[]) {
 		memset(buf, 0, sizeof(buf));
     gen_rand_expr();
 
-		sprintf(code_buf, code_format, buf);
+		if (loop == 1) {
+			sprintf(buf, "%s", "1 + 1");
+			sprintf(code_buf, code_format, buf);
+		} else {
+			sprintf(code_buf, code_format, buf);
+		}
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
