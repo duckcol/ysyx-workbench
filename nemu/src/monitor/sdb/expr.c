@@ -50,7 +50,7 @@ static struct rule {
 	{"\\*", '*'},					// mul
 	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
-	{"$[a-f0-9]+",TK_REG},//	reg name
+	{"\\$[a-f0-9]+",TK_REG},//	reg name
 	{"0[xX][a-fA-F0-9]+", TK_HEX},	//	hex number
 	{"[0-9]+", TK_DIGIT},		// digit in POSIX regex
 	{"\\(", '('},
