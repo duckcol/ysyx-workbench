@@ -144,6 +144,7 @@ static bool make_token(char *e) {
 						Info("tokens[%d].type: %d, str: %s",
 								nr_token,tokens[nr_token].type,tokens[nr_token].str);
 						nr_token++;
+						break;
 
           default: TODO();
         }
