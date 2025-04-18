@@ -28,7 +28,8 @@
 #include <string.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_DIGIT, TK_PARTH, TK_HEX
+  TK_NOTYPE = 256, TK_EQ, TK_DIGIT, TK_PARTH, 
+	TK_HEX, TK_REG
 
   /* TODO: Add more token types */
 
@@ -49,6 +50,7 @@ static struct rule {
 	{"\\*", '*'},					// mul
 	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
+	{"$[a-f0-9]+",TK_REG},//	reg name
 	{"0[xX][a-fA-F0-9]+", TK_HEX},	//	hex number
 	{"[0-9]+", TK_DIGIT},		// digit in POSIX regex
 	{"\\(", '('},
@@ -145,6 +147,15 @@ static bool make_token(char *e) {
 								nr_token,tokens[nr_token].type,tokens[nr_token].str);
 						nr_token++;
 						break;
+
+					case TK_REG:
+						tokens[nr_token].type = rules[i].token_type;
+						Assert(substr_len < 10, "too long for a reg name");
+						strncpy(tokens[nr_token].str, substr_start, substr_len);
+						tokens[nr_token].str[substr_len] = '\0';//	really important
+						Info("tokens[%d].type: %d, str: %s",
+								nr_token,tokens[nr_token].type,tokens[nr_token].str);
+						nr_token++;
 
           default: TODO();
         }
