@@ -220,7 +220,7 @@ word_t eval(int p, int q) {
 		} else if (tokens[p].type == TK_REG) {
 			bool success = false;
 			printf("the reg:%s\n", tokens[p].str+1);
-			return (success) ? isa_reg_str2val(tokens[p].str+1, &success) : -1;
+			return (success) ? isa_reg_str2val(tokens[p].str, &success) : -1;
 		} else {
 			//Assert(0, "should be a number");
 			return 0;
