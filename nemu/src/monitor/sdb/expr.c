@@ -50,7 +50,7 @@ static struct rule {
 	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
 	{"0[xX][a-fA-F0-9]+", TK_HEX},	//	hex number
-	{"[[:digit:]]+", TK_DIGIT},		// digit in POSIX regex
+	{"[0-9]+", TK_DIGIT},		// digit in POSIX regex
 	{"\\(", '('},
 	{"\\)", ')'},						//	parenthese
 };
