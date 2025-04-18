@@ -47,7 +47,6 @@ void isa_reg_display() {
 word_t isa_reg_str2val(const char *s, bool *success) {
 	int length = sizeof(regs)/sizeof(regs[0]);
 	for (int i = 0; i < length; i++) {
-		printf("1\n");
 		*success = (strncmp(s+1, regs[i], 11) == 0) ? true : false;
 		if (*success == true) break;
 	}

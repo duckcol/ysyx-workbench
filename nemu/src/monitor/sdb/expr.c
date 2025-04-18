@@ -219,8 +219,9 @@ word_t eval(int p, int q) {
 			return value;
 		} else if (tokens[p].type == TK_REG) {
 			bool success = false;
-			printf("the reg:%s\n", tokens[p].str+1);
-			return (success) ? isa_reg_str2val(tokens[p].str, &success) : -1;
+			printf("the reg:%s\n", tokens[p].str);
+			word_t value = isa_reg_str2val(tokens[p].str, &success);
+			return (success) ? value : -1;
 		} else {
 			//Assert(0, "should be a number");
 			return 0;
