@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
     gen_rand_expr();
 
 		if (loop == 1) {
-			sprintf(buf, "%s", "1 + 1");
+			sprintf(buf, "%s", "(    (  156      )-  423  )/132     ");
 			sprintf(code_buf, code_format, buf);
 		} else {
 			sprintf(code_buf, code_format, buf);

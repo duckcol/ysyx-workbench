@@ -14,8 +14,7 @@
 #**************************************************************************************/
 
 test: app
-	-@./build/gen-expr 1 > ./input
-	-@ cat ./input
+	-@./build/gen-expr 1 
 
 run: app
 	-@./build/gen-expr 200 > ./input
