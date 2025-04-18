@@ -82,7 +82,7 @@ static void gen_rand_expr() {
 			gen_rand_expr();
 			break;
 	}
-	//sprintf(buf, "1 + 1");
+	sprintf(buf, "1 - 10");
 }
 
 int main(int argc, char *argv[]) {
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
     gen_rand_expr();
 
     sprintf(code_buf, code_format, buf);
-		//sprintf(code_buf, test, 0u);
+		//sprintf(code_buf, test, 0u);	// test for div zero
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
