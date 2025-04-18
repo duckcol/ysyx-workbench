@@ -51,5 +51,6 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 		if (*success == true) break;
 	}
 	*success = (strncmp(s, regs[0], 11) == 0) ? true : *success;
+	if (*success) printf("reg found!\n"); else printf("reg not found\n");
   return 0;
 }
