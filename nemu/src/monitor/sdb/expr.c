@@ -218,8 +218,8 @@ word_t eval(int p, int q) {
 			if(*endptr != '\0') Assert(0, "not a number");
 			return value;
 		} else if (tokens[p].type == TK_REG) {
-			bool success;
-			return isa_reg_str2val(tokens[p].str, &success);
+			bool success = false;
+			return (success) ? isa_reg_str2val(tokens[p].str, &success) : -1;
 		} else {
 			//Assert(0, "should be a number");
 			return 0;
