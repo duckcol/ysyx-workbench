@@ -28,7 +28,8 @@
 #include <string.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_DIGIT, TK_PARTH, 
+  TK_NOTYPE = 256, TK_EQ, TK_NEQ,
+	TK_DIGIT, TK_PARTH, 
 	TK_HEX, TK_REG
 
   /* TODO: Add more token types */
@@ -50,7 +51,8 @@ static struct rule {
 	{"\\*", '*'},					// mul
 	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
-	{"\\$[a-f0-9]+",TK_REG},//	reg name
+  {"!=", TK_NEQ},        // not equal
+	{"\\$[a-z0-9]+",TK_REG},//	reg name
 	{"0[xX][a-fA-F0-9]+", TK_HEX},	//	hex number
 	{"[0-9]+", TK_DIGIT},		// digit in POSIX regex
 	{"\\(", '('},
