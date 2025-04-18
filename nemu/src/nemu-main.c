@@ -13,8 +13,8 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "debug.h"
-#include <common.h>
+#include "../include/debug.h"
+#include "../include/common.h"
 #include <stdio.h>
 #include <string.h>
 #include "monitor/sdb/sdb.h"
