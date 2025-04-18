@@ -138,7 +138,7 @@ static bool make_token(char *e) {
 
 					case TK_HEX:
 						tokens[nr_token].type = rules[i].token_type;
-						Assert(substr_len < 31 ,"the digit's len is to long");
+						Assert(substr_len < 11 ,"the hex digit's len is to long");
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
 						tokens[nr_token].str[substr_len] = '\0';//	really important
 						Info("tokens[%d].type: %d, str: %s",
