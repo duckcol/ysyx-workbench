@@ -208,20 +208,25 @@ word_t eval(int p, int q) {
 				if (tokens[i].type == ')') surrounded--;
 
 				if (surrounded == 0) {
-					//	find find main op '+' or '-'
+					//	find main op '+' 
 					if (tokens[i].type == '+') op = i;
+
+					// differ "a-b" and "-a"
 					if (tokens[i].type == '-') {
-						// to differ "a-b" and "-a"
+						// differ case "p (x + -y)" and "p -x"
 						if (tokens[i-1].type == '+' || 
 							  tokens[i-1].type == '-' ||
 							  tokens[i-1].type == '*' ||
 							  tokens[i-1].type == '/') {
-							if (i == p) { // when deal with "-1"
-								op = i; // op == i == p
-							} else { // when deal with "+-1"
-								op = i-1;
-							}
+							// in case p (x op -y)
+							// when eval the "-y" in "x op -y"
+							// op == i == p
+							if (i == p) { op = i; } 
+							// when eval the "op" in "x op -y"
+							// op == position of "+"
+							//else { op = i-1; }
 						} else {
+							//	in case "x - y"
 							op = i;
 						}
 					}
