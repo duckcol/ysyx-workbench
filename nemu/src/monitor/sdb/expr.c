@@ -117,8 +117,8 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
 					case TK_NOTYPE: break;//	for blank, do nothing
 																
-					case TK_NEQ:TODO();
-					case TK_EQ: TODO();
+					case TK_NEQ:
+					case TK_EQ: 
 					case '+': 
 					case '*': 
 					case '-': 
@@ -239,6 +239,8 @@ word_t eval(int p, int q) {
 
 				if (surrounded == 0) {
 					//	find mian op "==" and "!="
+					if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ) op = i;
+
 					//	find main op '+' 
 					if (tokens[i].type == '+') op = i;
 
@@ -287,6 +289,8 @@ word_t eval(int p, int q) {
 				case '-': return val1 - val2;
 				case '*': return val1 * val2;
 				case '/': Assert(val2 != 0, "can't div by 0"); return val1 / val2;	
+				case TK_EQ: return (val1 == val2) ? 1 : 0;
+				case TK_NEQ: return (val1 != val2) ? 1 : 0;
 				default: Assert(0, "wrong in compute");
 			}
 	}
