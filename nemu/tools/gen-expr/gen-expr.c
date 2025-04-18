@@ -91,12 +91,7 @@ int main(int argc, char *argv[]) {
 		memset(buf, 0, sizeof(buf));
     gen_rand_expr();
 
-		if (loop == 1) {
-			//test ((408-(424)))/269+542
-			sprintf(code_buf, code_format,"1 - 10");	//for testing single expr
-		} else {
-			sprintf(code_buf, code_format, buf);
-		}
+		sprintf(code_buf, code_format, buf);
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
