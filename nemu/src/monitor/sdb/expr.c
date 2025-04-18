@@ -49,10 +49,10 @@ static struct rule {
 	{"\\*", '*'},					// mul
 	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
+	{"0x[[:digit:]]+", TK_HEX},	//	hex number
 	{"[[:digit:]]+", TK_DIGIT},		// digit in POSIX regex
 	{"\\(", '('},
 	{"\\)", ')'},						//	parenthese
-	{"0x[[:digit:]]+", TK_HEX},	//	hex number
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -194,12 +194,12 @@ word_t eval(int p, int q) {
 		if(tokens[p].type == TK_DIGIT) {
 			char* endptr;
 			word_t value = strtoul(tokens[p].str, &endptr, 10);
-			if(*endptr != '\0') Assert(0, "not a number");	
+			if(*endptr != '\0') Assert(0, "not a number");
 			return value;
 		} else if (tokens[p].type == TK_HEX) {
 			char* endptr;
 			word_t value = strtoul(tokens[p].str, &endptr, 16);
-			if(*endptr != '\0') Assert(0, "not a number");	
+			if(*endptr != '\0') Assert(0, "not a number");
 			return value;
 		} else {
 			//Assert(0, "should be a number");
