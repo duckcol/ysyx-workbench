@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include "../../../include/common.h"
-#include "debug.h"
+#include <debug.h>
 #include <stdio.h>
 #include <isa.h>
 #include <memory/vaddr.h>
