@@ -290,7 +290,8 @@ word_t eval(int p, int q) {
 						if (tokens[i-1].type == '+' || 
 							  tokens[i-1].type == '-' ||
 							  tokens[i-1].type == '*' ||
-							  tokens[i-1].type == '/') {
+							  tokens[i-1].type == '/' ||
+								i == 0) {
 							if (i == p) {op = i; tokens[op].type = TK_DEREF;}
 						} else if (tokens[op].type != '+' && tokens[op].type != '-') 
 							op = i;
