@@ -26,10 +26,13 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <memory/vaddr.h>
+#include <memory/paddr.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_NEQ,
 	TK_DIGIT, TK_PARTH, TK_AND,
+	TK_DEREF,
 	TK_HEX, TK_REG
 
   /* TODO: Add more token types */
@@ -268,7 +271,7 @@ word_t eval(int p, int q) {
 							// op == i == p
 							if (i == p) { op = i; } 
 							// when eval the "op" in "x op -y"
-							// op == position of "+"
+							// op == position of "op"
 							//else { op = i-1; }
 						} else {
 							//	in case "x - y"
@@ -284,6 +287,13 @@ word_t eval(int p, int q) {
 					//	find main op '*'
 					//	differ "muliple" and "DEREF"
 					if (tokens[i].type == '*') {
+						if (tokens[i-1].type == '+' || 
+							  tokens[i-1].type == '-' ||
+							  tokens[i-1].type == '*' ||
+							  tokens[i-1].type == '/') {
+							if (i == p) {op = i; tokens[op].type = TK_DEREF;}
+							else {op = i; tokens[op].type = TK_DEREF;}
+						}
 						if (tokens[op].type != '+' && tokens[op].type != '-') op = i;
 					}
 
@@ -300,6 +310,7 @@ word_t eval(int p, int q) {
 				case '-': return val1 - val2;
 				case '*': return val1 * val2;
 				case '/': Assert(val2 != 0, "can't div by 0"); return val1 / val2;	
+				case TK_DEREF: return vaddr_read(val2, 4);
 				case TK_EQ: return (val1 == val2) ? 1 : 0;
 				case TK_NEQ: return (val1 != val2) ? 1 : 0;
 				case TK_AND: return (val1 && val2) ? 1 : 0;
