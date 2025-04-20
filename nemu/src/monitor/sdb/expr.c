@@ -310,7 +310,15 @@ word_t eval(int p, int q) {
 				case '-': return val1 - val2;
 				case '*': return val1 * val2;
 				case '/': Assert(val2 != 0, "can't div by 0"); return val1 / val2;	
-				case TK_DEREF: return vaddr_read(val2, 4);
+				case TK_DEREF:
+					if(in_pmem(val2)) {
+						Log("the paddr: "FMT_PADDR"", val2);
+					} else {
+						Log("not a valid paddr, consider in pmem");
+						val2 = CONFIG_MBASE + val2;
+						Log("converted to paddr:"FMT_PADDR"", val2);
+					}
+					return vaddr_read(val2, 4);
 				case TK_EQ: return (val1 == val2) ? 1 : 0;
 				case TK_NEQ: return (val1 != val2) ? 1 : 0;
 				case TK_AND: return (val1 && val2) ? 1 : 0;
