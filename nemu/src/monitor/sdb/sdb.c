@@ -21,6 +21,7 @@
 #include "debug.h"
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
+#include <stdbool.h>
 
 static int is_batch_mode = false;
 
@@ -184,7 +185,9 @@ static int cmd_x(char *args) {
 	//	reserve EXPR for expression value 
 	
 	// the address
-	paddr_t address = (paddr_t) strtoull(EXPR, &endptr, 16);
+	bool success = false;
+	paddr_t address = (paddr_t) expr(EXPR, &success);
+	Assert(success == true, "$EXPR failed!");
 	if(in_pmem(address)) {
 		Log("the paddr: "FMT_PADDR"", address);
 	} else {
