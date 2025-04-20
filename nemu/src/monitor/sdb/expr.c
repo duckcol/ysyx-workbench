@@ -29,7 +29,7 @@
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_NEQ,
-	TK_DIGIT, TK_PARTH, 
+	TK_DIGIT, TK_PARTH, TK_AND,
 	TK_HEX, TK_REG
 
   /* TODO: Add more token types */
@@ -52,6 +52,7 @@ static struct rule {
 	{"/", '/'},						// div
   {"==", TK_EQ},        // equal
   {"!=", TK_NEQ},        // not equal
+	{"&&", TK_AND},				// AND
 	{"\\$[a-z0-9]+",TK_REG},//	reg name
 	{"0[xX][a-fA-F0-9]+", TK_HEX},	//	hex number
 	{"[0-9]+", TK_DIGIT},		// digit in POSIX regex
@@ -123,6 +124,7 @@ static bool make_token(char *e) {
 					case '*': 
 					case '-': 
 					case '/':
+					case TK_AND:
 					case ')':
 					case '(':							//	for sign, record in tokens
 						tokens[nr_token].type = rules[i].token_type; 
@@ -247,11 +249,14 @@ word_t eval(int p, int q) {
 					//	find mian op "==" and "!="
 					if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ) op = i;
 
+					//	find main op "&&"
+					if (tokens[i].type == TK_AND) op = i;
+
 					//	find main op '+' 
 					if (tokens[i].type == '+') op = i;
 
 					//	find main op '-'
-					// differ "a-b" and "-a"
+					//	differ "a-b" and "-a"
 					if (tokens[i].type == '-') {
 						// differ case "p (x + -y)" and "p -x"
 						if (tokens[i-1].type == '+' || 
@@ -297,6 +302,7 @@ word_t eval(int p, int q) {
 				case '/': Assert(val2 != 0, "can't div by 0"); return val1 / val2;	
 				case TK_EQ: return (val1 == val2) ? 1 : 0;
 				case TK_NEQ: return (val1 != val2) ? 1 : 0;
+				case TK_AND: return (val1 && val2) ? 1 : 0;
 				default: Assert(0, "wrong in compute");
 			}
 	}
