@@ -17,6 +17,8 @@
 #include "debug.h"
 #include <stdio.h>
 #include <isa.h>
+#include <memory/vaddr.h>
+#include <memory/paddr.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
@@ -26,8 +28,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <memory/vaddr.h>
-#include <memory/paddr.h>
+
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_NEQ,
