@@ -13,8 +13,8 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "../../../include/common.h"
-#include <debug.h>
+#include "common.h"
+#include "debug.h"
 #include <stdio.h>
 #include <isa.h>
 #include <memory/vaddr.h>
