@@ -55,7 +55,7 @@ void free_wp(WP *wp) {
 void info_w() {
 	head = new_wp();
 	new_wp();
-	for(WP *each = head; each->next != free_; each = each->next) {
+	for(WP *each = head; each != free_; each = each->next) {
 		printf("watchpoint %d's NO: %d\n", each->NO, each->NO);
 	}
 	free_wp(head->next);
