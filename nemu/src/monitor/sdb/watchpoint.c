@@ -58,7 +58,7 @@ void info_w() {
 	for(WP *each = head; each != free_; each = each->next) {
 		printf("watchpoint %d's NO: %d\n", each->NO, each->NO);
 	}
-	free_wp(head->next);
+	free_wp(&wp_pool[1]);
 	for(WP *each = head; each != free_; each = each->next) {
 		printf("watchpoint %d's NO: %d\n", each->NO, each->NO);
 	}
