@@ -22,6 +22,7 @@
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 static int is_batch_mode = false;
 
@@ -154,7 +155,9 @@ static int cmd_info(char *args) {
 	}
 
 	if(strcmp(args, "w") == 0) {
-		Log("TODO: display watchpoint");
+		//	for test
+		info_w();
+		//	end test
 		return 0;
 	} else {
 		Log("invalid arg, plz try again");
