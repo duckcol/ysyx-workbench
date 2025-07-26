@@ -240,7 +240,7 @@ word_t eval(int p, int q) {
 	} else if (check_parentheses(p, q) == true) {
 			//the expr surrounded by a matched parentheses,
 			//remove them and eval
-			Info("expr in parentheses");
+			Info("expr in parentheses, remove the parentheses");
 			if (q == p + 1) return 0;//in case "()"
 			else return eval(p+1, q-1);	
 
@@ -306,6 +306,7 @@ word_t eval(int p, int q) {
 
 				}
 			}	
+			Info("the main op found, type:%c , position:%d", tokens[op].type, op);
 
 			//do compute
 			//in case "-1", which is actually 0-1, but p=0, op=0,
