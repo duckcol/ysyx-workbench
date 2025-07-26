@@ -196,11 +196,11 @@ bool check_parentheses(int p, int q) {
 		for(int i = p + 1; i < q; i++) {
 			if (tokens[i].type == '(') count++;
 			if (tokens[i].type == ')') count--;
-			if (count <= 0) return false;
+			if (count < 0) return false;
 		}
 
 		if (count == 0) return true;
-		return false;
+		else return false;
 
 	} else {
 		//	not starting with an parenthese
