@@ -187,19 +187,21 @@ static bool make_token(char *e) {
 bool check_parentheses(int p, int q) {
 	int count = 0;
 	//	to deal with ")..."
-	Assert(tokens[p].type != ')', "wrong position of parenthese");
+	Assert(tokens[p].type != ')', "wrong parenthese, starting with ')', instead of '('");
 
 	if(tokens[p].type == '(') {
 		//	in case: "()"
 		if(tokens[q].type == ')' && q == p + 1) return true;
-		//	for other cases
+		//	for other cases like "( expr )"
 		for(int i = p + 1; i < q; i++) {
 			if (tokens[i].type == '(') count++;
 			if (tokens[i].type == ')') count--;
 			if (count < 0) return false;
 		}
+
 		if (count == 0) return true;
 		else return false;
+
 	} else {
 		//	not starting with an parenthese
 		return false;
@@ -240,9 +242,9 @@ word_t eval(int p, int q) {
 			else return eval(p+1, q-1);	
 
 	} else {
-			//find the main op and eval, consider "1 + (2 + 3) / 4"
+			//find the main op and eval, for example "1 + (2 + 3) / 4"
 
-			//find main op, for case:"(val) op (val)"
+			//find main op, for example "(val) op (val)"
 			int surrounded = 0; int op = 0;
 			for(int i = p; i < q; i++) {
 
