@@ -53,6 +53,6 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 	}
 	*success = (strncmp(s, regs[0], 11) == 0) ? true : *success;
 	*success = (strncmp(s+1, "pc", 11) == 0) ? true : *success;
-	if (*success) Info("reg found!\n"); else Info("reg not found!\n");
+	if (*success) Info("reg found!"); else Info("reg not found!");
   return 0;
 }

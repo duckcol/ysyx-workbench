@@ -229,7 +229,7 @@ word_t eval(int p, int q) {
 			return value;
 		} else if (tokens[p].type == TK_REG) {
 			bool success = false;
-			printf("the reg name:%s\n", tokens[p].str);
+			Info("the reg name:%s\n", tokens[p].str);
 			word_t value = isa_reg_str2val(tokens[p].str, &success);
 			return (success) ? value : -1;
 		} else {
