@@ -36,9 +36,9 @@ void isa_reg_display() {
 				|| (i>=10 && i<= 17) 
 				|| (i>=28 && i<=31)) 
 		{
-			printf("%s\t0x%-8x\t%-8u\n", regs[i], gpr(i), gpr(i));
+			Log("%s\t0x%-8x\t%-8u\n", regs[i], gpr(i), gpr(i));
 		} else {
-			printf("%s\t0x%-8x\t0x%-8x\n", regs[i], gpr(i), gpr(i));
+			Log("%s\t0x%-8x\t0x%-8x\n", regs[i], gpr(i), gpr(i));
 		}
 	}
 	printf("pc\t0x%x\t0x%x\n", cpu.pc, cpu.pc);
