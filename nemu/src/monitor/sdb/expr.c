@@ -250,7 +250,7 @@ word_t eval(int p, int q) {
 			//find main op, for example "(val) op (val)"
 			Info("expr not in parentheses");
 			int surrounded = 0; int op = 0;
-			for(int i = p; i < q; i++) {
+			for(int i = p; i <= q; i++) {
 
 				if (tokens[i].type == '(') surrounded++;
 				if (tokens[i].type == ')') surrounded--;
@@ -275,11 +275,11 @@ word_t eval(int p, int q) {
 							  tokens[i-1].type == '/') {
 							// in case p (x op -y)
 							// when eval the "-y" in "x op -y"
-							// op == i == p
+							// op == i == p 
 							if (i == p) { op = i; } 
 							// when eval the "op" in "x op -y"
 							// op == position of "op"
-							//else { op = i-1; }
+							// else { op = i-1; }
 						} else {
 							//	in case "x - y"
 							op = i;
