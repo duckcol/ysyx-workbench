@@ -276,10 +276,10 @@ word_t eval(int p, int q) {
 							// in case p (x op -y)
 							// when eval the "-y" in "x op -y"
 							// op == i == p 
-							if (i == p) { op = i; } 
+							if (i == p) op = i;  
 							// when eval the "op" in "x op -y"
 							// op == position of "op"
-							else { op = i-1; }
+							else op = i-1; 
 						} else {
 							//	in case "x - y"
 							op = i;
@@ -306,6 +306,7 @@ word_t eval(int p, int q) {
 
 				}
 			}	
+
 			Info("the main op found, type:%c , position:%d", tokens[op].type, op);
 
 			//do compute
