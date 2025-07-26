@@ -237,7 +237,7 @@ word_t eval(int p, int q) {
 			//the expr surrounded by a matched parentheses,
 			//remove them and eval
 			if (q == p + 1) return 0;//in case "()"
-			return eval(p+1, q-1);	
+			else return eval(p+1, q-1);	
 
 	} else {
 			//find the main op and eval, consider "1 + (2 + 3) / 4"
