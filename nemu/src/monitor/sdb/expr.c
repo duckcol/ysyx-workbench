@@ -147,7 +147,7 @@ static bool make_token(char *e) {
 						nr_token++;
 						break;
 
-					case TK_HEX:
+					case TK_HEX://  for hex numbers, record and turn into str
 						tokens[nr_token].type = rules[i].token_type;
 						Assert(substr_len < 11 ,"the hex digit's len is to long");
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
@@ -157,7 +157,7 @@ static bool make_token(char *e) {
 						nr_token++;
 						break;
 
-					case TK_REG:
+					case TK_REG://	for register, record the name of the register and turn into str
 						tokens[nr_token].type = rules[i].token_type;
 						Assert(substr_len < 10, "too long for a reg name");
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
