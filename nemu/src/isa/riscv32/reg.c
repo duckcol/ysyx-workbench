@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "local-include/reg.h"
+#include "common.h"
 #include "debug.h"
 
 const char *regs[] = {
@@ -47,15 +48,26 @@ void isa_reg_display() {
 
 word_t isa_reg_str2val(const char *s, bool *success) {
 	int length = sizeof(regs)/sizeof(regs[0]);
+	word_t value;
 	for (int i = 1; i < length; i++) {
 		// search for reg name except $0 and pc
 		*success = (strncmp(s+1, regs[i], 11) == 0) ? true : false;
-		if (*success == true) break;
+		if (*success == true) {
+			value = gpr(i);
+			break;
+		}
 	}
 	//	search for reg $0
 	*success = (strncmp(s, regs[0], 11) == 0) ? true : *success;
+	value = success ? gpr(0) : 0;
 	//	search for reg pc
 	*success = (strncmp(s+1, "pc", 11) == 0) ? true : *success;
-	if (*success) Info("reg found!"); else Info("reg not found!");
+	value = success ? cpu.pc : 0;
+	if (*success) {
+		Info("reg found!"); 
+		return value;
+	} else {
+		Info("reg not found!");
+	}
   return 0;
 }
