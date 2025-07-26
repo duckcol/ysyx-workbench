@@ -196,7 +196,7 @@ bool check_parentheses(int p, int q) {
 		for(int i = p + 1; i < q; i++) {
 			if (tokens[i].type == '(') count++;
 			if (tokens[i].type == ')') count--;
-			if (count <= 0 && i < q - 1) return false;
+			if (i < q - 1 && count <= 0) return false;
 		}
 
 		if (count == 0) return true;
@@ -211,9 +211,11 @@ bool check_parentheses(int p, int q) {
 word_t eval(int p, int q) {
 	if(p > q) {
 		/* bad expr*/
+		Info("expr p > q");
 		Assert(0, "bad expr: p:%d, q:%d", p, q);
 
 	} else if(p == q) {
+		Info("expr p == q");
 		/*should be a single number*/
 		if(tokens[p].type == TK_DIGIT) {
 			char* endptr;
@@ -238,6 +240,7 @@ word_t eval(int p, int q) {
 	} else if (check_parentheses(p, q) == true) {
 			//the expr surrounded by a matched parentheses,
 			//remove them and eval
+			Info("expr in parentheses");
 			if (q == p + 1) return 0;//in case "()"
 			else return eval(p+1, q-1);	
 
@@ -245,6 +248,7 @@ word_t eval(int p, int q) {
 			//find the main op and eval, for example "1 + (2 + 3) / 4"
 
 			//find main op, for example "(val) op (val)"
+			Info("expr not in parentheses");
 			int surrounded = 0; int op = 0;
 			for(int i = p; i < q; i++) {
 
