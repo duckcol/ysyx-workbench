@@ -200,7 +200,7 @@ bool check_parentheses(int p, int q) {
 		}
 
 		if (count == 0) return true;
-		else return false;
+		return false;
 
 	} else {
 		//	not starting with an parenthese
