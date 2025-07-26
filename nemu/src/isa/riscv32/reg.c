@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "local-include/reg.h"
+#include "debug.h"
 
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -36,9 +37,9 @@ void isa_reg_display() {
 				|| (i>=10 && i<= 17) 
 				|| (i>=28 && i<=31)) 
 		{
-			Log("%s\t0x%-8x\t%-8u\n", regs[i], gpr(i), gpr(i));
+			printf("%s\t0x%-8x\t%-8u\n", regs[i], gpr(i), gpr(i));
 		} else {
-			Log("%s\t0x%-8x\t0x%-8x\n", regs[i], gpr(i), gpr(i));
+			printf("%s\t0x%-8x\t0x%-8x\n", regs[i], gpr(i), gpr(i));
 		}
 	}
 	printf("pc\t0x%x\t0x%x\n", cpu.pc, cpu.pc);
@@ -52,6 +53,6 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 	}
 	*success = (strncmp(s, regs[0], 11) == 0) ? true : *success;
 	*success = (strncmp(s+1, "pc", 11) == 0) ? true : *success;
-	if (*success) printf("reg found!\n"); else printf("reg not found!\n");
+	if (*success) Info("reg found!\n"); else Info("reg not found!\n");
   return 0;
 }
