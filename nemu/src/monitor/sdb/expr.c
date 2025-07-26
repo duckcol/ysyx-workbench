@@ -255,7 +255,7 @@ word_t eval(int p, int q) {
 				if (tokens[i].type == '(') surrounded++;
 				if (tokens[i].type == ')') surrounded--;
 
-				if (surrounded == 0) {
+				if (surrounded == 0) {// skip the expr surrounded by parentheses
 					//	find mian op "==" and "!="
 					if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ) op = i;
 
