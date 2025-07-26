@@ -279,7 +279,7 @@ word_t eval(int p, int q) {
 							if (i == p) { op = i; } 
 							// when eval the "op" in "x op -y"
 							// op == position of "op"
-							// else { op = i-1; }
+							else { op = i-1; }
 						} else {
 							//	in case "x - y"
 							op = i;
