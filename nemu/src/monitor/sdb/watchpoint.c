@@ -47,6 +47,8 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
+
+//	move WP from free_ to head
 WP* new_wp() {
 	//	spcify the WP
 	WP* new = free_; 
@@ -68,7 +70,7 @@ WP* new_wp() {
 			//	tmp.NO < new.NO < tmp.next.NO
 			WP* tmp = head;
 			while (tmp->next != NULL) {
-				Assert(tmp != NULL, "couldn't find the position");
+				Assert(tmp != NULL, "couldn't find the position in head");
 				if (tmp->next->NO < new->NO) 
 					tmp = tmp->next;
 			}
@@ -84,7 +86,57 @@ WP* new_wp() {
 	return new;
 }
 
+//	move back WP from head to free_
+//	while free the content in WP
 void free_wp(WP *wp) {
+	WP* tmp = wp;
+	if (tmp == head) head = head->next;
+	if (tmp == NULL) return;
+
+	//	seperate the wp from head list
+	if (tmp->prev == NULL && tmp->next == NULL)
+		;//do nothing
+	if (tmp->prev == NULL && tmp->next != NULL) {
+		tmp->next->prev = NULL;
+		tmp->next = NULL;
+	}
+	if (tmp->prev != NULL && tmp->next == NULL) {
+		tmp->prev->next = NULL;
+		tmp->prev = NULL;
+	}
+	if (tmp->prev != NULL && tmp->next != NULL) {
+		tmp->prev->next = tmp->next;
+		tmp->next->prev = tmp->prev;
+		tmp->prev = tmp->next = NULL;
+	}
+
+	//	clear the content
+	
+	//	join the tmp back to free_ list
+	if(free_ == NULL) free_ = tmp;
+	else { 
+		if (tmp->NO < free_->NO ) {
+			tmp->prev = NULL; tmp->next = free_;
+			free_->prev = tmp; free_->next = free_->next;
+			free_ = tmp;
+		} else {
+			//	find a position
+			//	near < tmp < near.next
+			WP* near = free_;
+			while (near->next != NULL) {
+				Assert(near != NULL, "couldn't find the position in free_");
+				if (near->next->NO < tmp->NO) 
+					near = near->next;
+			}
+			tmp->prev = near; tmp->next = near->next;
+			near->next = tmp; 
+			if (tmp->next != NULL) {
+				near->next->prev = tmp;
+			}
+		}
+	}
+	
+	
 }
 
 void printf_the_free_WP_list() {
@@ -134,13 +186,11 @@ void test_new_and_free_WP(){
 	}
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
-	/*
 
 	printf("free 1 WP, the list:\n");
 	free(head);
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
-	*/
 
 }
 
