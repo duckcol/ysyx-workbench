@@ -224,6 +224,8 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
 	Info("the args: %s",args);
+	bool *success = malloc(sizeof(bool)); 
+	Info("the expr is:"FMT_WORD"", expr(args, success));
 	return 0;
 }
 
