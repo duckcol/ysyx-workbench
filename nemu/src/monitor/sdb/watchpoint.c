@@ -69,13 +69,15 @@ WP* new_wp() {
 			WP* tmp = head;
 			while (tmp->next != NULL) {
 				Assert(tmp != NULL, "couldn't find the position");
-				if (tmp->next->NO < new->NO) {
+				if (tmp->next->NO < new->NO) 
 					tmp = tmp->next;
-				}
 			}
+			//	rebind tmp and new
 			new->prev = tmp; new->next = tmp->next;
-			tmp->prev = tmp->prev; tmp->next = new;
-			new->next->prev = new; 
+			tmp->next = new; 
+			if (new->next != NULL) {
+				new->next->prev = new;
+			}
 		}
 	}
 
