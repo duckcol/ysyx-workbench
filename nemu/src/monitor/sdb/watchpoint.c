@@ -187,17 +187,17 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	printf("free 1 WP, the list:\n");
+	printf("free WP 1, the list:\n");
 	free_wp(head + 1);
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	printf("free 1 WP, the list:\n");
+	printf("free WP 0, the list:\n");
 	free_wp(head);
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	printf("free 1 WP, the list:\n");
+	printf("free WP 2, the list:\n");
 	free_wp(head);
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
