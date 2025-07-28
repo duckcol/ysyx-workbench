@@ -183,7 +183,7 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	printf("used 5 WP, the list:\n");
+	printf("use 5 WP, the list:\n");
 	for(int i = 0; i < 5; i++) {
 		new_wp();
 	}
@@ -205,8 +205,8 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	printf("use WP 0, the list:\n");
-	new_wp();
+	printf("use 5 WP, the list:\n");
+	for(int i = 0; i < 5; i++) new_wp();
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 }
