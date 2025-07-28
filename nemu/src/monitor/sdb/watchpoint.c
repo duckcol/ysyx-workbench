@@ -49,7 +49,7 @@ void init_wp_pool() {
 /* TODO: Implement the functionality of watchpoint */
 WP* new_wp() {
 	//	spcify the WP
-	WP* new = free_;
+	WP* new = free_; 
 	free_ = free_->next;
 
 	//	rebind the WP
@@ -76,11 +76,11 @@ WP* new_wp() {
 		}
 	}
 
-
 	return new;
 }
 
-//void free_wp(WP *wp) {}
+void free_wp(WP *wp) {
+}
 
 void printf_the_free_WP_list() {
 	WP* ptr = free_;
@@ -107,11 +107,10 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	for(int i = 0; i < 5; i++) {
+	printf("used 5 WP, the list:\n");
+	for(int i = 0; i < 1; i++) {
 		new_wp();
 	}
-
-	printf("used 5 WP, the list:\n");
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
