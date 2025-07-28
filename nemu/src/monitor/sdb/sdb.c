@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include "common.h"
 #include "debug.h"
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
@@ -69,6 +70,7 @@ static int cmd_si(char *args);
 static int cmd_info(char *args);
 static int cmd_x(char *args);
 static int cmd_p(char *args); 
+static int cmd_w(char *args);
 
 static struct {
   const char *name;
@@ -84,6 +86,7 @@ static struct {
 	{ "info", "info r: print all regs;info w: print all watchpoint", cmd_info}, 
 	{ "x", "x N EXPR: print 4*N bytes starting from EXPR(paddr, but will auto convert invalid paddr)", cmd_x},
 	{"p", "p $EXPR: print the compute result of $EXPR", cmd_p},
+	{"w", "w $EXPR: stop program if $EXPR changes", cmd_w},
 
 };
 
@@ -216,6 +219,11 @@ static int cmd_p(char *args) {
 	bool *success = malloc(sizeof(bool)); 
 	printf("the result: "FMT_WORD"\n", expr(args, success));
 
+	return 0;
+}
+
+static int cmd_w(char *args) {
+	Info("the args: %s",args);
 	return 0;
 }
 
