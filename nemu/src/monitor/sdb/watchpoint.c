@@ -67,6 +67,12 @@ WP* new_wp() {
 			//	to find the position where:
 			//	tmp.NO < new.NO < tmp.next.NO
 			WP* tmp = head;
+			while (tmp->next != NULL) {
+				Assert(tmp != NULL, "couldn't find the position");
+				if (tmp->next->NO < new->NO) {
+					tmp = tmp->next;
+				}
+			}
 			new->prev = tmp; new->next = tmp->next;
 			tmp->next = new; tmp->next->prev = new;
 		}
