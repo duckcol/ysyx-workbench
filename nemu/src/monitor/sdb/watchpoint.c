@@ -73,6 +73,7 @@ WP* new_wp() {
 				Assert(tmp != NULL, "couldn't find the position in head");
 				if (tmp->next->NO < new->NO) 
 					tmp = tmp->next;
+				else break;
 			}
 			//	rebind tmp and new
 			new->prev = tmp; new->next = tmp->next;
@@ -133,7 +134,7 @@ void free_wp(WP *wp) {
 			tmp->prev = near; tmp->next = near->next;
 			near->next = tmp; 
 			if (tmp->next != NULL) {
-				near->next->prev = tmp;
+				tmp->next->prev = tmp;
 			}
 		}
 	}
