@@ -59,7 +59,7 @@ void printf_the_free_WP_list() {
 	WP* ptr = free_;
 	printf("free_ = ");
 	while (ptr != NULL) {
-		printf("%d <-> ",ptr->NO);
+		printf("%d - ",ptr->NO);
 		ptr = ptr->next;
 	}
 	printf("NULL\n");
