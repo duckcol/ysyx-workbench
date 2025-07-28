@@ -86,7 +86,7 @@ void free_wp(WP *wp) {
 	}
 }
 
-void test_new_and_free_WP(){
+void printf_the_free_WP_list() {
 	WP* ptr = free_;
 	printf("free_ -> ");
 	while (ptr != NULL) {
@@ -94,6 +94,28 @@ void test_new_and_free_WP(){
 		ptr = ptr->next;
 	}
 	printf("NULL\n");
+}
+
+void printf_the_used_WP_list() {
+	WP* ptr = head;
+	printf("head -> ");
+	while (ptr != NULL) {
+		printf("%d -> ",ptr->NO);
+		ptr = ptr->next;
+	}
+	printf("NULL\n");
+}
+
+void test_new_and_free_WP(){
+	printf("the primitive free WP List:\n");
+	printf_the_free_WP_list();
+	printf("the primitive used WP List:\n");
+	printf_the_used_WP_list();
+
+	for(int i = 0; i < 5; i++) {
+		new_wp();
+	}
+
 }
 
 void info_w() {
