@@ -120,6 +120,7 @@ void free_wp(WP *wp) {
 			free_->prev = tmp; free_->next = free_->next;
 			free_ = tmp;
 		} else {
+			//	free_ < tmp
 			//	find a position
 			//	near < tmp < near.next
 			WP* near = free_;
@@ -127,6 +128,7 @@ void free_wp(WP *wp) {
 				Assert(near != NULL, "couldn't find the position in free_");
 				if (near->next->NO < tmp->NO) 
 					near = near->next;
+				else break;
 			}
 			tmp->prev = near; tmp->next = near->next;
 			near->next = tmp; 
