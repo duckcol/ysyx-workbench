@@ -89,9 +89,11 @@ void printf_the_free_WP_list() {
 	printf("free_ = ");
 	while (ptr != NULL) {
 		printf("%d - ",ptr->NO);
-		ptr = ptr->next;
+		if (ptr->next == NULL) break;
+		else ptr = ptr->next;
 	}
 	printf("NULL\n");
+
 	printf("free_ (revserse) = ");
 	while (ptr != NULL) {
 		printf("%d - ",ptr->NO);
@@ -105,9 +107,11 @@ void printf_the_used_WP_list() {
 	printf("head = ");
 	while (ptr != NULL) {
 		printf("%d - ",ptr->NO);
-		ptr = ptr->next;
+		if (ptr->next == NULL) break;
+		else ptr = ptr->next;
 	}
 	printf("NULL\n");
+
 	printf("head (revserse) = ");
 	while (ptr != NULL) {
 		printf("%d - ",ptr->NO);
