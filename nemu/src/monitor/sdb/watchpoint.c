@@ -61,6 +61,7 @@ WP* new_wp() {
 		if (new->NO < head->NO ) {
 			new->next = head;
 			head->prev = new;
+			head = new;
 		} else {
 			//	head->NO < new->NO
 			//	to find the excat tmp where:
