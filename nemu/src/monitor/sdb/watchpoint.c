@@ -53,6 +53,7 @@ WP* new_wp() {
 	//	spcify the WP
 	WP* new = free_; 
 	free_ = free_->next;
+	Assert(free_ != NULL, "no more free WP !");
 
 	//	rebind the WP
 	free_->prev = NULL; 
@@ -92,7 +93,10 @@ WP* new_wp() {
 void free_wp(WP *wp) {
 	WP* tmp = wp;
 	if (tmp == head) head = head->next;
-	if (tmp == NULL) return;
+	if (tmp == NULL) {
+		WARN("wp empty !");
+		return;
+	}
 
 	//	seperate the wp from head list
 	if (tmp->prev == NULL && tmp->next == NULL)
@@ -207,6 +211,11 @@ void test_new_and_free_WP(){
 
 	printf("use 5 WP, the list:\n");
 	for(int i = 0; i < 5; i++) new_wp();
+	printf_the_free_WP_list();
+	printf_the_used_WP_list();
+
+	printf("used till the end \n");
+	for(int i = 30; i > 0; i--) new_wp();
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 }
