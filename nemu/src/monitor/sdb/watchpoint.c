@@ -59,8 +59,8 @@ WP* new_wp() {
 	else { 
 		//	insert the new into head list in order
 		if (new->NO < head->NO ) {
-			new->next = head;
-			head->prev = new;
+			new->prev = NULL; new->next = head;
+			head->prev = new; head->next = head->next;
 			head = new;
 		} else {
 			//	head->NO < new->NO
@@ -74,7 +74,8 @@ WP* new_wp() {
 				}
 			}
 			new->prev = tmp; new->next = tmp->next;
-			tmp->next = new; tmp->next->prev = new;
+			tmp->prev = tmp->prev; tmp->next = new;
+			new->next->prev = new; 
 		}
 	}
 
@@ -125,13 +126,13 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	/*
 	printf("used 5 WP, the list:\n");
 	for(int i = 0; i < 5; i++) {
 		new_wp();
 	}
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
+	/*
 
 	printf("free 1 WP, the list:\n");
 	free(head);
