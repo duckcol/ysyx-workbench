@@ -88,7 +88,7 @@ void free_wp(WP *wp) {
 
 void printf_the_free_WP_list() {
 	WP* ptr = free_;
-	printf("free_ -> ");
+	printf("free_ = ");
 	while (ptr != NULL) {
 		printf("%d -> ",ptr->NO);
 		ptr = ptr->next;
@@ -98,7 +98,7 @@ void printf_the_free_WP_list() {
 
 void printf_the_used_WP_list() {
 	WP* ptr = head;
-	printf("head -> ");
+	printf("head = ");
 	while (ptr != NULL) {
 		printf("%d -> ",ptr->NO);
 		ptr = ptr->next;
