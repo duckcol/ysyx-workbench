@@ -107,14 +107,17 @@ void printf_the_used_WP_list() {
 }
 
 void test_new_and_free_WP(){
-	printf("the primitive free WP List:\n");
+	printf("the primitive free and used WP List:\n");
 	printf_the_free_WP_list();
-	printf("the primitive used WP List:\n");
 	printf_the_used_WP_list();
 
 	for(int i = 0; i < 5; i++) {
 		new_wp();
 	}
+
+	printf("used 5 WP, the list:\n");
+	printf_the_free_WP_list();
+	printf_the_used_WP_list();
 
 }
 
