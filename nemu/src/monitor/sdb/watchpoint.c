@@ -108,7 +108,7 @@ void test_new_and_free_WP(){
 	printf_the_used_WP_list();
 
 	printf("used 5 WP, the list:\n");
-	for(int i = 0; i < 1; i++) {
+	for(int i = 0; i < 2; i++) {
 		new_wp();
 	}
 	printf_the_free_WP_list();
