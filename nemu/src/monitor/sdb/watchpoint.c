@@ -94,7 +94,7 @@ void free_wp(WP *wp) {
 	WP* tmp = wp;
 	if (tmp == head) head = head->next;
 	if (tmp == NULL) {
-		WARN("wp empty !");
+		WARN("WP* to be freed is NULL !");
 		return;
 	}
 
