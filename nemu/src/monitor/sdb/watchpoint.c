@@ -14,7 +14,6 @@
 ***************************************************************************************/
 
 #include "sdb.h"
-#include <stdio.h>
 
 #define NR_WP 32
 
@@ -42,14 +41,20 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 WP* new_wp() {
+	// free_ is wp_pool[0] after init
 	WP* new_ = free_;
+	//	free_ give wp_pool[0] to new_, then became wp_pool[1]
 	free_ = free_->next;
-	Assert(free_ != NULL, "watchpoint pool full!");
+	//	the last one, wp_pool[NR_WP - 1].next = NULL
+	Assert(free_ != NULL, "no free watchpoint !");
 	return new_;
 }
 
 void free_wp(WP *wp) {
-	free_ = wp;
+	if(wp->NO < free_->NO) {
+		wp->next = free_;
+		free_ = wp;
+	}
 }
 
 void info_w() {
