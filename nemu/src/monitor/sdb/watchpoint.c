@@ -64,10 +64,10 @@ WP* new_wp() {
 			head = new;
 		} else {
 			//	head->NO < new->NO
-			//	to find the excat tmp where:
+			//	to find the position where:
 			//	tmp.NO < new.NO < tmp.next.NO
 			WP* tmp = head;
-			while (tmp->next->NO < new->NO) {
+			while (tmp->next->NO < new->NO && tmp->next != NULL) {
 				tmp = tmp->next;
 			}
 			Assert(tmp != NULL, \
