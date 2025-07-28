@@ -89,7 +89,8 @@ void printf_the_free_WP_list() {
 	printf("free_ = ");
 	while (ptr != NULL) {
 		printf("%d - ",ptr->NO);
-		ptr = ptr->next;
+		if (ptr->next == NULL) break;
+		else ptr = ptr->next;
 	}
 	printf("NULL\n");
 
@@ -123,6 +124,7 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
+	/*
 	printf("used 5 WP, the list:\n");
 	for(int i = 0; i < 5; i++) {
 		new_wp();
@@ -130,7 +132,6 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	/*
 	printf("free 1 WP, the list:\n");
 	free(head);
 	printf_the_free_WP_list();
