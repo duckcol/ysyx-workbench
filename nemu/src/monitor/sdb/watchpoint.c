@@ -69,7 +69,7 @@ void printf_the_used_WP_list() {
 	WP* ptr = head;
 	printf("head = ");
 	while (ptr != NULL) {
-		printf("%d <-> ",ptr->NO);
+		printf("%d - ",ptr->NO);
 		ptr = ptr->next;
 	}
 	printf("NULL\n");
