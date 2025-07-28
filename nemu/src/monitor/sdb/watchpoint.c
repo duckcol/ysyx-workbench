@@ -214,10 +214,8 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	printf("used till the end \n");
-	for(int i = 30; i > 0; i--) new_wp();
-	printf_the_free_WP_list();
-	printf_the_used_WP_list();
+	//printf("used till the end \n");for(int i = 30; i > 0; i--) new_wp();
+	free_wp(NULL);
 }
 
 void info_w() {
