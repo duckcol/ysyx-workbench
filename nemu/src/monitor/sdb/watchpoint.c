@@ -204,6 +204,11 @@ void test_new_and_free_WP(){
 	free_wp(head);
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
+
+	printf("use WP 0, the list:\n");
+	new_wp();
+	printf_the_free_WP_list();
+	printf_the_used_WP_list();
 }
 
 void info_w() {
