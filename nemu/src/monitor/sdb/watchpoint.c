@@ -13,7 +13,9 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "debug.h"
 #include "sdb.h"
+#include <string.h>
 
 #define NR_WP 32
 
@@ -54,6 +56,15 @@ void free_wp(WP *wp) {
 	if(wp->NO < free_->NO) {
 		wp->next = free_;
 		free_ = wp;
+	} else { // free_->NO < wp->NO
+		WP* small = free_;
+		while (small->next->NO <= wp->NO) {
+			Assert(small->next != NULL, \
+			"inserting error when free_wp(): couldn't find the position");
+			small = small->next;
+		}
+		wp->next = small->next;
+		small->next = wp;
 	}
 }
 
