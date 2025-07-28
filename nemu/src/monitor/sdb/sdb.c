@@ -229,6 +229,7 @@ static int cmd_w(char *args) {
 	bool *success = malloc(sizeof(bool)); 
 	word_t result = success ? expr(args, success) : -1 ;
 	if(success) Info("expr success, result: "FMT_WORD"", result); else WARN("expr failed");
+
 	return 0;
 }
 
