@@ -187,13 +187,13 @@ static int cmd_x(char *args) {
 	token = strtok(NULL, " ");
 	char* EXPR = malloc(sizeof(char)*20); 
 	strcpy(EXPR, token); 
-	Log("the EXPR: %s", EXPR);
-	//	reserve EXPR for expression value 
+	Log("the args: %s", EXPR);
 	
 	// the address
 	bool success = false;
 	paddr_t address = (paddr_t) expr(EXPR, &success);
 	Assert(success == true, "$EXPR failed!");
+	Info("the expr: "FMT_WORD"", address);
 	if(in_pmem(address)) {
 		Log("the paddr: "FMT_PADDR"", address);
 	} else {
