@@ -16,7 +16,6 @@
 #include "common.h"
 #include "debug.h"
 #include "sdb.h"
-#include <stdio.h>
 
 #define NR_WP 32
 
@@ -49,11 +48,39 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 WP* new_wp() {
-	return NULL;
+	//	spcify the WP
+	WP* new = free_;
+	free_ = free_->next;
+
+	//	rebind the WP
+	free_->prev = NULL; 
+	new->next = NULL; new->prev = NULL;
+	if(head == NULL) head = new;
+	else { 
+		//	insert the new into head list in order
+		if (new->NO < head->NO ) {
+			new->next = head;
+			head->prev = new;
+		} else {
+			//	head->NO < new->NO
+			//	to find the excat tmp where:
+			//	tmp.NO < new.NO < tmp.next.NO
+			WP* tmp = head;
+			while (tmp->next->NO < new->NO) {
+				tmp = tmp->next;
+			}
+			Assert(tmp != NULL, \
+			"couldn't find the right order for WP* new");
+			new->prev = tmp; new->next = tmp->next;
+			tmp->next = new; tmp->next->prev = new;
+		}
+	}
+
+
+	return new;
 }
 
-void free_wp(WP *wp) {
-}
+//void free_wp(WP *wp) {}
 
 void printf_the_free_WP_list() {
 	WP* ptr = free_;
