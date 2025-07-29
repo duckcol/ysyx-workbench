@@ -86,6 +86,8 @@ WP* new_wp() {
 		}
 	}
 
+	//	set the content
+
 	return new;
 }
 

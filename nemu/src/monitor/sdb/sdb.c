@@ -22,8 +22,6 @@
 #include "debug.h"
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
-#include <stdbool.h>
-#include <stdio.h>
 
 static int is_batch_mode = false;
 
@@ -184,10 +182,7 @@ static int cmd_x(char *args) {
 	
 	//	the EXPR part
 	token = strtok(NULL, " ");
-	if(token == NULL) {
-		WARN("no EXPR found !");
-		return 0;
-	}
+	if(token == NULL) {WARN("no EXPR found !"); return 0;}
 	char* EXPR = malloc(sizeof(char)*20); 
 	strcpy(EXPR, token); 
 	
@@ -234,13 +229,15 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
 	Info("the args: %s",args);
-	if(args == NULL) {
-		WARN("no expr input !");
-		return 0;
-	}
+	if(args == NULL) {WARN("no expr input !"); return 0;}
+	
+	//	apply an new WP and set the content
+	
+
 	bool *success = malloc(sizeof(bool)); 
 	word_t result = success ? expr(args, success) : -1 ;
-	if(success) Info("expr success, result: "FMT_WORD"", result); else WARN("expr failed");
+	if(success) Info("expr success, result: "FMT_WORD"", result); 
+	else WARN("expr failed");
 
 	return 0;
 }
