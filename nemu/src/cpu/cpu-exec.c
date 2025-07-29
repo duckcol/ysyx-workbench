@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "utils.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
@@ -42,7 +43,10 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 
 	//	check watchpoints
 	//	if change, stop cpu 
-	//	if (wp_list_change()) nemu_state.state = NEMU_STOP; else ;
+	if (wp_list_change()) {
+		nemu_state.state = (nemu_state.state == NEMU_END) ? NEMU_END : NEMU_STOP; 
+	}
+	else ;
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
