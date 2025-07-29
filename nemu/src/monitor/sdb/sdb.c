@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <complex.h>
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
@@ -263,7 +264,15 @@ static int cmd_d(char *args) {
 	//	check if the number > 0
 	if(N <= 0) {WARN("N should be > 0, plz try again"); return 0;}
 
-	return 0;
+	//	delete the watchpoint N
+	if (delete_WP(N)) {
+		Info("delete the watchpoint %d. ", N);
+		return 0;
+	} else {
+		WARN("watchpoint %d delete failed! ", N);
+		return -1;
+	}
+
 }
 
 void sdb_set_batch_mode() {

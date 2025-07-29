@@ -16,9 +16,6 @@
 #include "common.h"
 #include "debug.h"
 #include "sdb.h"
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define NR_WP 32
 
@@ -119,7 +116,10 @@ void free_wp(WP *wp) {
 		tmp->prev = tmp->next = NULL;
 	}
 
-	//	TODO: clear the content in WP* tmp
+	//	clear the content in WP* tmp
+	free(tmp->expr);
+	tmp->expr = NULL;
+	tmp->new_value = tmp->old_value = 0;
 	
 	//	join the tmp back to free_ list
 	if(free_ == NULL) free_ = tmp;
@@ -172,6 +172,29 @@ bool apply_and_set_WP(char *expr, word_t first_value){
 		}
 	}
 	Assert(success, "could't find WP* new in head list");
+	return success;
+}
+
+bool delete_WP(int N) {
+	bool success = false;
+	//	check if N is in head list 
+	//	if found delete_WP
+	//	else return false
+	for(WP* tmp = head; tmp != NULL; tmp = tmp->next) {
+		if (tmp->NO == N) {
+			free_wp(tmp);
+			Assert(
+			(tmp->expr == NULL) &&\
+			(tmp->old_value == 0) &&\
+			(tmp->new_value == 0) ,\
+			"watchpoint clear failed");
+			return true;
+		}
+	}
+	if (success == false) {
+		WARN("can't find watchpoint %d", N);
+		return false;
+	}
 	return success;
 }
 
