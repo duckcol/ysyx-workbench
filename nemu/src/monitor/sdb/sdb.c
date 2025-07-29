@@ -178,9 +178,9 @@ static int cmd_x(char *args) {
 	Log("the N: %d", N);
 	//	here are some checks to N
 	//	check if there's a number
-	if(token == endptr) {Log("no number, try again"); return 0;}
+	if(token == endptr) {WARN("no number, try again"); return 0;}
 	//	check if the number > 0
-	if(N <= 0) {Log("N should be lager than zero, plz try again"); return 0;}
+	if(N <= 0) {WARN("N should be lager than zero, plz try again"); return 0;}
 	
 	//	the EXPR part
 	token = strtok(NULL, " ");
