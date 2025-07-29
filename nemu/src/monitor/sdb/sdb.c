@@ -184,13 +184,12 @@ static int cmd_x(char *args) {
 	
 	//	the EXPR part
 	token = strtok(NULL, " ");
-	char* EXPR = malloc(sizeof(char)*20); 
-	strcpy(EXPR, token); 
-	Log("the args: %s", EXPR);
-	if(EXPR == NULL) {
-		WARN("no expr input !");
+	if(token == NULL) {
+		WARN("no EXPR found !");
 		return 0;
 	}
+	char* EXPR = malloc(sizeof(char)*20); 
+	strcpy(EXPR, token); 
 	
 	//	second, compute the EXPR and turn into address
 	// the address
