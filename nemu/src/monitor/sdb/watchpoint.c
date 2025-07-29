@@ -157,9 +157,9 @@ bool apply_and_set_WP(char *expr, word_t first_value){
 	//	set value
 	int NO = new->NO;
 	new->expr = expr;
-	new->old_value = first_value;
-	Assert(new->new_value == 0, \
-	"WP init wrong: WP->new_value != 0");
+	new->old_value = new->new_value = first_value;
+	Assert(new->new_value != 0, \
+	"WP init wrong: WP->new_value == 0");
 
 	//	check if WP* new in head list
 	for(WP* tmp = head; tmp != NULL; tmp = tmp->next) {
@@ -247,6 +247,7 @@ void test_new_and_free_WP(){
 void info_w() {
 	printf("list all watchpoints in used:\n");
 	for(WP* tmp = head; tmp != NULL; tmp = tmp->next) {
+		Info("expr: %s",tmp->expr);
 		printf("watchpoint %d: "
 				"expr:%s | old_value: "FMT_WORD" | new_value: "FMT_WORD"\n", 
 				tmp->NO, tmp->expr ,tmp->old_value, tmp->new_value);
