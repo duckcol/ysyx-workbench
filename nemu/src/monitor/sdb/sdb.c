@@ -69,6 +69,7 @@ static int cmd_info(char *args);
 static int cmd_x(char *args);
 static int cmd_p(char *args); 
 static int cmd_w(char *args);
+static int cmd_d(char *args);
 
 static struct {
   const char *name;
@@ -85,6 +86,7 @@ static struct {
 	{ "x", "x N EXPR: print 4*N bytes starting from EXPR(paddr, but will auto convert invalid paddr)", cmd_x},
 	{"p", "p $EXPR: print the compute result of $EXPR", cmd_p},
 	{"w", "w $EXPR: stop program if $EXPR changes", cmd_w},
+	{"d", "d N: delete the watchpoint N which has the NO == N", cmd_d},
 
 };
 
@@ -238,7 +240,28 @@ static int cmd_w(char *args) {
 	if(success) Info("expr success, the first result: "FMT_WORD"", result); 
 	else {WARN("expr failed! try again."); return 0;}
 	//	apply an new WP and set the content
-	apply_and_set_WP(args, result);
+	if(apply_and_set_WP(args, result)) return 0;
+	else {
+		WARN("watchpoint apply failed!");
+		return -1;
+	}
+}
+
+static int cmd_d(char *args) {
+	//	check to args
+	Info("the args: %s",args);
+	if(args == NULL) {WARN("no N input !"); return 0;}
+
+	//	turn args into N
+	char *token = strtok(args, " ");
+	char *endptr;
+	int N = (int) strtol(token, &endptr, 10);
+	Log("the N: %d", N);
+	//	here are some checks to N
+	//	check if there's a number
+	if(token == endptr) {WARN("no number, try again"); return 0;}
+	//	check if the number > 0
+	if(N <= 0) {WARN("N should be > 0, plz try again"); return 0;}
 
 	return 0;
 }
