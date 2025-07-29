@@ -42,7 +42,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 
 	//	check watchpoints
 	//	if change, stop cpu 
-	if (wp_list_change()) nemu_state.state = NEMU_STOP;
+	//	if (wp_list_change()) nemu_state.state = NEMU_STOP; else ;
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
