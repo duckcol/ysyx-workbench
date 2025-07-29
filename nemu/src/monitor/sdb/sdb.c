@@ -180,7 +180,7 @@ static int cmd_x(char *args) {
 	//	check if there's a number
 	if(token == endptr) {WARN("no number, try again"); return 0;}
 	//	check if the number > 0
-	if(N <= 0) {WARN("N should be lager than zero, plz try again"); return 0;}
+	if(N <= 0) {WARN("N should be > 0, plz try again"); return 0;}
 	
 	//	the EXPR part
 	token = strtok(NULL, " ");
