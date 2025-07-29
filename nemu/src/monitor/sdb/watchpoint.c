@@ -16,6 +16,8 @@
 #include "common.h"
 #include "debug.h"
 #include "sdb.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 #define NR_WP 32
 
@@ -173,6 +175,24 @@ bool apply_and_set_WP(char *expr, word_t first_value){
 	}
 	Assert(success, "could't find WP* new in head list");
 	return success;
+}
+
+bool wp_list_change() {
+	bool change = false;
+	for (WP* tmp = head; tmp != NULL; tmp = tmp->next) {
+		bool expr_success = false;
+		tmp->new_value = expr(tmp->expr, &expr_success);
+		Assert(expr_success, "expr failed while checking watchpoint changes");
+
+		if (tmp->old_value != tmp->new_value) {
+			change = true;
+			printf("watchpoint %d: "
+			"expr: %s | old_value: "FMT_WORD" | new_value: "FMT_WORD" \n",
+			tmp->NO, tmp->expr, tmp->old_value, tmp->new_value);
+		}
+	}
+	
+	return change;
 }
 
 bool delete_WP(int N) {
