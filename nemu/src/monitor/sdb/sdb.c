@@ -231,6 +231,7 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_w(char *args) {
+#ifdef CONFIG_WATCHPOINT
 	//	check to args
 	Info("the args: %s",args);
 	if(args == NULL) {WARN("no expr input !"); return 0;}
@@ -246,9 +247,14 @@ static int cmd_w(char *args) {
 		WARN("watchpoint apply failed!");
 		return -1;
 	}
+#else
+	Info("CONFIG_WATCHPOINT false, watchpoint disabled");
+	return 0;
+#endif
 }
 
 static int cmd_d(char *args) {
+#ifdef CONFIG_WATCHPOINT
 	//	check to args
 	Info("the args: %s",args);
 	if(args == NULL) {WARN("no N input !"); return 0;}
@@ -272,7 +278,10 @@ static int cmd_d(char *args) {
 		WARN("watchpoint %d delete failed! ", N);
 		return -1;
 	}
-
+#else 
+	Info("CONFIG_WATCHPOINT false, watchpoint disabled");
+	return 0;
+#endif
 }
 
 void sdb_set_batch_mode() {
