@@ -262,7 +262,7 @@ static int cmd_d(char *args) {
 	//	check if there's a number
 	if(token == endptr) {WARN("no number, try again"); return 0;}
 	//	check if the number > 0
-	if(N <= 0) {WARN("N should be > 0, plz try again"); return 0;}
+	if(N < 0) {WARN("N should be >= 0, plz try again"); return 0;}
 
 	//	delete the watchpoint N
 	if (delete_WP(N)) {
