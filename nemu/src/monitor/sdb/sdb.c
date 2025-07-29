@@ -226,11 +226,11 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
 	Info("the args: %s",args);
-	bool *success = malloc(sizeof(bool)); 
 	if(args == NULL) {
 		WARN("no expr input !");
 		return 0;
 	}
+	bool *success = malloc(sizeof(bool)); 
 	word_t result = success ? expr(args, success) : -1 ;
 	if(success) Info("expr success, result: "FMT_WORD"", result); else WARN("expr failed");
 
