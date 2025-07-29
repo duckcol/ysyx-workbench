@@ -16,6 +16,8 @@
 #include "common.h"
 #include "debug.h"
 #include "sdb.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 #define NR_WP 32
 
@@ -86,8 +88,6 @@ WP* new_wp() {
 		}
 	}
 
-	//	set the content
-
 	return new;
 }
 
@@ -145,8 +145,30 @@ void free_wp(WP *wp) {
 			}
 		}
 	}
-	
-	
+}
+
+bool apply_and_set_WP(char *expr, word_t first_value){
+	//	apply WP* new
+	bool success = false;
+	WP* new = new_wp();
+	Assert(new != NULL, \
+	"new_wp() in apply_and_set_WP() failed! ");
+
+	//	set value
+	int NO = new->NO;
+	new->expr = expr;
+	new->old_value = first_value;
+	Assert(new->new_value == 0, \
+	"WP init wrong: WP->new_value != 0");
+
+	//	check if WP* new in head list
+	for(WP* tmp = head; tmp != NULL; tmp = tmp->next) {
+		if (tmp->NO == NO) {
+			success = true;
+		}
+	}
+	Assert(success, "could't find WP* new in head list");
+	return success;
 }
 
 //	this two printf could printf list to NULL
@@ -223,16 +245,12 @@ void test_new_and_free_WP(){
 }
 
 void info_w() {
-	/*
-	head = new_wp();
-	new_wp();
-	for(WP *each = head; each != free_; each = each->next) {
-		printf("watchpoint %d's NO: %d\n", each->NO, each->NO);
+	printf("list all watchpoints in used:\n");
+	for(WP* tmp = head; tmp != NULL; tmp = tmp->next) {
+		printf("watchpoint %d: "
+				"expr:%s | old_value: "FMT_WORD" | new_value: "FMT_WORD"\n", 
+				tmp->NO, tmp->expr ,tmp->old_value, tmp->new_value);
 	}
-	free_wp(&wp_pool[1]);
-	for(WP *each = head; each != free_; each = each->next) {
-		printf("watchpoint %d's NO: %d\n", each->NO, each->NO);
-	}
-	*/
-	test_new_and_free_WP();
+
+	//test_new_and_free_WP();
 }

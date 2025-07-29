@@ -228,16 +228,17 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_w(char *args) {
+	//	check to args
 	Info("the args: %s",args);
 	if(args == NULL) {WARN("no expr input !"); return 0;}
 	
-	//	apply an new WP and set the content
-	
-
+	//	check if the expr is valid or not
 	bool *success = malloc(sizeof(bool)); 
 	word_t result = success ? expr(args, success) : -1 ;
-	if(success) Info("expr success, result: "FMT_WORD"", result); 
-	else WARN("expr failed");
+	if(success) Info("expr success, the first result: "FMT_WORD"", result); 
+	else {WARN("expr failed! try again."); return 0;}
+	//	apply an new WP and set the content
+	apply_and_set_WP(args, result);
 
 	return 0;
 }

@@ -20,6 +20,7 @@
 
 word_t expr(char *e, bool *success);
 
+bool apply_and_set_WP(char* expr, word_t first_value);
 void test_new_and_free_WP();
 void info_w();
 
