@@ -45,11 +45,13 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 	//	if change, stop cpu 
 	//	when watch $pc, it is easy to make cpu work over inst
 	//	so need to check the state is END or QUIT or not
+#ifdef CONFIG_WATCHPOINT
 	if (wp_list_change()) {
 		nemu_state.state = 
 			(nemu_state.state == NEMU_END) || 
 			(nemu_state.state == NEMU_QUIT) ? nemu_state.state : NEMU_STOP; 
 	}
+#endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
