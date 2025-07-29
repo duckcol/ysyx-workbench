@@ -176,7 +176,7 @@ bool apply_and_set_WP(char *expr, word_t first_value){
 }
 
 //	this two printf could printf list to NULL
-void printf_the_free_WP_list() {
+void printf_the_free_WP_list(int opt) {
 	WP* ptr = free_;
 	printf("free_ = ");
 	while (ptr != NULL) {
@@ -186,15 +186,17 @@ void printf_the_free_WP_list() {
 	}
 	printf("NULL\n");
 
+	if(opt == 0){
 	printf("free_ (revserse) = ");
 	while (ptr != NULL) {
 		printf("%d - ",ptr->NO);
 		ptr = ptr->prev;
 	}
 	printf("NULL\n");
+	}
 }
 
-void printf_the_used_WP_list() {
+void printf_the_used_WP_list(int opt) {
 	WP* ptr = head;
 	printf("head = ");
 	while (ptr != NULL) {
@@ -204,45 +206,47 @@ void printf_the_used_WP_list() {
 	}
 	printf("NULL\n");
 
+	if (opt == 0) {
 	printf("head (revserse) = ");
 	while (ptr != NULL) {
 		printf("%d - ",ptr->NO);
 		ptr = ptr->prev;
 	}
 	printf("NULL\n");
+	}
 }
 
 void test_new_and_free_WP(){
 	printf("the primitive free and used WP List:\n");
-	printf_the_free_WP_list();
-	printf_the_used_WP_list();
+	printf_the_free_WP_list(0);
+	printf_the_used_WP_list(0);
 
 	printf("use 5 WP, the list:\n");
 	for(int i = 0; i < 5; i++) {
 		new_wp();
 	}
-	printf_the_free_WP_list();
-	printf_the_used_WP_list();
+	printf_the_free_WP_list(0);
+	printf_the_used_WP_list(0);
 
 	printf("free WP 1, the list:\n");
 	free_wp(head + 1);
-	printf_the_free_WP_list();
-	printf_the_used_WP_list();
+	printf_the_free_WP_list(0);
+	printf_the_used_WP_list(0);
 
 	printf("free WP 0, the list:\n");
 	free_wp(head);
-	printf_the_free_WP_list();
-	printf_the_used_WP_list();
+	printf_the_free_WP_list(0);
+	printf_the_used_WP_list(0);
 
 	printf("free WP 2, the list:\n");
 	free_wp(head);
-	printf_the_free_WP_list();
-	printf_the_used_WP_list();
+	printf_the_free_WP_list(0);
+	printf_the_used_WP_list(0);
 
 	printf("use 5 WP, the list:\n");
 	for(int i = 0; i < 5; i++) new_wp();
-	printf_the_free_WP_list();
-	printf_the_used_WP_list();
+	printf_the_free_WP_list(0);
+	printf_the_used_WP_list(0);
 
 	free_wp(NULL);
 	//printf("used till the end \n");for(int i = 30; i > 0; i--) new_wp();
@@ -250,6 +254,8 @@ void test_new_and_free_WP(){
 
 void info_w() {
 	printf("list all watchpoints in used:\n");
+	printf_the_free_WP_list(1);
+	printf_the_used_WP_list(1);
 	for(WP* tmp = head; tmp != NULL; tmp = tmp->next) {
 		Info("expr: %s",tmp->expr);
 		printf("watchpoint %d: "
