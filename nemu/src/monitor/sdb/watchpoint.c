@@ -189,6 +189,8 @@ bool wp_list_change() {
 			printf("watchpoint %d: "
 			"expr: %s | old_value: "FMT_WORD" | new_value: "FMT_WORD" \n",
 			tmp->NO, tmp->expr, tmp->old_value, tmp->new_value);
+
+			tmp->old_value = tmp->new_value;
 		}
 	}
 	
