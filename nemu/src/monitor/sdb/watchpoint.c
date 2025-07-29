@@ -68,17 +68,18 @@ WP* new_wp() {
 		} else {
 			//	head->NO < new->NO
 			//	to find the position where:
-			//	tmp.NO < new.NO < tmp.next.NO
-			WP* tmp = head;
-			while (tmp->next != NULL) {
-				Assert(tmp != NULL, "couldn't find the position in head");
-				if (tmp->next->NO < new->NO) 
-					tmp = tmp->next;
+			//	near.NO < new.NO < near.next.NO
+			WP* near = head;
+			while (near->next != NULL) {
+				if (near->next->NO < new->NO) 
+					near = near->next;
 				else break;
+				Assert(near != NULL, \
+				"couldn't find the near position in head list");
 			}
-			//	rebind tmp and new
-			new->prev = tmp; new->next = tmp->next;
-			tmp->next = new; 
+			//	rebind near and new
+			new->prev = near; new->next = near->next;
+			near->next = new; 
 			if (new->next != NULL) {
 				new->next->prev = new;
 			}
@@ -115,7 +116,7 @@ void free_wp(WP *wp) {
 		tmp->prev = tmp->next = NULL;
 	}
 
-	//	clear the content
+	//	TODO: clear the content in WP* tmp
 	
 	//	join the tmp back to free_ list
 	if(free_ == NULL) free_ = tmp;
@@ -127,13 +128,13 @@ void free_wp(WP *wp) {
 		} else {
 			//	free_ < tmp
 			//	find a position
-			//	near < tmp < near.next
+			//	near.NO < tmp.NO < near.next.NO
 			WP* near = free_;
 			while (near->next != NULL) {
-				Assert(near != NULL, "couldn't find the position in free_");
 				if (near->next->NO < tmp->NO) 
 					near = near->next;
 				else break;
+				Assert(near != NULL, "couldn't find the position in free_");
 			}
 			tmp->prev = near; tmp->next = near->next;
 			near->next = tmp; 
@@ -146,6 +147,7 @@ void free_wp(WP *wp) {
 	
 }
 
+//	this two printf could printf list to NULL
 void printf_the_free_WP_list() {
 	WP* ptr = free_;
 	printf("free_ = ");
@@ -214,8 +216,8 @@ void test_new_and_free_WP(){
 	printf_the_free_WP_list();
 	printf_the_used_WP_list();
 
-	//printf("used till the end \n");for(int i = 30; i > 0; i--) new_wp();
 	free_wp(NULL);
+	//printf("used till the end \n");for(int i = 30; i > 0; i--) new_wp();
 }
 
 void info_w() {
