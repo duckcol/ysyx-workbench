@@ -169,9 +169,6 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-	//	for now, the EXPR isn't done
-	//	so we restrict it to be an hax number
-	
 	//	first, split the args to be N and EXPR
 	
 	//	the N part
@@ -180,7 +177,9 @@ static int cmd_x(char *args) {
 	int N = (int) strtol(token, &endptr, 10);
 	Log("the N: %d", N);
 	//	here are some checks to N
-	if(token == endptr) {Log("no number, try again"); return 0;}//	check if there's a number
+	//	check if there's a number
+	if(token == endptr) {Log("no number, try again"); return 0;}
+	//	check if the number > 0
 	if(N <= 0) {Log("N should be lager than zero, plz try again"); return 0;}
 	
 	//	the EXPR part
@@ -188,7 +187,12 @@ static int cmd_x(char *args) {
 	char* EXPR = malloc(sizeof(char)*20); 
 	strcpy(EXPR, token); 
 	Log("the args: %s", EXPR);
+	if(EXPR == NULL) {
+		WARN("no expr input !");
+		return 0;
+	}
 	
+	//	second, compute the EXPR and turn into address
 	// the address
 	bool success = false;
 	paddr_t address = (paddr_t) expr(EXPR, &success);
