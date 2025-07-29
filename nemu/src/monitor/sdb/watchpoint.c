@@ -18,6 +18,7 @@
 #include "sdb.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define NR_WP 32
 
@@ -156,7 +157,10 @@ bool apply_and_set_WP(char *expr, word_t first_value){
 
 	//	set value
 	int NO = new->NO;
-	new->expr = expr;
+	//	TODO: free the char* storage in free_wp()!
+	char *storage = malloc(sizeof(char) * 512);
+	strcpy(storage, expr);
+	new->expr = storage;
 	new->old_value = new->new_value = first_value;
 	Assert(new->new_value != 0, \
 	"WP init wrong: WP->new_value == 0");
