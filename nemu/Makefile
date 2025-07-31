@@ -59,3 +59,22 @@ else
 # Include rules to build NEMU
 include $(NEMU_HOME)/scripts/native.mk
 endif
+
+# static
+count: 
+	@echo -n "the number of src files: "
+	@find . -name "*.[ch]" |\
+	grep -E "^\./(src|include)" | \
+  grep -E -v "^\./include/config" |\
+ 	grep -v "mips32\|riscv64\|loongarch32r" | \
+	wc -l 
+	
+	@find . -name "*.[ch]" |\
+	grep -E "^\./(src|include)" | \
+  grep -E -v "^\./include/config" |\
+ 	grep -v "mips32\|riscv64\|loongarch32r" |\
+ 	xargs wc | tail -n1 |\
+	awk '{printf "the number of lines in src:%s\nthe number of words in src:%s\n", $$1, $$2}'
+
+check-what-make-done:
+	echo
