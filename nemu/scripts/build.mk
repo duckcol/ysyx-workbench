@@ -35,7 +35,7 @@ $(OBJ_DIR)/%.o: %.c
 	#the next line is added to expand macro
 	#comment it to run norrmally
 	#@$(CC) $(CFLAGS) -E -o $@.i $< 
-	@$(CC) $(CFLAGS) -E -MF /dev/null $< | clang-format > $@.i
+	@$(CC) $(CFLAGS) -E -MF /dev/null $< | clang-format >> $@.i
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 $(OBJ_DIR)/%.o: %.cc
