@@ -28,6 +28,10 @@ LDFLAGS := -O2 $(LDFLAGS)
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o) $(CXXSRC:%.cc=$(OBJ_DIR)/%.o)
 
 # Compilation patterns
+
+# insert the fowllow line
+# next to @$(CC)... to expand macros
+# @$(CC) $(CFLAGS) -E -o $@.i $<
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
 	@mkdir -p $(dir $@)
