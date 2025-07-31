@@ -50,9 +50,6 @@ $(OBJ_DIR)/%.o: %.cc
 
 .PHONY: app clean
 
-see: 
-	@$(CC) $(CFLAGS) -E -MF /dev/null $< | clang-format > $@.i
-
 app: $(BINARY)
 
 $(BINARY):: $(OBJS) $(ARCHIVES)
