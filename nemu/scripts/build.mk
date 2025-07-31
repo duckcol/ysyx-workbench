@@ -34,7 +34,7 @@ $(OBJ_DIR)/%.o: %.c
 	@$(CC) $(CFLAGS) -c -o $@ $<
 	#the next line is added to expand macro
 	#comment it to run norrmally
-	@$(CC) $(CFLAGS) -c -0 $@.i $< 
+	@$(CC) $(CFLAGS) -E -o $@.i $< 
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 $(OBJ_DIR)/%.o: %.cc
