@@ -32,6 +32,9 @@ $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c -o $@ $<
+	#the next line is added to expand macro
+	#comment it to run norrmally
+	@$(CC) $(CFLAGS) -c -0 $@.i $< 
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 $(OBJ_DIR)/%.o: %.cc
@@ -46,6 +49,9 @@ $(OBJ_DIR)/%.o: %.cc
 # Some convenient rules
 
 .PHONY: app clean
+
+see: 
+	@$(CC) $(CFLAGS) -E -MF /dev/null $< | clang-format > $@.i
 
 app: $(BINARY)
 
