@@ -31,7 +31,7 @@ OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o) $(CXXSRC:%.cc=$(OBJ_DIR)/%.o)
 
 # insert the fowllow line
 # next to @$(CC)... to expand macros
-# @$(CC) $(CFLAGS) -E -o $@.i $<
+# @$(CC) $(CFLAGS) -E -MF /dev/null $< | clang-format > $@.i
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
 	@mkdir -p $(dir $@)
