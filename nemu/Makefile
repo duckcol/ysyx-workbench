@@ -77,9 +77,17 @@ count:
 	awk '{printf "the number of lines in src:%s\nthe number of words in src:%s\n", $$1, $$2}'
 
 check-src:
-	@echo "check the used src *.c file numbers: "
+	@echo -n "check the used src *.c file numbers: "
 	@make -nB | \
-    grep -E '^gcc' | \
+  	grep -E '^gcc' | \
+  	sed -e "s|$${NEMU_HOME}|\$$NEMU_HOME|g" | \
+  	sed -e "s|\$$NEMU_HOME/build/obj-riscv32-nemu-interpreter|$${OBJ_DIR}|g" | \
+  	sed -e "s/-O2.*=riscv32/$${CFLAGS}/g" |\
+		wc -l
+	@echo "the list:"
+	@make -nB | \
+  	grep -E '^gcc' | \
     sed -e "s|$${NEMU_HOME}|\$$NEMU_HOME|g" | \
     sed -e "s|\$$NEMU_HOME/build/obj-riscv32-nemu-interpreter|$${OBJ_DIR}|g" | \
-    sed -e "s/-O2.*=riscv32/$${CFLAGS}/g" | wc -l
+    sed -e "s/-O2.*=riscv32/$${CFLAGS}/g" 
+
