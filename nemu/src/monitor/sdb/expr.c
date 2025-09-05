@@ -236,7 +236,7 @@ word_t eval(int p, int q) {
     if (tokens[p].type == TK_DIGIT) {
       char *endptr;
       word_t value = strtoul(tokens[p].str, &endptr, 10);
-      if (*endptr != '\0' || *endptr == 'u' || *endptr == 'l')
+      if (*endptr != '\0' || *endptr != 'u' || *endptr != 'l')
         Assert(0, "not a number");
       return value;
     } else if (tokens[p].type == TK_HEX) {
