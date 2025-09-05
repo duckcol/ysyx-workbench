@@ -145,7 +145,10 @@ static bool make_token(char *e) {
           tokens[nr_token].type = rules[i].token_type;
           Assert(substr_len < 31, "the digit's len is to long");
           strncpy(tokens[nr_token].str, substr_start, substr_len);
-          tokens[nr_token].str[substr_len] = '\0'; //	really important
+          //  IMPORTANT!!!
+          //  add '\0' to the end of digit
+          //  and remove the "ul" in digit like "123ul"
+          tokens[nr_token].str[substr_len] = '\0';
           Info("tokens[%d].type: %d, str: %s", nr_token, tokens[nr_token].type,
                tokens[nr_token].str);
           nr_token++;
@@ -233,7 +236,7 @@ word_t eval(int p, int q) {
     if (tokens[p].type == TK_DIGIT) {
       char *endptr;
       word_t value = strtoul(tokens[p].str, &endptr, 10);
-      if (*endptr != '\0')
+      if (*endptr != '\0' || *endptr == 'u' || *endptr == 'l')
         Assert(0, "not a number");
       return value;
     } else if (tokens[p].type == TK_HEX) {
