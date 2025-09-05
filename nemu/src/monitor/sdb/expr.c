@@ -59,7 +59,7 @@ static struct rule {
     {"&&", TK_AND},                // AND
     {"\\$[a-z0-9]+", TK_REG},      //	reg name
     {"0[xX][a-fA-F0-9]+", TK_HEX}, //	hex number
-    {"[0-9]+", TK_DIGIT},          // digit in POSIX regex
+    {"[0-9]+[ul]*", TK_DIGIT},     // digit in POSIX regex
     {"\\(", '('},
     {"\\)", ')'}, //	parenthese
 };
