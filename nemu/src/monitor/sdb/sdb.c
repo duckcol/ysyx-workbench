@@ -247,7 +247,7 @@ static int cmd_p(char *args) {
   else
     WARN("expr failed");
   printf("the result: " FMT_WORD "\n", result);
-  printf("the result: %u\n", (uint32_t)result);
+  // printf("the result: %u\n", (uint32_t)result);
 
   return 0;
 }
