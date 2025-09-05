@@ -49,7 +49,7 @@ static void gen_rand_expr() {
   case 0:
     // gen_num
     INSERT_BLANK;
-    sprintf(BUFEND, "%u", (uint32_t)choose(1000));
+    sprintf(BUFEND, "%uul", (uint32_t)choose(1000));
     INSERT_BLANK;
     break;
   case 1:
