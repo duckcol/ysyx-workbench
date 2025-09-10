@@ -17,7 +17,7 @@ test: app
 	-@./build/gen-expr 1 > ./input
 
 run: app
-	-@./build/gen-expr 200 > ./input
+	-@./build/gen-expr 2000 > ./input
 
 NAME = gen-expr
 SRCS = gen-expr.c
