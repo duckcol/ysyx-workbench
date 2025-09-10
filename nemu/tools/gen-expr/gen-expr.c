@@ -123,10 +123,10 @@ int main(int argc, char *argv[]) {
     uint32_t result;
     ret = fscanf(fp, "%u", &result);
     // int status = pclose(fp);
-    //   if (WEXITSTATUS(status) == 136)
-    //     printf("0 0\n");
-    //   else
-    //     printf("%u %s\n", result, buf);
-    // }
-    return 0;
+    // if (WEXITSTATUS(status) == 136)
+    //   printf("0 0\n");
+    // else
+    printf("%u %s\n", result, buf);
   }
+  return 0;
+}
