@@ -174,7 +174,7 @@ bool apply_and_set_WP(char *expr, word_t first_value) {
   strcpy(storage, expr);
   new->expr = storage;
   new->old_value = new->new_value = first_value;
-  Assert(new->new_value != 0, "WP init wrong: WP->new_value == 0");
+  WARN("WP init wrong: WP->new_value == 0");
 
   // check if WP* new in head list
   for (WP *tmp = head; tmp != NULL; tmp = tmp->next) {
