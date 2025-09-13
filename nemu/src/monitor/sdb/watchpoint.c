@@ -174,7 +174,10 @@ bool apply_and_set_WP(char *expr, word_t first_value) {
   strcpy(storage, expr);
   new->expr = storage;
   new->old_value = new->new_value = first_value;
-  WARN("WP init wrong: WP->new_value == 0");
+  if (first_value == 0)
+    WARN("WP init warning: WP->new_value == 0");
+  else
+    Log("WP init value: " FMT_WORD "", first_value);
 
   // check if WP* new in head list
   for (WP *tmp = head; tmp != NULL; tmp = tmp->next) {
