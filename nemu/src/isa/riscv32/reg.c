@@ -58,7 +58,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 
   // search for reg $0
   *success = (strncmp(s, regs[0], 11) == 0) ? true : *success;
-  value = success ? gpr(0) : 0;
+  value = *success ? gpr(0) : 0;
   if (*success) {
     Info("reg found!");
     return value;
@@ -66,7 +66,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 
   // search for reg pc
   *success = (strncmp(s + 1, "pc", 11) == 0) ? true : *success;
-  value = success ? cpu.pc : 0;
+  value = *success ? cpu.pc : 0;
   if (*success) {
     Info("reg found!");
     return value;
