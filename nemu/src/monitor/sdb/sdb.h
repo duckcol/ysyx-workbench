@@ -20,4 +20,10 @@
 
 word_t expr(char *e, bool *success);
 
+bool apply_and_set_WP(char* expr, word_t first_value);
+bool delete_WP(int N);
+bool wp_list_change();
+void test_new_and_free_WP();
+void info_w();
+
 #endif
