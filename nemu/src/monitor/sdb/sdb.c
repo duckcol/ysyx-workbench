@@ -210,7 +210,7 @@ static int cmd_x(char *args) {
   //  second, compute the EXPR and turn into address
   //  the address
   bool success = false;
-  paddr_t address = (paddr_t)expr(EXPR, &success);
+  vaddr_t address = (vaddr_t)expr(EXPR, &success);
   Assert(success == true, "$EXPR failed!");
   Info("the expr: " FMT_WORD "", address);
   if (in_pmem(address)) {
