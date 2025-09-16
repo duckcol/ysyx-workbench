@@ -18,6 +18,7 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
+
 #ifdef CONFIG_WATCHPOINT
 #include <../src/monitor/sdb/sdb.h>
 #endif
