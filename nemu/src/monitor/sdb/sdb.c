@@ -207,8 +207,8 @@ static int cmd_x(char *args) {
   char *EXPR = malloc(sizeof(char) * 20);
   strcpy(EXPR, token);
 
-  //	second, compute the EXPR and turn into address
-  // the address
+  //  second, compute the EXPR and turn into address
+  //  the address
   bool success = false;
   paddr_t address = (paddr_t)expr(EXPR, &success);
   Assert(success == true, "$EXPR failed!");
@@ -225,7 +225,7 @@ static int cmd_x(char *args) {
   printf("address: content\n");
   printf("" FMT_PADDR ":", address);
   for (int i = 0; i < N; i++) {
-    printf(" 0x%08x", vaddr_read(address + i * 4, 4));
+    printf(" " FMT_WORD "", vaddr_read(address + i * 4, 4));
   }
   printf("\n");
 
