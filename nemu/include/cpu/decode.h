@@ -114,11 +114,11 @@ finish:
 
 #define INSTPAT_START(name)                                                    \
   {                                                                            \
-    const void **__instpat_end = &&concat(__instpat_end_, name);
+    const void *__instpat_end = &&concat(__instpat_end_, name);
 //  the origincal code is below, but seemingly buggy
 // const void **__instpat_end = &&concat(__instpat_end_, name);
 #define INSTPAT_END(name)                                                      \
-  concat(__instpat_end_, name) : Info("Trigger label");                        \
+  concat(__instpat_end_, name) :;                                              \
   }
 
 #endif
