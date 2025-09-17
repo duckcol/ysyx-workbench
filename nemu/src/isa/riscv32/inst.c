@@ -13,7 +13,6 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
-// #include "debug.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
@@ -86,7 +85,6 @@ static int decode_exec(Decode *s) {
   }
 
   INSTPAT_START(); //	decode and printf
-                   // Log("pc: "FMT_WORD"\n", cpu.pc);
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U,
           R(rd) = s->pc + imm);
   INSTPAT("??????? ????? ????? 100 ????? 00000 11", lbu, I,
