@@ -135,6 +135,8 @@ static int decode_exec(Decode *s) {
           // Log("pc + imm = " FMT_WORD "", s->pc + imm);
           s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
   );
+  INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
+          Mw(src1 + imm, 4, src2));
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
