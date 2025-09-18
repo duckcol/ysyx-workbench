@@ -23,6 +23,7 @@
 #define Mw vaddr_write
 
 enum {
+  TYPE_R,
   TYPE_I,
   TYPE_U,
   TYPE_S,
@@ -57,6 +58,10 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
   int rs2 = BITS(i, 24, 20);
   *rd = BITS(i, 11, 7);
   switch (type) {
+  case TYPE_R:
+    src1R();
+    src2R();
+    break;
   case TYPE_I:
     src1R();
     immI();
