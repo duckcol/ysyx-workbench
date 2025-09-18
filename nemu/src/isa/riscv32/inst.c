@@ -127,12 +127,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("? ?????????? ? ???????? ????? 11011 11", jal, J,
           if (rd == 0) R(1) = s->pc + 4;
           else R(rd) = s->pc + 4; // pc + 4 == snpc
-          Log("immJ = " FMT_WORD " "
-              "s->pc = " FMT_WORD " "
-              "s->pc + imm = " FMT_WORD " "
-              "s->snpc = " FMT_WORD " "
-              "s->dnpc = " FMT_WORD " ",
-              imm, s->pc, s->pc + imm, s->snpc, s->dnpc);
+          Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
+          Log("pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
+              s->pc, s->snpc, s->dnpc);
           s->dnpc = s->dnpc + imm // current pc point to pc + imm
   );
 
