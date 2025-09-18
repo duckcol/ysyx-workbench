@@ -130,7 +130,7 @@ static int decode_exec(Decode *s) {
           Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
           Log("pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
               s->pc, s->snpc, s->dnpc);
-          Log("dnpc + imm = " FMT_WORD "", s->dnpc + imm);
+          Log("pc + imm = " FMT_WORD "", s->pc + imm);
           s->dnpc = s->pc + imm // current pc point to pc + imm
   );
 
