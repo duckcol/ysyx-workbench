@@ -125,7 +125,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi, I,
           R(rd) = src1 + imm);
   INSTPAT("? ?????????? ? ???????? ????? 11011 11", jal, J,
-          R(rd) = s->pc + 4; // pc + 4 == snpc
+          if (rd == 0) R(1) = s->pc + 4;
+          else R(rd) = s->pc + 4; // pc + 4 == snpc
           Log("immJ = " FMT_WORD " s->pc = " FMT_WORD " "
               "s->pc + imm = " FMT_WORD "",
               imm, s->pc, s->pc + imm);
