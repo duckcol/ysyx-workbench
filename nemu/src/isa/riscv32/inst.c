@@ -126,7 +126,8 @@ static int decode_exec(Decode *s) {
           R(rd) = src1 + imm);
   INSTPAT("? ?????????? ? ???????? ????? 11011 11", jal, J,
           R(rd) = s->pc + 4; // pc + 4 == snpc
-          s->pc += imm       // current pc point to pc + imm
+          Log("immJ = " FMT_WORD "", imm);
+          s->pc += imm // current pc point to pc + imm
   );
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
