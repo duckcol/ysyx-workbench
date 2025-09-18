@@ -13,6 +13,7 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
+#include "common.h"
 #include "local-include/reg.h"
 #include "macro.h"
 #include <cpu/cpu.h>
@@ -73,7 +74,6 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
   int rs2 = BITS(i, 24, 20);
   *rd = BITS(i, 11, 7);
   switch (type) {
-  // TODO: TYPE_R, TYPE_B, TYPE_J untested
   case TYPE_R:
     src1R();
     src2R();
@@ -85,6 +85,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
   case TYPE_U:
     immU();
     break;
+  // TODO: TYPE_R, TYPE_B, TYPE_J untested
   case TYPE_S:
     src1R();
     src2R();
@@ -120,6 +121,26 @@ static int decode_exec(Decode *s) {
           R(rd) = Mr(src1 + imm, 1));
   INSTPAT("??????? ????? ????? 000 ????? 01000 11", sb, S,
           Mw(src1 + imm, 1, src2));
+
+  // add the following to run dummy.c
+  INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi, I,
+          R(rd) = src1 + imm);
+  INSTPAT("? ?????????? ? ???????? ????? 11011 11", jal, J,
+          //  TODO: check jal in manual
+          R(rd) = s->pc + 4;
+          // if (rd == 0) R(1) = s->pc + 4;
+          // else R(rd) = s->pc + 4; // pc + 4 == snpc
+          // Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
+          // Log("pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
+          //     s->pc, s->snpc, s->dnpc);
+          // Log("pc + imm = " FMT_WORD "", s->pc + imm);
+          s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
+  );
+  INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
+          Mw(src1 + imm, 4, src2));
+  INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I,
+          if (rd == 0) R(1) = s->pc + 4;
+          else R(rd) = s->pc + 4; s->dnpc = (src1 + imm) & ~((word_t)1););
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
