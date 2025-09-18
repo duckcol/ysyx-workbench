@@ -131,7 +131,7 @@ static int decode_exec(Decode *s) {
           Log("pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
               s->pc, s->snpc, s->dnpc);
           Log("pc + imm = " FMT_WORD "", s->pc + imm);
-          s->dnpc = s->pc + imm // current pc point to pc + imm
+          s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
   );
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
