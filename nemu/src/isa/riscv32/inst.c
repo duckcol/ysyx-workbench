@@ -14,6 +14,7 @@
  ***************************************************************************************/
 
 #include "common.h"
+#include "debug.h"
 #include "local-include/reg.h"
 #include "macro.h"
 #include <cpu/cpu.h>
@@ -115,6 +116,7 @@ static int decode_exec(Decode *s) {
   }
 
   INSTPAT_START(); //	decode and printf
+  //	example instructions
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U,
           R(rd) = s->pc + imm);
   INSTPAT("??????? ????? ????? 100 ????? 00000 11", lbu, I,
@@ -128,12 +130,10 @@ static int decode_exec(Decode *s) {
   INSTPAT("? ?????????? ? ???????? ????? 11011 11", jal, J,
           //  TODO: check jal in manual
           R(rd) = s->pc + 4;
-          // if (rd == 0) R(1) = s->pc + 4;
-          // else R(rd) = s->pc + 4; // pc + 4 == snpc
-          // Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
-          // Log("pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
-          //     s->pc, s->snpc, s->dnpc);
-          // Log("pc + imm = " FMT_WORD "", s->pc + imm);
+          Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
+          Log("pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
+              s->pc, s->snpc, s->dnpc);
+          Log("pc + imm = " FMT_WORD "", s->pc + imm);
           s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
   );
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
@@ -142,8 +142,119 @@ static int decode_exec(Decode *s) {
           if (rd == 0) R(1) = s->pc + 4;
           else R(rd) = s->pc + 4; s->dnpc = (src1 + imm) & ~((word_t)1););
 
+  //  more instructions:
+  //  Integer Computational instructions
+  //  Integer Register-Immediate Instructions
+  INSTPAT("??????? ????? ????? 010 ????? 00100 11", slti, I,
+          WARN("exec inst \"slti\": convert src1 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src1, (int32_t)src1);
+          WARN("exec inst \"slti\": convert imm uint32_t " FMT_WORD
+               " to int32_t %d",
+               imm, (int32_t)imm);
+          R(rd) = ((int32_t)src1 < (int32_t)imm));
+  INSTPAT("??????? ????? ????? 011 ????? 00100 11", sltiu, I,
+          R(rd) = (src1 < imm));
+  INSTPAT("??????? ????? ????? 111 ????? 00100 11", andi, I,
+          R(rd) = (src1 & imm));
+  INSTPAT("??????? ????? ????? 110 ????? 00100 11", ori, I,
+          R(rd) = (src1 | imm));
+  INSTPAT("??????? ????? ????? 100 ????? 00100 11", xori, I,
+          R(rd) = (src1 ^ imm));
+  INSTPAT("0000000 ????? ????? 001 ????? 00100 11", slli, I,
+          R(rd) = (src1 << imm));
+  INSTPAT("0000000 ????? ????? 001 ????? 00100 11", srai, I,
+          WARN("exec inst \"srai\": convert src1 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src1, (int32_t)src1);
+          R(rd) = (word_t)((int32_t)src1 >> imm));
+  INSTPAT("0000000 ????? ????? 001 ????? 00100 11", srli, I,
+          R(rd) = (src1 >> imm));
+  INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui, U, R(rd) = imm);
+
+  //  Integer Register-Register Operations
+  INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add, R,
+          R(rd) = src1 + src2);
+  INSTPAT("0000000 ????? ????? 010 ????? 01100 11", slt, R,
+          WARN("exec inst \"slt\": convert src1 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src1, (int32_t)src1);
+          WARN("exec inst \"slt\": convert src2 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src2, (int32_t)src2);
+          R(rd) = ((int32_t)src1 < (int32_t)src2));
+  INSTPAT("0000000 ????? ????? 011 ????? 01100 11", sltu, R,
+          R(rd) = (src1 < src2));
+  INSTPAT("0000000 ????? ????? 111 ????? 01100 11", and, R,
+          R(rd) = (src1 & src2));
+  INSTPAT("0000000 ????? ????? 100 ????? 01100 11", xor, R,
+          R(rd) = (src1 ^ src2));
+  INSTPAT("0000000 ????? ????? 110 ????? 01100 11", or, R,
+          R(rd) = (src1 | src2));
+  INSTPAT("0000000 ????? ????? 001 ????? 01100 11", sll, R,
+          WARN("exec inst \"sll\": src2 " FMT_WORD
+               " only use lowwer 5 bits " FMT_WORD "",
+               src2, (word_t)BITS(src2, 4, 0));
+          R(rd) = (src1 << (word_t)BITS(src2, 4, 0)));
+  INSTPAT("0000000 ????? ????? 101 ????? 01100 11", srl, R,
+          WARN("exec inst \"srl\": src2 " FMT_WORD
+               " only use lowwer 5 bits " FMT_WORD "",
+               src2, (word_t)BITS(src2, 4, 0));
+          R(rd) = (src1 >> (word_t)BITS(src2, 4, 0)));
+  INSTPAT("0100000 ????? ????? 101 ????? 01100 11", sra, R,
+          WARN("exec inst \"sra\": convert src1 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src1, (int32_t)src1);
+          WARN("exec inst \"sra\": src2 " FMT_WORD
+               " only use lowwer 5 bits " FMT_WORD "",
+               src2, (word_t)BITS(src2, 4, 0));
+          R(rd) = (word_t)((int32_t)src1 >> (word_t)BITS(src2, 4, 0)));
+  INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub, R,
+          R(rd) = (src1 - src2));
+
+  //  Conditional Branches
+  INSTPAT("? ?????? ????? ????? 000 ???? ? 11000 11", beq, B,
+          if (src1 == src2) s->dnpc += imm);
+  INSTPAT("? ?????? ????? ????? 001 ???? ? 11000 11", bnq, B,
+          if (src1 != src2) s->dnpc += imm);
+  INSTPAT("? ?????? ????? ????? 111 ???? ? 11000 11", bgeu, B,
+          if (src1 >= src2) s->dnpc += imm);
+  INSTPAT("? ?????? ????? ????? 101 ???? ? 11000 11", bge, B,
+          WARN("exec inst \"bge\": convert src1 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src1, (int32_t)src1);
+          WARN("exec inst \"bge\": convert src2 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src2, (int32_t)src2);
+          if ((int32_t)src1 >= (int32_t)src2) s->dnpc += imm);
+  INSTPAT("? ?????? ????? ????? 110 ???? ? 11000 11", bltu, B,
+          if (src1 < src2) s->dnpc += imm);
+  INSTPAT("? ?????? ????? ????? 100 ???? ? 11000 11", blt, B,
+          WARN("exec inst \"blt\": convert src1 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src1, (int32_t)src1);
+          WARN("exec inst \"blt\": convert src2 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src2, (int32_t)src2);
+          if ((int32_t)src1 < (int32_t)src2) s->dnpc += imm);
+
+  //  Load and Store instructions
+  INSTPAT("??????? ????? ????? 000 ????? 00000 11", lb, I,
+          R(rd) = SEXT(BITS(Mr(src1 + imm, 1), 7, 0), 8));
+  INSTPAT("??????? ????? ????? 001 ????? 00000 11", lh, I,
+          R(rd) = SEXT(BITS(Mr(src1 + imm, 2), 15, 0), 16));
+  INSTPAT("??????? ????? ????? 010 ????? 00000 11", lw, I,
+          R(rd) = Mr(src1 + imm, 4));
+  INSTPAT("??????? ????? ????? 101 ????? 00000 11", lhu, I,
+          R(rd) = Mr(src1 + imm, 2));
+
+  INSTPAT("??????? ????? ????? 001 ????? 01000 11", sh, S,
+          Mw(src1 + imm, 2, src2));
+
+  //  ending instructions
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N, INV(s->pc));
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
   INSTPAT_END();
 
@@ -153,6 +264,9 @@ static int decode_exec(Decode *s) {
 }
 
 int isa_exec_once(Decode *s) {
+  //  inst_fetch() will update snpc to pc + 4
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
+  //  decode_exec() will decode and execute current pc inst
+  //  and it will let dnpc == snpc by default
   return decode_exec(s);
 }
