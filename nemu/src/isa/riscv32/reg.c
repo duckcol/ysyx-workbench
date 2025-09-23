@@ -26,6 +26,12 @@ const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
                       "a6", "a7", "s2",  "s3",  "s4", "s5", "s6", "s7",
                       "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
+char *isa_reg_name(int i) {
+  char *reg_name = malloc(10);
+  strncpy(reg_name, regs[i], 10);
+  return reg_name;
+}
+
 void isa_reg_display() {
   int length = sizeof(regs) / sizeof(regs[0]);
   printf("Name\tHex\t\tData\n");

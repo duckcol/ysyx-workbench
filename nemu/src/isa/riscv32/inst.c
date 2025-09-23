@@ -131,7 +131,7 @@ static int decode_exec(Decode *s) {
 
   INSTPAT(
       "??????? ????? ????? ??? ????? 11011 11", jal, J,
-      Info("jal: rd = %d(%s)  imm = " FMT_WORD "", rd, reg_name(rd), imm);
+      Info("jal: rd = %d(%s)  imm = " FMT_WORD "", rd, isa_reg_name(rd), imm);
       Info("jal: pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
            s->pc, s->snpc, s->dnpc);
       Info("jal: target dnpc = " FMT_WORD "", s->pc + imm); R(rd) = s->snpc;
