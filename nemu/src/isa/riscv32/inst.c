@@ -15,6 +15,7 @@
 
 #include "common.h"
 #include "debug.h"
+#include "isa.h"
 #include "local-include/reg.h"
 #include "macro.h"
 #include <cpu/cpu.h>
@@ -141,10 +142,11 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
           Mw(src1 + imm, 4, src2));
 
-  INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I,
-          Info("jalr: rd = %d  imm = " FMT_WORD " ", rd, imm);
-          Info("jalr: target dnpc = " FMT_WORD "", (src1 + imm) & ~((word_t)1));
-          R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
+  INSTPAT(
+      "??????? ????? ????? 000 ????? 11001 11", jalr, I,
+      Info("jalr: rd = %d(%s)  imm = " FMT_WORD " ", rd, isa_reg_name(rd), imm);
+      Info("jalr: target dnpc = " FMT_WORD "", (src1 + imm) & ~((word_t)1));
+      R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
 
   //  more instructions:
   //  Integer Computational instructions
