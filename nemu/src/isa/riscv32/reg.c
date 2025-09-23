@@ -27,8 +27,11 @@ const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
                       "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
 char *isa_reg_name(int i) {
+  Assert((i >= 0 && i <= 31), "i %d out of reg bound", i);
   char *reg_name = malloc(10);
-  strncpy(reg_name, regs[i], 10);
+  char *ret = NULL;
+  ret = strncpy(reg_name, regs[i], 10);
+  Assert(ret != NULL, "strncpy failed");
   return reg_name;
 }
 
