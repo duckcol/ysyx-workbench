@@ -148,6 +148,7 @@ static int decode_exec(Decode *s) {
       Info("jalr: target dnpc = " FMT_WORD "", (src1 + imm) & ~((word_t)1));
       R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
 
+  // instructions to run add.c
   //  more instructions:
   //  Integer Computational instructions
   //  Integer Register-Immediate Instructions
