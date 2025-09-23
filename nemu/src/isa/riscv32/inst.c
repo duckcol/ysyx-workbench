@@ -133,7 +133,7 @@ static int decode_exec(Decode *s) {
       Info("jal: rd = %d  imm = " FMT_WORD "", rd, imm);
       Info("jal: pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
            s->pc, s->snpc, s->dnpc);
-      Info("jal: pc + imm = " FMT_WORD "", s->pc + imm); R(rd) = s->snpc;
+      Info("jal: target dnpc = " FMT_WORD "", s->pc + imm); R(rd) = s->snpc;
       s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
   );
 
