@@ -298,7 +298,9 @@ word_t eval(int p, int q) {
         if (tokens[i].type == '-') {
           // differ case "p (x + -y)" and "p -x"
           if (tokens[i - 1].type == '+' || tokens[i - 1].type == '-' ||
-              tokens[i - 1].type == '*' || tokens[i - 1].type == '/') {
+              tokens[i - 1].type == '*' || tokens[i - 1].type == '/' ||
+              tokens[i - 1].type == TK_EQ || tokens[i - 1].type == TK_NEQ ||
+              tokens[i - 1].type == TK_AND) {
             // in case p (x op -y)
             // when eval the "-y" in "x op -y"
             // op == i == p
@@ -325,7 +327,8 @@ word_t eval(int p, int q) {
         if (tokens[i].type == '*') {
           if (tokens[i - 1].type == '+' || tokens[i - 1].type == '-' ||
               tokens[i - 1].type == '*' || tokens[i - 1].type == '/' ||
-              i == 0) {
+              tokens[i - 1].type == TK_EQ || tokens[i - 1].type == TK_NEQ ||
+              tokens[i - 1].type == TK_AND || i == 0) {
             if (i == p) {
               op = i;
               tokens[op].type = TK_DEREF;
