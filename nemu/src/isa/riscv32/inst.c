@@ -149,6 +149,13 @@ static int decode_exec(Decode *s) {
       R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
 
   // instructions to run add.c
+  // lw rd offset(rs1): TYPE_I, load word
+  // add rd rs1 rs2: TYPE_R, rd = rs1 + rs2
+  // sub rd rs1 rs2: TYPE_R, rd = rs1 - rs2
+  // sltiu rd rs1 imm: TYPE_I, rd = ((uint) rs1 < (uint) imm)
+  // beq rs1 rs2 offset: if(rs1 == rs2) pc += offset
+  // bne rs1 rs2 offset: if(rs1 != rs2) pc += offset
+  //
   //  more instructions:
   //  Integer Computational instructions
   //  Integer Register-Immediate Instructions
@@ -221,11 +228,11 @@ static int decode_exec(Decode *s) {
 
   //  Conditional Branches
   INSTPAT("? ?????? ????? ????? 000 ???? ? 11000 11", beq, B,
-          if (src1 == src2) s->dnpc += imm);
-  INSTPAT("? ?????? ????? ????? 001 ???? ? 11000 11", bnq, B,
-          if (src1 != src2) s->dnpc += imm);
+          if (src1 == src2) s->dnpc = s->pc + imm);
+  INSTPAT("? ?????? ????? ????? 001 ???? ? 11000 11", bne, B,
+          if (src1 != src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 111 ???? ? 11000 11", bgeu, B,
-          if (src1 >= src2) s->dnpc += imm);
+          if (src1 >= src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 101 ???? ? 11000 11", bge, B,
           WARN("exec inst \"bge\": convert src1 uint32_t " FMT_WORD
                " to int32_t %d",
@@ -233,9 +240,9 @@ static int decode_exec(Decode *s) {
           WARN("exec inst \"bge\": convert src2 uint32_t " FMT_WORD
                " to int32_t %d",
                src2, (int32_t)src2);
-          if ((int32_t)src1 >= (int32_t)src2) s->dnpc += imm);
+          if ((int32_t)src1 >= (int32_t)src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 110 ???? ? 11000 11", bltu, B,
-          if (src1 < src2) s->dnpc += imm);
+          if (src1 < src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 100 ???? ? 11000 11", blt, B,
           WARN("exec inst \"blt\": convert src1 uint32_t " FMT_WORD
                " to int32_t %d",
@@ -243,7 +250,7 @@ static int decode_exec(Decode *s) {
           WARN("exec inst \"blt\": convert src2 uint32_t " FMT_WORD
                " to int32_t %d",
                src2, (int32_t)src2);
-          if ((int32_t)src1 < (int32_t)src2) s->dnpc += imm);
+          if ((int32_t)src1 < (int32_t)src2) s->dnpc = s->pc + imm);
 
   //  Load and Store instructions
   INSTPAT("??????? ????? ????? 000 ????? 00000 11", lb, I,
