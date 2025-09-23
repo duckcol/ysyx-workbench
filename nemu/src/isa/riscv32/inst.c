@@ -116,6 +116,7 @@ static int decode_exec(Decode *s) {
   }
 
   INSTPAT_START(); //	decode and printf
+  //	example instructions
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U,
           R(rd) = s->pc + imm);
   INSTPAT("??????? ????? ????? 100 ????? 00000 11", lbu, I,
@@ -123,23 +124,27 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 000 ????? 01000 11", sb, S,
           Mw(src1 + imm, 1, src2));
 
-  // add the following to run dummy.c
+  // instructions to run dummy.c
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi, I,
           R(rd) = src1 + imm);
-  INSTPAT("? ?????????? ? ???????? ????? 11011 11", jal, J,
-          //  TODO: check jal in manual
-          R(rd) = s->pc + 4;
-          Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
-          Log("pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
-              s->pc, s->snpc, s->dnpc);
-          Log("pc + imm = " FMT_WORD "", s->pc + imm);
-          s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
+
+  INSTPAT(
+      "??????? ????? ????? ??? ????? 11011 11", jal, J,
+      //  TODO: check jal in manual
+      R(rd) = s->snpc;
+      Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
+      Log("jal: pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
+          s->pc, s->snpc, s->dnpc);
+      Log("jal: pc + imm = " FMT_WORD "", s->pc + imm);
+      s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
   );
+
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
           Mw(src1 + imm, 4, src2));
   INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I,
-          if (rd == 0) R(1) = s->pc + 4;
-          else R(rd) = s->pc + 4; s->dnpc = (src1 + imm) & ~((word_t)1););
+          //  TODO: check jalr in manual
+          R(rd) = s->snpc;
+          s->dnpc = (src1 + imm) & ~((word_t)1));
 
   //  more instructions:
   //  Integer Computational instructions
