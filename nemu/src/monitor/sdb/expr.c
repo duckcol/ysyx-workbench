@@ -325,7 +325,8 @@ word_t eval(int p, int q) {
         if (tokens[i].type == '*') {
           if (tokens[i - 1].type == '+' || tokens[i - 1].type == '-' ||
               tokens[i - 1].type == '*' || tokens[i - 1].type == '/' ||
-              i == 0) {
+              tokens[i - 1].type == TK_EQ || tokens[i - 1].type == TK_NEQ ||
+              tokens[i - 1].type == TK_AND || i == 0) {
             if (i == p) {
               op = i;
               tokens[op].type = TK_DEREF;
