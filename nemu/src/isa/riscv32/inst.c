@@ -130,21 +130,20 @@ static int decode_exec(Decode *s) {
 
   INSTPAT(
       "??????? ????? ????? ??? ????? 11011 11", jal, J,
-      //  TODO: check jal in manual
-      R(rd) = s->snpc;
-      Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
-      Log("jal: pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
-          s->pc, s->snpc, s->dnpc);
-      Log("jal: pc + imm = " FMT_WORD "", s->pc + imm);
+      Info("jal: rd = %d  imm = " FMT_WORD "", rd, imm);
+      Info("jal: pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
+           s->pc, s->snpc, s->dnpc);
+      Info("jal: pc + imm = " FMT_WORD "", s->pc + imm); R(rd) = s->snpc;
       s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
   );
 
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
           Mw(src1 + imm, 4, src2));
+
   INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I,
-          //  TODO: check jalr in manual
-          R(rd) = s->snpc;
-          s->dnpc = (src1 + imm) & ~((word_t)1));
+          Info("jalr: rd = %d  imm = " FMT_WORD " ", rd, imm);
+          Info("jalr: target dnpc = " FMT_WORD "", (src1 + imm) & ~((word_t)1));
+          R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
 
   //  more instructions:
   //  Integer Computational instructions
