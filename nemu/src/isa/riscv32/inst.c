@@ -15,12 +15,14 @@
 
 #include "common.h"
 #include "debug.h"
+#include "isa.h"
 #include "local-include/reg.h"
 #include "macro.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
 
+#define reg_name(i) regs[i]
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
@@ -124,24 +126,36 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 000 ????? 01000 11", sb, S,
           Mw(src1 + imm, 1, src2));
 
-  // add the following to run dummy.c
+  // instructions to run dummy.c
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi, I,
           R(rd) = src1 + imm);
-  INSTPAT("? ?????????? ? ???????? ????? 11011 11", jal, J,
-          //  TODO: check jal in manual
-          R(rd) = s->pc + 4;
-          Log("jal: rd = %d", rd); Log("imm = " FMT_WORD "", imm);
-          Log("pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
-              s->pc, s->snpc, s->dnpc);
-          Log("pc + imm = " FMT_WORD "", s->pc + imm);
-          s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
+
+  INSTPAT(
+      "??????? ????? ????? ??? ????? 11011 11", jal, J,
+      Info("jal: rd = %d(%s)  imm = " FMT_WORD "", rd, isa_reg_name(rd), imm);
+      Info("jal: pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
+           s->pc, s->snpc, s->dnpc);
+      Info("jal: target dnpc = " FMT_WORD "", s->pc + imm); R(rd) = s->snpc;
+      s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
   );
+
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
           Mw(src1 + imm, 4, src2));
-  INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I,
-          if (rd == 0) R(1) = s->pc + 4;
-          else R(rd) = s->pc + 4; s->dnpc = (src1 + imm) & ~((word_t)1););
 
+  INSTPAT(
+      "??????? ????? ????? 000 ????? 11001 11", jalr, I,
+      Info("jalr: rd = %d(%s)  imm = " FMT_WORD " ", rd, isa_reg_name(rd), imm);
+      Info("jalr: target dnpc = " FMT_WORD "", (src1 + imm) & ~((word_t)1));
+      R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
+
+  // instructions to run add.c
+  // lw rd offset(rs1): TYPE_I, load word
+  // add rd rs1 rs2: TYPE_R, rd = rs1 + rs2
+  // sub rd rs1 rs2: TYPE_R, rd = rs1 - rs2
+  // sltiu rd rs1 imm: TYPE_I, rd = ((uint) rs1 < (uint) imm)
+  // beq rs1 rs2 offset: if(rs1 == rs2) pc += offset
+  // bne rs1 rs2 offset: if(rs1 != rs2) pc += offset
+  //
   //  more instructions:
   //  Integer Computational instructions
   //  Integer Register-Immediate Instructions
@@ -214,11 +228,11 @@ static int decode_exec(Decode *s) {
 
   //  Conditional Branches
   INSTPAT("? ?????? ????? ????? 000 ???? ? 11000 11", beq, B,
-          if (src1 == src2) s->dnpc += imm);
-  INSTPAT("? ?????? ????? ????? 001 ???? ? 11000 11", bnq, B,
-          if (src1 != src2) s->dnpc += imm);
+          if (src1 == src2) s->dnpc = s->pc + imm);
+  INSTPAT("? ?????? ????? ????? 001 ???? ? 11000 11", bne, B,
+          if (src1 != src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 111 ???? ? 11000 11", bgeu, B,
-          if (src1 >= src2) s->dnpc += imm);
+          if (src1 >= src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 101 ???? ? 11000 11", bge, B,
           WARN("exec inst \"bge\": convert src1 uint32_t " FMT_WORD
                " to int32_t %d",
@@ -226,9 +240,9 @@ static int decode_exec(Decode *s) {
           WARN("exec inst \"bge\": convert src2 uint32_t " FMT_WORD
                " to int32_t %d",
                src2, (int32_t)src2);
-          if ((int32_t)src1 >= (int32_t)src2) s->dnpc += imm);
+          if ((int32_t)src1 >= (int32_t)src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 110 ???? ? 11000 11", bltu, B,
-          if (src1 < src2) s->dnpc += imm);
+          if (src1 < src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 100 ???? ? 11000 11", blt, B,
           WARN("exec inst \"blt\": convert src1 uint32_t " FMT_WORD
                " to int32_t %d",
@@ -236,7 +250,7 @@ static int decode_exec(Decode *s) {
           WARN("exec inst \"blt\": convert src2 uint32_t " FMT_WORD
                " to int32_t %d",
                src2, (int32_t)src2);
-          if ((int32_t)src1 < (int32_t)src2) s->dnpc += imm);
+          if ((int32_t)src1 < (int32_t)src2) s->dnpc = s->pc + imm);
 
   //  Load and Store instructions
   INSTPAT("??????? ????? ????? 000 ????? 00000 11", lb, I,
