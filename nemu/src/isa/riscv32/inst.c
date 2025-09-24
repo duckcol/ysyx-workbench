@@ -230,7 +230,17 @@ static int decode_exec(Decode *s) {
           //  the result is the lowwer 32 bits of src1 * src2
           R(rd) = src1 * src2);
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
-          R(rd) = BITS((int64_t)((int32_t)src1 * (int32_t)src2), 63, 32));
+          WARN("exec inst \"mulh\": convert src1 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src1, (int32_t)src1);
+          WARN("exec inst \"mulh\": convert src2 uint32_t " FMT_WORD
+               " to int32_t %d",
+               src2, (int32_t)src2);
+          int64_t tmp = (int32_t)src1 * (int32_t)src2;
+          Info("mulh: full result is "
+               "0x%016" PRIx64 ", high 32 bits is " FMT_WORD "",
+               tmp, (word_t)(tmp >> 32) & 0xfffffff);
+          R(rd) = (tmp >> 32) & 0xffffffff);
   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
           R(rd) = BITS((int64_t)((int32_t)src1 * (uint32_t)src2), 63, 32));
   INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R,
