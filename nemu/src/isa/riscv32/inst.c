@@ -177,7 +177,7 @@ static int decode_exec(Decode *s) {
           R(rd) = (src1 ^ imm));
   INSTPAT("0000000 ????? ????? 001 ????? 00100 11", slli, I,
           R(rd) = (src1 << imm));
-  INSTPAT("0000000 ????? ????? 001 ????? 00100 11", srai, I,
+  INSTPAT("0100000 ????? ????? 101 ????? 00100 11", srai, I,
           WARN("exec inst \"srai\": convert src1 uint32_t " FMT_WORD
                " to int32_t %d",
                src1, (int32_t)src1);
