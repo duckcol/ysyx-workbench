@@ -22,7 +22,6 @@
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
 
-#define reg_name(i) regs[i]
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
