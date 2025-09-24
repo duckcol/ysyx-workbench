@@ -230,8 +230,8 @@ static int decode_exec(Decode *s) {
           //  the result is the lowwer 32 bits of src1 * src2
           R(rd) = src1 * src2);
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
-          int64_t s_src1 = (int64_t)src1;
-          int64_t s_src2 = (int64_t)src2;
+          int64_t s_src1 = src1;
+          int64_t s_src2 = src2;
           WARN("exec inst \"mulh\": convert src1 uint32_t " FMT_WORD
                " to int32_t %d(hex:" FMT_WORD ")",
                src1, (int32_t)src1, (int32_t)src1);
