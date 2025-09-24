@@ -236,7 +236,7 @@ static int decode_exec(Decode *s) {
           WARN("exec inst \"mulh\": convert src2 uint32_t " FMT_WORD
                " to int32_t %d",
                src2, (int32_t)src2);
-          int64_t tmp = (int64_t)src1 * (int64_t)src2;
+          int64_t tmp = (int32_t)src1 * (int32_t)src2;
           Info("mulh: full result is "
                "0x%016" PRIx64 ", high 32 bits is " FMT_WORD "",
                tmp, (word_t)BITS(tmp, 63, 32));
