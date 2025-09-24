@@ -231,11 +231,11 @@ static int decode_exec(Decode *s) {
           R(rd) = src1 * src2);
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
           WARN("exec inst \"mulh\": convert src1 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src1, (int32_t)src1);
+               " to int32_t %d(hex:" FMT_WORD ")",
+               src1, (int32_t)src1, (int32_t)src1);
           WARN("exec inst \"mulh\": convert src2 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src2, (int32_t)src2);
+               " to int32_t %d(hex:" FMT_WORD ")",
+               src2, (int32_t)src2, (int32_t)src2);
           int64_t tmp = src1 * src2;
           Info("mulh: full result is "
                "0x%016" PRIx64 ", high 32 bits is " FMT_WORD "",
