@@ -239,8 +239,8 @@ static int decode_exec(Decode *s) {
           uint64_t tmp = (uint64_t)src1 * (uint64_t)src2;
           Info("mulh: full result is "
                "0x%016" PRIx64 ", high 32 bits is " FMT_WORD "",
-               tmp, (word_t)(tmp >> 32) & 0xfffffff);
-          R(rd) = (word_t)(tmp >> 32) & 0xffffffff);
+               tmp, (word_t)BITS(tmp, 63, 32));
+          R(rd) = (word_t)BITS(tmp, 63, 32));
   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
           R(rd) = BITS((int64_t)((int32_t)src1 * (uint32_t)src2), 63, 32));
   INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R,
