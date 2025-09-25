@@ -231,6 +231,15 @@ static int decode_exec(Decode *s) {
           R(rd) = src1 * src2);
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
           // R(rd) = BITS((int64_t)(int32_t)src1 * (int32_t)src2, 63, 32));
+          Info("src1:" FMT_WORD ", src2:" FMT_WORD "", src1, src2);
+          int32_t ssrc1 = (int32_t)src1; int32_t ssrc2 = (int32_t)src2;
+          Info("int32 src1: " FMT_WORD ", int32_t src2: " FMT_WORD "", ssrc1,
+               ssrc2);
+          int64_t sssrc1 = (int64_t)ssrc1; int64_t sssrc2 = (int64_t)ssrc2;
+          Info("int64 src1: "
+               "0x%016" PRIx64 ", int64 src2:"
+               "0x%016" PRIx64 "",
+               sssrc1, sssrc2);
           int64_t tmp = (int64_t)(int32_t)src1 * (int64_t)(int32_t)src2;
           R(rd) = BITS(tmp, 63, 32));
   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
