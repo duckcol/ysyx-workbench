@@ -22,10 +22,11 @@
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
 
-#define reg_name(i) regs[i]
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
+
+#define FMT_64 "0x%016" PRIx64
 
 enum {
   TYPE_R,
@@ -225,6 +226,48 @@ static int decode_exec(Decode *s) {
           R(rd) = (word_t)((int32_t)src1 >> (word_t)BITS(src2, 4, 0)));
   INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub, R,
           R(rd) = (src1 - src2));
+
+  //  M Standard Extension for Multiplication and Division
+  INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul, R,
+          //  the result is the lowwer 32 bits of src1 * src2
+          R(rd) = src1 * src2);
+  INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
+          R(rd) =
+              BITS((int64_t)(int32_t)src1 * (int64_t)(int32_t)src2, 63, 32));
+  //  the following is why use type change twich
+  // int64_t ret1 = src1 * src2;
+  // Info("src1:" FMT_WORD ", src2:" FMT_WORD ", ret:" FMT_64 "", src1,
+  //      src2, ret1);
+  //
+  // int32_t ssrc1 = (int32_t)src1; int32_t ssrc2 = (int32_t)src2;
+  // int64_t ret2 = ssrc1 * ssrc2;
+  // Info("int32 src1: " FMT_WORD ", int32_t src2: " FMT_WORD
+  //      ", ret2:" FMT_64 "",
+  //      ssrc1, ssrc2, ret2);
+  //
+  // int64_t sssrc1 = (int64_t)src1; int64_t sssrc2 = (int64_t)src2;
+  // int64_t ret3 = sssrc1 * sssrc2; Info(
+  //     "int64 src1: " FMT_64 ", int64 src2:" FMT_64 ", ret3: " FMT_64 "",
+  //     sssrc1, sssrc2, ret3);
+  //
+  // int64_t tmp = (int64_t)(int32_t)src1 * (int64_t)(int32_t)src2;
+  // R(rd) = BITS(tmp, 63, 32));
+  INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
+          R(rd) = BITS((int64_t)(int32_t)src1 * (uint64_t)src2, 63, 32));
+  INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R,
+          R(rd) = BITS((uint64_t)src1 * (uint64_t)src2, 63, 32));
+  INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div, R,
+          if (src2 == 0) R(rd) = -1;
+          else R(rd) = (int32_t)src1 / (int32_t)src2);
+  INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu, R,
+          if (src2 == 0) R(rd) = -1;
+          else R(rd) = (uint32_t)src1 / (uint32_t)src2);
+  INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem, R,
+          if (src2 == 0) R(rd) = src1;
+          else R(rd) = (int32_t)src1 % (int32_t)src2);
+  INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu, R,
+          if (src2 == 0) R(rd) = src1;
+          else R(rd) = (uint32_t)src1 % (uint32_t)src2);
 
   //  Conditional Branches
   INSTPAT("? ?????? ????? ????? 000 ???? ? 11000 11", beq, B,
