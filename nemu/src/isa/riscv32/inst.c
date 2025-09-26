@@ -58,7 +58,6 @@ enum {
   do {                                                                         \
     *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);                   \
   } while (0)
-// TODO: immB() and immJ() untested
 #define immB()                                                                 \
   do {                                                                         \
     *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 7, 7) << 11) |          \
@@ -89,7 +88,6 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
   case TYPE_U:
     immU();
     break;
-  // TODO: TYPE_R, TYPE_B, TYPE_J untested
   case TYPE_S:
     src1R();
     src2R();
@@ -149,14 +147,6 @@ static int decode_exec(Decode *s) {
       Info("jalr: target dnpc = " FMT_WORD "", (src1 + imm) & ~((word_t)1));
       R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
 
-  // instructions to run add.c
-  // lw rd offset(rs1): TYPE_I, load word
-  // add rd rs1 rs2: TYPE_R, rd = rs1 + rs2
-  // sub rd rs1 rs2: TYPE_R, rd = rs1 - rs2
-  // sltiu rd rs1 imm: TYPE_I, rd = ((uint) rs1 < (uint) imm)
-  // beq rs1 rs2 offset: if(rs1 == rs2) pc += offset
-  // bne rs1 rs2 offset: if(rs1 != rs2) pc += offset
-  //
   //  more instructions:
   //  Integer Computational instructions
   //  Integer Register-Immediate Instructions
@@ -232,28 +222,30 @@ static int decode_exec(Decode *s) {
           //  the result is the lowwer 32 bits of src1 * src2
           R(rd) = src1 * src2);
   INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R,
-          // R(rd) = BITS((int64_t)(int32_t)src1 * (int32_t)src2, 63, 32));
-          int64_t ret1 = src1 * src2;
-          Info("src1:" FMT_WORD ", src2:" FMT_WORD ", ret:" FMT_64 "", src1,
-               src2, ret1);
-
-          int32_t ssrc1 = (int32_t)src1; int32_t ssrc2 = (int32_t)src2;
-          int64_t ret2 = ssrc1 * ssrc2;
-          Info("int32 src1: " FMT_WORD ", int32_t src2: " FMT_WORD
-               ", ret2:" FMT_64 "",
-               ssrc1, ssrc2, ret2);
-
-          int64_t sssrc1 = (int64_t)src1; int64_t sssrc2 = (int64_t)src2;
-          int64_t ret3 = sssrc1 * sssrc2; Info(
-              "int64 src1: " FMT_64 ", int64 src2:" FMT_64 ", ret3: " FMT_64 "",
-              sssrc1, sssrc2, ret3);
-
-          int64_t tmp = (int64_t)(int32_t)src1 * (int64_t)(int32_t)src2;
-          R(rd) = BITS(tmp, 63, 32));
+          R(rd) =
+              BITS((int64_t)(int32_t)src1 * (int64_t)(int32_t)src2, 63, 32));
+  //  the following is why use type change twich
+  // int64_t ret1 = src1 * src2;
+  // Info("src1:" FMT_WORD ", src2:" FMT_WORD ", ret:" FMT_64 "", src1,
+  //      src2, ret1);
+  //
+  // int32_t ssrc1 = (int32_t)src1; int32_t ssrc2 = (int32_t)src2;
+  // int64_t ret2 = ssrc1 * ssrc2;
+  // Info("int32 src1: " FMT_WORD ", int32_t src2: " FMT_WORD
+  //      ", ret2:" FMT_64 "",
+  //      ssrc1, ssrc2, ret2);
+  //
+  // int64_t sssrc1 = (int64_t)src1; int64_t sssrc2 = (int64_t)src2;
+  // int64_t ret3 = sssrc1 * sssrc2; Info(
+  //     "int64 src1: " FMT_64 ", int64 src2:" FMT_64 ", ret3: " FMT_64 "",
+  //     sssrc1, sssrc2, ret3);
+  //
+  // int64_t tmp = (int64_t)(int32_t)src1 * (int64_t)(int32_t)src2;
+  // R(rd) = BITS(tmp, 63, 32));
   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu, R,
-          R(rd) = BITS((int64_t)((int32_t)src1 * (uint32_t)src2), 63, 32));
+          R(rd) = BITS((int64_t)(int32_t)src1 * (uint64_t)src2, 63, 32));
   INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R,
-          R(rd) = BITS((uint64_t)((uint32_t)src1 * (uint32_t)src2), 63, 32));
+          R(rd) = BITS((uint64_t)src1 * (uint64_t)src2, 63, 32));
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div, R,
           if (src2 == 0) R(rd) = -1;
           else R(rd) = (int32_t)src1 / (int32_t)src2);
