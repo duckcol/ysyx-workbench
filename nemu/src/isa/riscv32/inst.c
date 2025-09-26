@@ -58,7 +58,6 @@ enum {
   do {                                                                         \
     *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);                   \
   } while (0)
-// TODO: immB() and immJ() untested
 #define immB()                                                                 \
   do {                                                                         \
     *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 7, 7) << 11) |          \
@@ -89,7 +88,6 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
   case TYPE_U:
     immU();
     break;
-  // TODO: TYPE_R, TYPE_B, TYPE_J untested
   case TYPE_S:
     src1R();
     src2R();
@@ -149,14 +147,6 @@ static int decode_exec(Decode *s) {
       Info("jalr: target dnpc = " FMT_WORD "", (src1 + imm) & ~((word_t)1));
       R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
 
-  // instructions to run add.c
-  // lw rd offset(rs1): TYPE_I, load word
-  // add rd rs1 rs2: TYPE_R, rd = rs1 + rs2
-  // sub rd rs1 rs2: TYPE_R, rd = rs1 - rs2
-  // sltiu rd rs1 imm: TYPE_I, rd = ((uint) rs1 < (uint) imm)
-  // beq rs1 rs2 offset: if(rs1 == rs2) pc += offset
-  // bne rs1 rs2 offset: if(rs1 != rs2) pc += offset
-  //
   //  more instructions:
   //  Integer Computational instructions
   //  Integer Register-Immediate Instructions
