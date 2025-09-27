@@ -126,6 +126,10 @@ endmenu
 
 menu "Testing and Debugging"
 
+config DEBUG_PRINT_INFO
+  bool "Enable print debug info"
+  default y
+
 config WATCHPOINT
 	bool "Enable watchpoint"
 	default y

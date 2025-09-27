@@ -120,17 +120,17 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-  Info("the args: %s", args); //	for dbg
+  Log("the args: %s", args); //	for dbg
 
   //	check if the args is NULL
   if (args == NULL) {
-    Log("You must type one args,plz try again");
+    Info("You must type one args,plz try again");
     return 0;
   }
 
   //	check if the args is multiple
   char *arg = strtok(args, " ");
-  Info("the arg: %s", arg);
+  Log("the arg: %s", arg);
   char *exceed = strtok(NULL, " "); // continue to split the args
   if (exceed != NULL) {
     Log("exceed args input, the exceeded part will be ignored");
@@ -155,10 +155,10 @@ static int cmd_info(char *args) {
   // check args:
   // 1.NULL or not
   // 2.only "r" and "w" is valid
-  Info("the args: %s", args);
+  Log("the args: %s", args);
 
   if (args == NULL) {
-    Info("need an arg, plz try again");
+    Log("need an arg, plz try again");
     return 0;
   }
 
@@ -168,9 +168,7 @@ static int cmd_info(char *args) {
   }
 
   if (strcmp(args, "w") == 0) {
-    //	for test
     info_w();
-    //	end test
     return 0;
   } else {
     Log("invalid arg, plz try again");
@@ -212,7 +210,7 @@ static int cmd_x(char *args) {
   bool success = false;
   vaddr_t address = (vaddr_t)expr(EXPR, &success);
   Assert(success == true, "$EXPR failed!");
-  Info("the expr: " FMT_WORD "", address);
+  Log("the expr: " FMT_WORD "", address);
   if (in_pmem(address)) {
     Log("the paddr: " FMT_PADDR "", address);
   } else {
@@ -234,7 +232,7 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-  Info("the args: %s", args);
+  Log("the args: %s", args);
   if (args == NULL) {
     WARN("no expr input !");
     return 0;
@@ -255,7 +253,7 @@ static int cmd_p(char *args) {
 static int cmd_w(char *args) {
 #ifdef CONFIG_WATCHPOINT
   //	check to args
-  Info("the args: %s", args);
+  Log("the args: %s", args);
   if (args == NULL) {
     WARN("no expr input !");
     return 0;
