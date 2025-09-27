@@ -69,7 +69,7 @@ uint64_t get_time();
 
 #define _Log(...)                                                              \
   do {                                                                         \
-    IFDEF(CONFIG_DEBUG_PRINT_INFO, printf(__VA_ARGS__););                      \
+    printf(__VA_ARGS__);                                                       \
     log_write(__VA_ARGS__);                                                    \
   } while (0)
 
