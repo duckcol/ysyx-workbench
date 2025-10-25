@@ -27,7 +27,7 @@ brun: image
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 	
 run: image
-	echo current image:$(IMAGE)
+	@echo L2 current image:$(IMAGE)
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 
 gdb: image
