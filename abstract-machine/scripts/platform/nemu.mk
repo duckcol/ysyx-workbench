@@ -24,8 +24,7 @@ image: $(IMAGE).elf
 
 brun: image
 	@echo L2 current image:$(IMAGE)
-	$(NEMUFLAGS) += -b
-	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS) -b" IMG=$(IMAGE).bin
 
 run: image
 	@echo L2 current image:$(IMAGE)
