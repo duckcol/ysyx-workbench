@@ -21,5 +21,6 @@ void init_iringbuff() {
 void log_iringbuff() {
   for (int i = 0; i < NR_INST; i++) {
     log_write("%s\n", iringbuff.insts[i]);
+    puts(iringbuff.insts[i]);
   }
 }
