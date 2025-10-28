@@ -1,0 +1,57 @@
+#include "sdb.h"
+
+int readin_expr_test() {
+  FILE *file =
+      fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/input", "r");
+  FILE *pass =
+      fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/pass", "w");
+  FILE *fail =
+      fopen("/home/coladuck/ysyx-workbench/nemu/tools/gen-expr/fail", "w");
+  Assert(file != NULL, "input file open failed");
+  Assert(pass != NULL, "pass file open failed");
+  Assert(fail != NULL, "fail file open failed");
+
+  char line[65536 + 128];
+  int pass_cnt = 0;
+  int fail_cnt = 0;
+  int input_line_num = 0;
+  while (fgets(line, sizeof(line), file) != NULL) {
+    //	deal with line change
+    long len = strlen(line);
+    if (len > 0 && line[len - 1] == '\n') {
+      line[len - 1] = '\0';
+    }
+
+    //	deal with each line
+    //	store and change the number
+    input_line_num++;
+    word_t num;
+    char *expression;
+    num = strtoull(line, &expression, 10);
+    Assert(expression != line, "first character is not digit");
+    bool success;
+    word_t result = expr(expression, &success);
+    if (result == num) {
+      pass_cnt++;
+      fprintf(pass,
+              "Location: %d; Num:" FMT_WORD "; Result:" FMT_WORD
+              "; TokensSuccess:%d; Expression:%s;\n",
+              input_line_num, num, result, success, expression);
+    } else {
+      fail_cnt++;
+      fprintf(fail,
+              "Location: %d; Num:" FMT_WORD "; Result:" FMT_WORD
+              "; TokensSuccess:%d; Expression:%s;\n",
+              input_line_num, num, result, success, expression);
+    }
+  }
+  CORRECT("pass example num:%d\n", pass_cnt);
+  WARN("failed example num:%d\n", fail_cnt);
+
+  //	some check
+  Assert(ferror(file) == 0, "file reading error");
+  fclose(file);
+  fclose(pass);
+  fclose(fail);
+  return 0;
+};
