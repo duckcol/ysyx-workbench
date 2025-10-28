@@ -30,6 +30,8 @@ void init_iringbuff();
 void log_iringbuff();
 int push_iringbuff(char *inst);
 
+int is_exit_status_bad();
+
 word_t expr(char *e, bool *success);
 
 #endif

@@ -24,6 +24,9 @@ void init_iringbuff() {
 
 int push_iringbuff(char *inst) {
   strncpy(iringbuff.insts[iringbuff.rp], inst, 128);
+  if (is_exit_status_bad()) {
+    strncat(iringbuff.insts[iringbuff.rp], "<-- ERROR!", 15);
+  }
   rp_update;
   return 0;
 }
