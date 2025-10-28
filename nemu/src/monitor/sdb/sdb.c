@@ -165,7 +165,11 @@ static int cmd_info(char *args) {
   }
 
   if (strcmp(args, "w") == 0) {
+#ifdef CONFIG_WATCHPOINT
     info_w();
+#else
+    Info("CONFIG_WATCHPOINT false, watchpoint disabled");
+#endif
     return 0;
   } else {
     Log("invalid arg, plz try again");
