@@ -331,6 +331,9 @@ void sdb_mainloop() {
     return;
   }
 
+  /*  init instrutions ringbuffer */
+  init_iringbuff();
+
   for (char *str; (str = rl_gets()) != NULL;) {
     char *str_end = str + strlen(str);
 
