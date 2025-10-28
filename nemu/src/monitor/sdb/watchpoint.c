@@ -13,8 +13,6 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
-#include "common.h"
-#include "debug.h"
 #include "sdb.h"
 
 #define NR_WP 32
