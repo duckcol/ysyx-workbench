@@ -126,7 +126,7 @@ void assert_fail_msg() {
 }
 
 void print_inst_ringbuff() {
-  Log("========instructions ringbuff========");
+  Log("\n========instructions ringbuff========");
   log_iringbuff();
 }
 
