@@ -128,6 +128,7 @@ void assert_fail_msg() {
 void print_inst_ringbuff() {
   Log("\n========instructions ringbuff========");
   log_iringbuff();
+  Log("\n===============end===================");
 }
 
 /* Simulate how the CPU works. */
