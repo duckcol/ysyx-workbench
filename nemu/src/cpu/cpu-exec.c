@@ -125,7 +125,10 @@ void assert_fail_msg() {
   statistic();
 }
 
-void print_inst_ringbuff() { Log("========instructions ringbuff========"); }
+void print_inst_ringbuff() {
+  Log("========instructions ringbuff========");
+  log_iringbuff();
+}
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
