@@ -40,7 +40,7 @@ run: run-env
 	$(call git_commit, "run NEMU")
 	$(NEMU_EXEC)
 
-brun: ARGS += -b
+brun: ARGS += --batch
 brun:run
 
 gdb: run-env
