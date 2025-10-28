@@ -26,6 +26,9 @@ void test_new_and_free_WP();
 void info_w();
 #endif
 
+void init_iringbuff();
+void log_iringbuff();
+
 word_t expr(char *e, bool *success);
 
 #endif
