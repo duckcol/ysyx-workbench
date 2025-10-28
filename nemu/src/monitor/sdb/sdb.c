@@ -14,8 +14,6 @@
  ***************************************************************************************/
 
 #include "sdb.h"
-#include "common.h"
-#include "debug.h"
 #include <complex.h>
 #include <cpu/cpu.h>
 #include <isa.h>
@@ -23,7 +21,6 @@
 #include <memory/vaddr.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-#include <stdint.h>
 
 static int is_batch_mode = false;
 
@@ -168,7 +165,11 @@ static int cmd_info(char *args) {
   }
 
   if (strcmp(args, "w") == 0) {
+#ifdef CONFIG_WATCHPOINT
     info_w();
+#else
+    Info("CONFIG_WATCHPOINT false, watchpoint disabled");
+#endif
     return 0;
   } else {
     Log("invalid arg, plz try again");
@@ -329,6 +330,9 @@ void sdb_mainloop() {
     cmd_c(NULL);
     return;
   }
+
+  /*  init instrutions ringbuffer */
+  init_iringbuff();
 
   for (char *str; (str = rl_gets()) != NULL;) {
     char *str_end = str + strlen(str);

@@ -14,14 +14,11 @@
  ***************************************************************************************/
 
 #include "utils.h"
+#include <../src/monitor/sdb/sdb.h>
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-
-#ifdef CONFIG_WATCHPOINT
-#include <../src/monitor/sdb/sdb.h>
-#endif
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -48,6 +45,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
+  //  iringbuffer
+  push_iringbuff(_this->logbuf);
+
   //	check watchpoints
   //	if change, stop cpu execution
   //	when watch $pc, it is easy to make cpu work over inst
@@ -68,24 +68,24 @@ static void exec_once(Decode *s, vaddr_t pc) {
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-#ifdef CONFIG_ITRACE
+#ifdef CONFIG_ITRACE //  itrace execute code
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc); //	printf address
   int ilen = s->snpc - s->pc;
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst.val;
   for (i = ilen - 1; i >= 0; i--) {
-    p += snprintf(p, 4, " %02x", inst[i]); //	print byte
+    p += snprintf(p, 4, " %02x", inst[i]); //	print instruction byte in hex
   }
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
   if (space_len < 0)
     space_len = 0;
   space_len = space_len * 3 + 1;
-  memset(p, ' ', space_len);
+  memset(p, ' ', space_len); // seperate hex code and disassemble with blank
   p += space_len;
 
-#ifndef CONFIG_ISA_loongarch32r
+#ifndef CONFIG_ISA_loongarch32r // disassemble inst and print to logbuf
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
               MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc),
@@ -126,6 +126,13 @@ void assert_fail_msg() {
   statistic();
 }
 
+void print_inst_ringbuff() {
+  Log("the instruction ringbuffer are as following");
+  puts("========instructions ringbuffer========");
+  log_iringbuff();
+  puts("================end====================");
+}
+
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);
@@ -162,6 +169,7 @@ void cpu_exec(uint64_t n) {
         nemu_state.halt_pc);
     // fall through
   case NEMU_QUIT:
+    print_inst_ringbuff();
     statistic();
   }
 }
