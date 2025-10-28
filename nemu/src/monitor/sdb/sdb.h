@@ -31,6 +31,7 @@ void log_iringbuff();
 int push_iringbuff(char *inst);
 
 int is_exit_status_bad();
+#define bad_ending is_exit_status_bad() && (nemu_state.state != NEMU_RUNNING)
 
 word_t expr(char *e, bool *success);
 

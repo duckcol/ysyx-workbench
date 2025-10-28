@@ -1,4 +1,5 @@
 #include "sdb.h"
+#include "utils.h"
 
 #define NR_INST 20
 
@@ -24,7 +25,7 @@ void init_iringbuff() {
 
 int push_iringbuff(char *inst) {
   strncpy(iringbuff.insts[iringbuff.rp], inst, 128);
-  if (!is_exit_status_bad()) {
+  if (bad_ending) {
     strncat(iringbuff.insts[iringbuff.rp], "<-- ERROR!", 15);
   }
   rp_update;

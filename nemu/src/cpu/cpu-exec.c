@@ -45,6 +45,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
+  //  iringbuffer
+  push_iringbuff(_this->logbuf);
+
   //	check watchpoints
   //	if change, stop cpu execution
   //	when watch $pc, it is easy to make cpu work over inst
@@ -58,9 +61,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
                            : NEMU_STOP;
   }
 #endif
-
-  //  iringbuffer
-  push_iringbuff(_this->logbuf);
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
