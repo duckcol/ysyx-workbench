@@ -82,7 +82,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   if (space_len < 0)
     space_len = 0;
   space_len = space_len * 3 + 1;
-  memset(p, ' ', space_len);
+  memset(p, ' ', space_len); // seperate hex code and disassemble with blank
   p += space_len;
 
 #ifndef CONFIG_ISA_loongarch32r // disassemble inst and print to logbuf
