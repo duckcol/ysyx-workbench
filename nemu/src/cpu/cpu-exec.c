@@ -127,9 +127,9 @@ void assert_fail_msg() {
 
 void print_inst_ringbuff() {
   Log("the instruction ringbuffer are as following");
-  puts("========instructions ringbuff========");
+  puts("========instructions ringbuffer========");
   log_iringbuff();
-  puts("===============end===================");
+  puts("================end====================");
 }
 
 /* Simulate how the CPU works. */
