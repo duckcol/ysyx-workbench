@@ -14,8 +14,6 @@
  ***************************************************************************************/
 
 #include "sdb.h"
-#include "common.h"
-#include "debug.h"
 #include <complex.h>
 #include <cpu/cpu.h>
 #include <isa.h>
@@ -23,7 +21,6 @@
 #include <memory/vaddr.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-#include <stdint.h>
 
 static int is_batch_mode = false;
 
