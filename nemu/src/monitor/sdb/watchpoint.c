@@ -16,8 +16,6 @@
 #include "common.h"
 #include "debug.h"
 #include "sdb.h"
-#include <stdbool.h>
-#include <stdio.h>
 
 #define NR_WP 32
 
