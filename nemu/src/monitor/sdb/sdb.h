@@ -28,6 +28,7 @@ void info_w();
 
 void init_iringbuff();
 void log_iringbuff();
+int push_iringbuff(char *inst);
 
 word_t expr(char *e, bool *success);
 

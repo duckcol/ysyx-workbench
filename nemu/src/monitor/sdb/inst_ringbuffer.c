@@ -18,6 +18,16 @@ void init_iringbuff() {
   iringbuff.wp = 0;
 }
 
+#define rp_update                                                              \
+  iringbuff.rp++;                                                              \
+  iringbuff.rp = (iringbuff.rp >= 20) ? 0 : iringbuff.rp;
+
+int push_iringbuff(char *inst) {
+  strncpy(iringbuff.insts[iringbuff.rp], inst, 128);
+  rp_update;
+  return 0;
+}
+
 void log_iringbuff() {
   for (int i = 0; i < NR_INST; i++) {
     log_write("%s\n", iringbuff.insts[i]);
