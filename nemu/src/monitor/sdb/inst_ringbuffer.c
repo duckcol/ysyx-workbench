@@ -1,5 +1,4 @@
 #include "sdb.h"
-#include "utils.h"
 
 #define NR_INST 20
 

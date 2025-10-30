@@ -46,7 +46,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
   //  iringbuffer
-  push_iringbuff(_this->logbuf);
+  IFDEF(CONFIG_ITRACE, push_iringbuff(_this->logbuf));
 
   //	check watchpoints
   //	if change, stop cpu execution
@@ -127,10 +127,12 @@ void assert_fail_msg() {
 }
 
 void print_inst_ringbuff() {
+#ifdef CONFIG_ITRACE
   Log("the instruction ringbuffer are as following");
   puts("========instructions ringbuffer========");
   log_iringbuff();
   puts("================end====================");
+#endif
 }
 
 /* Simulate how the CPU works. */

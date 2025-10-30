@@ -26,9 +26,11 @@ void test_new_and_free_WP();
 void info_w();
 #endif
 
+#ifdef CONFIG_ITRACE
 void init_iringbuff();
 void log_iringbuff();
 int push_iringbuff(char *inst);
+#endif
 
 int is_exit_status_bad();
 #define bad_ending                                                             \
