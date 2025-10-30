@@ -325,14 +325,11 @@ static int cmd_d(char *args) {
 void sdb_set_batch_mode() { is_batch_mode = true; }
 
 void sdb_mainloop() {
-  // Log("the is_batch_mode: %s", (is_batch_mode ? "True":"False"));
+
   if (is_batch_mode) {
     cmd_c(NULL);
     return;
   }
-
-  /*  init instrutions ringbuffer */
-  init_iringbuff();
 
   for (char *str; (str = rl_gets()) != NULL;) {
     char *str_end = str + strlen(str);
@@ -378,4 +375,9 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+
+  /*  init instrutions ringbuffer */
+  IFDEF(CONFIG_ITRACE, init_iringbuff());
+
+  /*  init memory trace */
 }
