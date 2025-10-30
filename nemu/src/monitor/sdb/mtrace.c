@@ -23,10 +23,10 @@ void init_mtrace() {
 int push_mem_trace(paddr_t addr, int type, word_t data) {
   if (type == 0)
     sprintf(mt.ringbuff[mt.wp],
-            "type: write, addr:" FMT_PADDR ", data:" FMT_WORD, addr, data);
+            "type: write, addr:" FMT_PADDR ", data:" FMT_WORD " ", addr, data);
   else if (type == 1)
     sprintf(mt.ringbuff[mt.wp],
-            "type: read , addr:" FMT_PADDR ", data:" FMT_WORD, addr, data);
+            "type: read , addr:" FMT_PADDR ", data:" FMT_WORD " ", addr, data);
   wp_update;
   return 0;
 }

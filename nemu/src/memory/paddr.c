@@ -57,7 +57,7 @@ word_t paddr_read(paddr_t addr, int len) {
   word_t ret;
   if (likely(in_pmem(addr))) {
     ret = pmem_read(addr, len);
-    // push_mem_trace(addr, 1, ret);
+    push_mem_trace(addr, 1, ret);
     return ret;
   }
   IFDEF(CONFIG_DEVICE, ret = mmio_read(addr, len); return ret;);
