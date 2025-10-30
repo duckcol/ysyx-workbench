@@ -13,12 +13,9 @@ void init_mtrace() {
   for (int i = 0; i < NR_MEM_TRACE; i++) {
     strncpy(mt.ringbuff[i], "1111_1111", 20 * sizeof(char));
   }
-  mt.rp = mt.wp = 0;
+  mt.rp = 0;
+  mt.wp = 0;
 }
-
-#define wp_update                                                              \
-  mt.wp++;                                                                     \
-  mt.wp = (mt.wp >= NR_MEM_TRACE) ? 0 : mt.wp;
 
 int push_mem_trace(paddr_t addr, int type, word_t data) {
   if (type == 0)
@@ -29,7 +26,8 @@ int push_mem_trace(paddr_t addr, int type, word_t data) {
     //         "type: read , addr:" FMT_PADDR ", data:" FMT_WORD " ", addr,
     //         data);
     sprintf(mt.ringbuff[mt.wp], "test %d", mt.rp);
-  wp_update;
+
+  mt.wp++;
   return 0;
 }
 
