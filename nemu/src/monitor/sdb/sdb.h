@@ -40,6 +40,7 @@ int is_exit_status_bad();
 
 #ifdef CONFIG_MTRACE
 void init_mtrace();
+int push_mem_trace(paddr_t addr, int type, word_t data);
 #endif
 
 word_t expr(char *e, bool *success);

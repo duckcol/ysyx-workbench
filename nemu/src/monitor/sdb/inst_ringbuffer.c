@@ -20,7 +20,7 @@ void init_iringbuff() {
 
 #define rp_update                                                              \
   iringbuff.rp++;                                                              \
-  iringbuff.rp = (iringbuff.rp >= 20) ? 0 : iringbuff.rp;
+  iringbuff.rp = (iringbuff.rp >= NR_INST) ? 0 : iringbuff.rp;
 
 int push_iringbuff(char *inst) {
   strncpy(iringbuff.insts[iringbuff.rp], inst, 128);
