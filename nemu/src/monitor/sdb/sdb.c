@@ -14,6 +14,7 @@
  ***************************************************************************************/
 
 #include "sdb.h"
+#include "macro.h"
 #include <complex.h>
 #include <cpu/cpu.h>
 #include <isa.h>
@@ -380,4 +381,5 @@ void init_sdb() {
   IFDEF(CONFIG_ITRACE, init_iringbuff());
 
   /*  init memory trace */
+  IFDEF(CONFIG_MTRACE, init_mtrace());
 }
