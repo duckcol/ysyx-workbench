@@ -325,8 +325,6 @@ static int cmd_d(char *args) {
 void sdb_set_batch_mode() { is_batch_mode = true; }
 
 void sdb_mainloop() {
-  /*  init instrutions ringbuffer */
-  IFDEF(CONFIG_ITRACE, init_iringbuff());
 
   if (is_batch_mode) {
     cmd_c(NULL);
@@ -377,4 +375,9 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+
+  /*  init instrutions ringbuffer */
+  IFDEF(CONFIG_ITRACE, init_iringbuff());
+
+  /*  init memory trace */
 }
