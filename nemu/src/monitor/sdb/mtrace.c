@@ -16,18 +16,18 @@ void init_mtrace() {
   mt.rp = mt.wp = 0;
 }
 
-#define rp_update                                                              \
-  mt.rp++;                                                                     \
-  mt.rp = (mt.rp >= NR_MEM_TRACE) ? 0 : mt.rp;
+#define wp_update                                                              \
+  mt.wp++;                                                                     \
+  mt.wp = (mt.wp >= NR_MEM_TRACE) ? 0 : mt.wp;
 
 int push_mem_trace(paddr_t addr, int type, word_t data) {
   if (type == 0)
-    sprintf(mt.ringbuff[mt.rp],
+    sprintf(mt.ringbuff[mt.wp],
             "type: write, addr:" FMT_PADDR ", data:" FMT_WORD, addr, data);
   else if (type == 1)
-    sprintf(mt.ringbuff[mt.rp],
+    sprintf(mt.ringbuff[mt.wp],
             "type: read , addr:" FMT_PADDR ", data:" FMT_WORD, addr, data);
-  rp_update;
+  wp_update;
   return 0;
 }
 
