@@ -13,6 +13,7 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
+#include "../src/monitor/sdb/sdb.h"
 #include <device/mmio.h>
 #include <isa.h>
 #include <memory/host.h>
