@@ -2,7 +2,7 @@
 
 #define NR_MEM_TRACE 20
 typedef struct {
-  char ringbuff[128][NR_MEM_TRACE];
+  char ringbuff[NR_MEM_TRACE][128];
   int rp;
   int wp;
 } memtrace;
