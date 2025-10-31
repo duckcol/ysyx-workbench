@@ -135,6 +135,15 @@ void print_inst_ringbuff() {
 #endif
 }
 
+void print_mem_trace() {
+#ifdef CONFIG_MTRACE
+  Log("the memory trace are as following");
+  puts("===========memory trace===========");
+  log_mem_trace();
+  puts("===============end================");
+#endif
+}
+
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);
@@ -172,6 +181,7 @@ void cpu_exec(uint64_t n) {
     // fall through
   case NEMU_QUIT:
     print_inst_ringbuff();
+    print_mem_trace();
     statistic();
   }
 }

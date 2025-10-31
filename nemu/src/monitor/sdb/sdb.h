@@ -38,7 +38,11 @@ int is_exit_status_bad();
       (nemu_state.state == NEMU_END || nemu_state.state == NEMU_QUIT ||        \
        nemu_state.state == NEMU_ABORT)
 
+#ifdef CONFIG_MTRACE
 void init_mtrace();
+int push_mem_trace(paddr_t addr, int type, word_t data);
+void log_mem_trace();
+#endif
 
 word_t expr(char *e, bool *success);
 

@@ -380,4 +380,5 @@ void init_sdb() {
   IFDEF(CONFIG_ITRACE, init_iringbuff());
 
   /*  init memory trace */
+  IFDEF(CONFIG_MTRACE, init_mtrace());
 }
