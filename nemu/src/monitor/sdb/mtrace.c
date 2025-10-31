@@ -25,7 +25,7 @@ int push_mem_trace(paddr_t addr, int type, word_t data) {
     // sprintf(mt.ringbuff[mt.wp],
     //         "type: read , addr:" FMT_PADDR ", data:" FMT_WORD " ", addr,
     //         data);
-    sprintf(mt.ringbuff[mt.wp], "test %d", mt.rp);
+    sprintf(mt.ringbuff[mt.wp], "test %d", mt.wp);
 
   mt.wp++;
   return 0;
