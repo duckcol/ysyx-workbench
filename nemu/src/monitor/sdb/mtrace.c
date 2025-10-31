@@ -23,11 +23,8 @@ int push_mem_trace(paddr_t addr, int type, word_t data) {
     sprintf(strbuff, "type: write, addr:" FMT_PADDR ", data:" FMT_WORD " ",
             addr, data);
   else if (type == 1)
-    // sprintf(strbuff, "type: read , addr:" FMT_PADDR ", data:" FMT_WORD " ",
-    //         addr, data);
-
-    // strcpy(mt.ringbuff[mt.wp], strbuff);
-    sprintf(mt.ringbuff[mt.wp], "test %d", mt.wp);
+    sprintf(mt.ringbuff[mt.wp], "test %d " FMT_PADDR " " FMT_WORD, mt.wp, addr,
+            data);
 
   mt.wp++;
   mt.wp = (mt.wp >= NR_MEM_TRACE) ? 0 : mt.wp;
