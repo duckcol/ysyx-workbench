@@ -33,6 +33,9 @@ int push_mem_trace(paddr_t addr, int type, word_t data) {
 
 void log_mem_trace() {
   for (int i = 0; i < NR_MEM_TRACE; i++) {
+    if (mt.rp == i) {
+      strncat(mt.ringbuff[i], "<--current write position", 50);
+    }
     log_write("%s\n", mt.ringbuff[i]);
     puts(mt.ringbuff[i]);
   }
