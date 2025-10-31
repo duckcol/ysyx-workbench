@@ -60,7 +60,8 @@ word_t paddr_read(paddr_t addr, int len) {
     push_mem_trace(addr, 1, ret);
     return ret;
   }
-  IFDEF(CONFIG_DEVICE, ret = mmio_read(addr, len); return ret;);
+  IFDEF(CONFIG_DEVICE, ret = mmio_read(addr, len); push_mem_trace(addr, 1, ret);
+        return ret;);
   out_of_bound(addr);
   return 0;
 }
@@ -68,8 +69,10 @@ word_t paddr_read(paddr_t addr, int len) {
 void paddr_write(paddr_t addr, int len, word_t data) {
   if (likely(in_pmem(addr))) {
     pmem_write(addr, len, data);
+    push_mem_trace(addr, 0, data);
     return;
   }
-  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
+  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data);
+        push_mem_trace(addr, 0, data); return);
   out_of_bound(addr);
 }
