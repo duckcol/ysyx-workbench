@@ -14,7 +14,6 @@
  ***************************************************************************************/
 
 #include "sdb.h"
-#include "macro.h"
 #include <complex.h>
 #include <cpu/cpu.h>
 #include <isa.h>
