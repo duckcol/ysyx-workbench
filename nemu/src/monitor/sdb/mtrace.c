@@ -19,12 +19,15 @@ void init_mtrace() {
 
 char strbuff[128];
 int push_mem_trace(paddr_t addr, int type, word_t data) {
-  if (type == 0)
-    sprintf(strbuff, "type: write, addr:" FMT_PADDR ", data:" FMT_WORD " ",
-            addr, data);
-  else if (type == 1)
-    sprintf(mt.ringbuff[mt.wp], "test %d " FMT_PADDR " " FMT_WORD " ", mt.wp,
-            addr, data);
+  if (type == 0) {
+    sprintf(mt.ringbuff[mt.wp],
+            "test wp:%d addr:" FMT_PADDR " data:" FMT_WORD " ", mt.wp, addr,
+            data);
+  } else if (type == 1) {
+    sprintf(mt.ringbuff[mt.wp],
+            "test wp:%d addr:" FMT_PADDR " data:" FMT_WORD " ", mt.wp, addr,
+            data);
+  }
 
   mt.wp++;
   mt.wp = (mt.wp >= NR_MEM_TRACE) ? 0 : mt.wp;
