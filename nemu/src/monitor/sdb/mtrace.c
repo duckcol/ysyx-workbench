@@ -17,7 +17,6 @@ void init_mtrace() {
   mt.wp = 0;
 }
 
-char strbuff[128];
 int push_mem_trace(paddr_t addr, int type, word_t data) {
   if (type == 0) {
     sprintf(mt.ringbuff[mt.wp],

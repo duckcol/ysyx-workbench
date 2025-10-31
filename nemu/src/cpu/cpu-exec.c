@@ -138,7 +138,9 @@ void print_inst_ringbuff() {
 void print_mem_trace() {
 #ifdef CONFIG_MTRACE
   Log("the memory trace are as following");
+  puts("===========memory trace===========");
   log_mem_trace();
+  puts("===============end================");
 #endif
 }
 
