@@ -5,5 +5,5 @@ void init_ftrace(const char *elf_file) {
     Log("no elf file input, ftrace malfunction");
     return;
   }
-  Log("the elf file is '%s'", elf_file);
+  Log("The elf file is %s", elf_file);
 }
