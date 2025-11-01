@@ -14,7 +14,6 @@
  ***************************************************************************************/
 
 #include "utils.h"
-#include <../src/monitor/sdb/sdb.h>
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
@@ -33,6 +32,7 @@ static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
 void device_update();
+int push_iringbuff(char *inst);
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -125,7 +125,7 @@ void assert_fail_msg() {
   isa_reg_display();
   statistic();
 }
-
+void log_iringbuff();
 void print_inst_ringbuff() {
 #ifdef CONFIG_ITRACE
   Log("the instruction ringbuffer are as following");
@@ -135,6 +135,7 @@ void print_inst_ringbuff() {
 #endif
 }
 
+void log_mem_trace();
 void print_mem_trace() {
 #ifdef CONFIG_MTRACE
   Log("the memory trace are as following");

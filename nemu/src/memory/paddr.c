@@ -13,11 +13,13 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
-#include "../src/monitor/sdb/sdb.h"
+#include "common.h"
 #include <device/mmio.h>
 #include <isa.h>
 #include <memory/host.h>
 #include <memory/paddr.h>
+
+int push_mem_trace(paddr_t addr, int type, word_t data);
 
 #if defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
