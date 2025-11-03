@@ -70,8 +70,7 @@ void init_ftrace(const char *elf_file) {
     Elf32_Sym *sym_entry = &symtab[i];
     if (ELF32_ST_TYPE(sym_entry->st_info) == STT_FUNC) {
       char *func_name = &strtab[sym_entry->st_name];
-      Log("Found function: %s \t begin " FMT_PADDR "\t end \t" FMT_PADDR
-          " bytes",
+      Log("Found function: %s begin " FMT_PADDR " end " FMT_PADDR " bytes",
           func_name, sym_entry->st_value,
           sym_entry->st_value + sym_entry->st_size);
     }
