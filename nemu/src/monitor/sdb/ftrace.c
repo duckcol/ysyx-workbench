@@ -17,7 +17,7 @@ void init_ftrace(const char *elf_file) {
   Elf32_Ehdr elf_header;
   int ret;
   ret = fread(&elf_header, 1, sizeof(Elf32_Ehdr), fp);
-  Assert(ret == 1, "read elf header error");
+  Assert(ret != 0, "read elf header error");
 
   //  find .symtab section
   fseek(fp, elf_header.e_shoff, SEEK_SET);
@@ -25,7 +25,7 @@ void init_ftrace(const char *elf_file) {
   for (int i = 0; i < elf_header.e_shnum; i++) {
     Elf32_Shdr section_header;
     ret = fread(&section_header, 1, sizeof(Elf32_Shdr), fp);
-    Assert(ret == 1, "read section error");
+    Assert(ret != 0, "read section error");
     if (section_header.sh_type == SHT_SYMTAB) {
       Log("find symtab");
       // symtab_shdr = section_header;
