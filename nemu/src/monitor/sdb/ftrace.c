@@ -80,10 +80,10 @@ void init_ftrace(const char *elf_file) {
           func_name, sym_entry->st_value,
           sym_entry->st_value + sym_entry->st_size);
 
-      func_log a_log;
-      a_log.start = sym_entry->st_value;
-      a_log.end = sym_entry->st_value + sym_entry->st_size;
-      strncpy(a_log.name, func_name, 50 * sizeof(char));
+      func_log *a_log = calloc(1, sizeof(func_log));
+      a_log->start = sym_entry->st_value;
+      a_log->end = sym_entry->st_value + sym_entry->st_size;
+      strncpy(a_log->name, func_name, 50 * sizeof(char));
       List_push(ftrace_log, &a_log);
     }
   }
