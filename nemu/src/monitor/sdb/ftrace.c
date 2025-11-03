@@ -1,3 +1,4 @@
+#include "debug.h"
 #include "sdb.h"
 #include <elf.h>
 
@@ -18,6 +19,7 @@ void init_ftrace(const char *elf_file) {
   int ret;
   ret = fread(&elf_header, 1, sizeof(Elf32_Ehdr), fp);
   Assert(ret != 0, "read elf header error");
+
   Log("the strtabndx: %d", elf_header.e_shstrndx);
 
   //  find .symtab section
@@ -31,9 +33,12 @@ void init_ftrace(const char *elf_file) {
     if (section_header.sh_type == SHT_SYMTAB) {
       Log("find symtab when shnum == %d", i);
       // symtab_shdr = section_header;
-    } else if (section_header.sh_type == SHT_STRTAB) {
+    } else if (section_header.sh_type == SHT_STRTAB &&
+               i != elf_header.e_shstrndx) {
       Log("find strtab when shnum == %d", i);
       // strtab_shdr = section_header;
+    } else if (i == elf_header.e_shstrndx) {
+      Log("find shstrtab when shnum == %d", i);
     }
   }
 }
