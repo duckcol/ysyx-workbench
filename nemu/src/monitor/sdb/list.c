@@ -1,4 +1,5 @@
 #include "list.h"
+#include "sdb.h"
 
 List *List_create() {
   //	the memory will be set to 0
@@ -19,7 +20,7 @@ void List_clear_destroy(List *list) {
 }
 
 //	push in a node to last of the list
-void List_push(List *list, void *value) {
+void List_push(List *list, func_log *value) {
   ListNode *node = calloc(1, sizeof(ListNode));
   Assert(node, "push listnode error");
 
@@ -38,13 +39,13 @@ void List_push(List *list, void *value) {
 }
 
 //	pop out the last node of the list
-void *List_pop(List *list) {
+func_log *List_pop(List *list) {
   ListNode *node = list->last;
   return node != NULL ? List_remove(list, node) : NULL;
 }
 
 //	add a node to the first of the list
-void List_unshift(List *list, void *value) {
+void List_unshift(List *list, func_log *value) {
   ListNode *node = calloc(1, sizeof(ListNode));
   Assert(node, "push listnode error");
 
@@ -64,7 +65,7 @@ void List_unshift(List *list, void *value) {
 
 //	remove the first node of the list
 //	and return the value of the remove node
-void *List_shift(List *list) {
+func_log *List_shift(List *list) {
   ListNode *node = list->first;
   return node != NULL ? List_remove(list, node) : NULL;
 }

@@ -4,7 +4,7 @@ struct ListNode;
 typedef struct ListNode {
   struct ListNode *next;
   struct ListNode *prev;
-  void *value;
+  func_log *value;
 } ListNode;
 
 typedef struct List {
@@ -20,11 +20,11 @@ void List_clear_destroy(List *list);
 #define List_first(A) ((A)->first != NULL ? (A)->first->value : NULL)
 #define List_last(A) ((A)->last != NULL ? (A)->last->value : NULL)
 
-void List_push(List *list, void *value);
-void *List_pop(List *list);
+void List_push(List *list, func_log *value);
+func_log *List_pop(List *list);
 
-void List_unshift(List *list, void *value);
-void *List_shift(List *list);
+void List_unshift(List *list, func_log *value);
+func_log *List_shift(List *list);
 
 void *List_remove(List *list, ListNode *node);
 
