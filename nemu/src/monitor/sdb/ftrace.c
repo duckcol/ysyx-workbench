@@ -100,4 +100,5 @@ void print_ftrace_log() {
     Log("Fn %s start at " FMT_PADDR " end at " FMT_PADDR "", a_log.name,
         a_log.start, a_log.end);
   }
+  List_clear_destroy(ftrace_log);
 }
