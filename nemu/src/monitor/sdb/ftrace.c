@@ -63,4 +63,15 @@ void init_ftrace(const char *elf_file) {
   Log("first str in shstrtab:%s", shstrtab + 1);
   Log("the symtab name:%s", shstrtab + symtab_shdr.sh_name);
   Log("the strtab name:%s", shstrtab + strtab_shdr.sh_name);
+
+  //  go through symtab for FUNC
+  int num_symbols = symtab_shdr.sh_size / symtab_shdr.sh_entsize;
+  for (int i = 0; i < num_symbols; i++) {
+    Elf32_Sym *sym_entry = &symtab[i];
+    if (ELF32_ST_TYPE(sym_entry->st_info) == STT_FUNC) {
+      char *func_name = &strtab[sym_entry->st_name];
+      printf("Found function: %s at address 0x%08X\n", func_name,
+             sym_entry->st_value);
+    }
+  }
 }
