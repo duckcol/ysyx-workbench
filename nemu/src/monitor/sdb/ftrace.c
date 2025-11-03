@@ -27,10 +27,10 @@ void init_ftrace(const char *elf_file) {
     ret = fread(&section_header, 1, sizeof(Elf32_Shdr), fp);
     Assert(ret != 0, "read section error");
     if (section_header.sh_type == SHT_SYMTAB) {
-      Log("find symtab");
+      Log("find symtab when shnum == %d", i);
       // symtab_shdr = section_header;
     } else if (section_header.sh_type == SHT_STRTAB) {
-      Log("find strtab");
+      Log("find strtab when shnum == %d", i);
       // strtab_shdr = section_header;
     }
   }
