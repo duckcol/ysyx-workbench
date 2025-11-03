@@ -1,6 +1,8 @@
-#include "debug.h"
+#include "list.h"
 #include "sdb.h"
 #include <elf.h>
+
+List *ftrace_log = NULL;
 
 void init_ftrace(const char *elf_file) {
   //  check if there is an elf file
@@ -8,6 +10,10 @@ void init_ftrace(const char *elf_file) {
     Log("no elf file input, ftrace malfunction");
     return;
   }
+
+  //  init ftrace log list
+  ftrace_log = List_create();
+  Assert(ftrace_log, "ftrace log init error");
 
   //  read in elf file
   Log("The elf file is %s", elf_file);
@@ -64,7 +70,7 @@ void init_ftrace(const char *elf_file) {
   Log("the symtab name:%s", shstrtab + symtab_shdr.sh_name);
   Log("the strtab name:%s", shstrtab + strtab_shdr.sh_name);
 
-  //  go through symtab for FUNC
+  //  go through symtab for FUNC and push in ftrace_log list
   int num_symbols = symtab_shdr.sh_size / symtab_shdr.sh_entsize;
   for (int i = 0; i < num_symbols; i++) {
     Elf32_Sym *sym_entry = &symtab[i];
@@ -73,6 +79,25 @@ void init_ftrace(const char *elf_file) {
       Log("Found function: %s begin " FMT_PADDR " end " FMT_PADDR " bytes",
           func_name, sym_entry->st_value,
           sym_entry->st_value + sym_entry->st_size);
+
+      func_log a_log;
+      a_log.start = sym_entry->st_value;
+      a_log.end = sym_entry->st_value + sym_entry->st_size;
+      strncpy(a_log.name, func_name, 50 * sizeof(char));
+      List_push(ftrace_log, &a_log);
     }
+  }
+
+  free(strtab);
+  free(symtab);
+  free(shstrtab);
+  fclose(fp);
+}
+
+void print_ftrace_log() {
+  LIST_FOREACH(ftrace_log, first, next, cur) {
+    func_log a_log = *(func_log *)cur->value;
+    Log("Fn %s start at " FMT_PADDR " end at " FMT_PADDR "", a_log.name,
+        a_log.start, a_log.end);
   }
 }
