@@ -59,5 +59,8 @@ void init_ftrace(const char *elf_file) {
   char *shstrtab = malloc(shstrtab_shdr.sh_size);
   ret = fread(shstrtab, 1, shstrtab_shdr.sh_size, fp);
   Assert(ret, "shstrtab readin error");
+
   Log("first str in shstrtab:%s", shstrtab + 1);
+  Log("the symtab name:%s", shstrtab + symtab_shdr.sh_name);
+  Log("the strtab name:%s", shstrtab + strtab_shdr.sh_name);
 }
