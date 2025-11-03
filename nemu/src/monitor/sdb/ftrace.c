@@ -70,7 +70,7 @@ void init_ftrace(const char *elf_file) {
     Elf32_Sym *sym_entry = &symtab[i];
     if (ELF32_ST_TYPE(sym_entry->st_info) == STT_FUNC) {
       char *func_name = &strtab[sym_entry->st_name];
-      Log("Found function: %s at address 0x%08X\n", func_name,
+      Log("Found function: %s at address " FMT_PADDR "", func_name,
           sym_entry->st_value);
     }
   }
