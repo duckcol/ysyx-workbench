@@ -106,18 +106,27 @@ void search_func_name(paddr_t pc, char *name) {
   Assert(0, "NOT found func name");
 }
 
+#define Log_start(format, ...)                                                 \
+  _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "", __FILE__, __LINE__,    \
+       __func__, ##__VA_ARGS__)
+#define Log_blank(format, ...)                                                 \
+  _Log(ANSI_FMT(format, ANSI_FG_BLUE), ##__VA_ARGS__)
+#define Log_ftrace(format, ...)                                                \
+  _Log(ANSI_FMT(format, ANSI_FG_BLUE) "\n", ##__VA_ARGS__)
+
 int level = 0;
 void add_ftrace(word_t target, bool is_ret) {
   char name[50];
   // char blank[100] = "";
   search_func_name(target, name);
-  // for (int i = level; i > 0; i--)
-  //   strncat(blank, " ", 100);
+  for (int i = level; i > 0; i--)
+    //   strncat(blank, " ", 100);
+    Log_blank("   ");
   if (is_ret == 1) {
-    Log("layer %d:ret to %s", level, name);
+    Log_ftrace("layer %d:ret to %s", level, name);
     level--;
   } else {
-    Log("layer %d:jmp to %s", level, name);
+    Log_ftrace("layer %d:jmp to %s", level, name);
     level++;
   }
 }
