@@ -1,3 +1,4 @@
+#include "debug.h"
 #include "list.h"
 #include "sdb.h"
 #include <elf.h>
@@ -100,9 +101,9 @@ void search_func_name(paddr_t pc, char *name) {
     if (log.start <= pc && pc < log.end) {
       strncpy(name, log.name, 50 * sizeof(char));
       return;
-    } else {
-      Assert(0, "NOT found func log");
     }
+
+    Assert(0, "NOT found func name");
   }
 }
 
