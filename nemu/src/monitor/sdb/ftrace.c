@@ -107,11 +107,13 @@ void search_func_name(paddr_t pc, char *name) {
   Assert(0, "NOT found func name");
 }
 
-void add_ftrace(word_t target, bool is_rs1) {
+void add_ftrace(word_t target, bool is_ret) {
   char name[50];
-  if (is_rs1 == 1) {
-    search_func_name(target, name);
+  search_func_name(target, name);
+  if (is_ret == 1) {
     Log("ret to func %s", name);
+  } else {
+    Log("jmp to func %s", name);
   }
 }
 
