@@ -102,8 +102,6 @@ void search_func_name(paddr_t pc, char *name) {
       strncpy(name, log.name, 50 * sizeof(char));
       return;
     }
-
-    Assert(0, "NOT found func name");
   }
 }
 
