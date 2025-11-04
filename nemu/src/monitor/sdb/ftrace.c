@@ -103,9 +103,8 @@ void search_func_name(paddr_t pc, char *name) {
       strncpy(name, log.name, 50 * sizeof(char));
       return;
     }
-
-    Assert(0, "NOT found func name");
   }
+  Assert(0, "NOT found func name");
 }
 
 void add_ftrace(word_t target, bool is_rs1) {
