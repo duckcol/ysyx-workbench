@@ -111,7 +111,7 @@ void add_ftrace(word_t target, bool is_ret) {
   char name[50];
   char blank[100] = "";
   search_func_name(target, name);
-  for (int i = level; i > 0; i++)
+  for (int i = level; i > 0; i--)
     strncat(blank, "  ", 100);
   if (is_ret == 1) {
     Log("%s ret to func %s", blank, name);
