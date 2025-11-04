@@ -1,4 +1,3 @@
-#include "debug.h"
 #include "list.h"
 #include "sdb.h"
 #include <elf.h>
@@ -107,13 +106,19 @@ void search_func_name(paddr_t pc, char *name) {
   Assert(0, "NOT found func name");
 }
 
+int level = 0;
 void add_ftrace(word_t target, bool is_ret) {
   char name[50];
+  char blank[100] = "";
   search_func_name(target, name);
+  for (int i = level; i > 0; i++)
+    strncat(blank, "  ", 100);
   if (is_ret == 1) {
-    Log("ret to func %s", name);
+    Log("%s ret to func %s", blank, name);
+    level--;
   } else {
-    Log("jmp to func %s", name);
+    Log("%s jmp to func %s", blank, name);
+    level++;
   }
 }
 
