@@ -114,10 +114,10 @@ void add_ftrace(word_t target, bool is_ret) {
   for (int i = level; i > 0; i--)
     strncat(blank, "   ", 100);
   if (is_ret == 1) {
-    Log("%sret to func %s", blank, name);
+    Log("%sret to %s", blank, name);
     level--;
   } else {
-    Log("%sjmp to func %s", blank, name);
+    Log("%sjmp to %s", blank, name);
     level++;
   }
 }
