@@ -145,6 +145,8 @@ void print_mem_trace() {
 #endif
 }
 
+void print_ftrace_log();
+
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);
@@ -183,6 +185,7 @@ void cpu_exec(uint64_t n) {
   case NEMU_QUIT:
     print_inst_ringbuff();
     print_mem_trace();
+    print_ftrace_log();
     statistic();
   }
 }

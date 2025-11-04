@@ -44,6 +44,12 @@ int push_mem_trace(paddr_t addr, int type, word_t data);
 void log_mem_trace();
 #endif
 
+typedef struct {
+  paddr_t start;
+  paddr_t end;
+  char name[50];
+} func_log;
+
 word_t expr(char *e, bool *success);
 
 #endif
