@@ -74,7 +74,8 @@ void init_ftrace(const char *elf_file) {
   int num_symbols = symtab_shdr.sh_size / symtab_shdr.sh_entsize;
   for (int i = 0; i < num_symbols; i++) {
     Elf32_Sym *sym_entry = &symtab[i];
-    if (ELF32_ST_TYPE(sym_entry->st_info) == STT_FUNC) {
+    if (ELF32_ST_TYPE(sym_entry->st_info) == STT_FUNC &&
+        sym_entry->st_size != 0) {
       char *func_name = &strtab[sym_entry->st_name];
       Log("Found function: %s begin " FMT_PADDR " end " FMT_PADDR " bytes",
           func_name, sym_entry->st_value,
@@ -92,6 +93,41 @@ void init_ftrace(const char *elf_file) {
   free(symtab);
   free(shstrtab);
   fclose(fp);
+}
+
+void search_func_name(paddr_t pc, char *name) {
+  LIST_FOREACH(ftrace_log, first, next, cur) {
+    func_log log = *(func_log *)cur->value;
+    if (log.start <= pc && pc < log.end) {
+      strncpy(name, log.name, 50 * sizeof(char));
+      return;
+    }
+  }
+  Assert(0, "NOT found func name");
+}
+
+#define Log_start(format, ...)                                                 \
+  _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "", __FILE__, __LINE__,    \
+       __func__, ##__VA_ARGS__)
+#define Log_blank(format, ...)                                                 \
+  _Log(ANSI_FMT(format, ANSI_FG_BLUE), ##__VA_ARGS__)
+#define Log_ftrace(format, ...)                                                \
+  _Log(ANSI_FMT(format, ANSI_FG_BLUE) "\n", ##__VA_ARGS__)
+
+int level = 0;
+void add_ftrace(word_t target, bool is_ret) {
+  char name[50];
+  Log_start();
+  search_func_name(target, name);
+  for (int i = level; i > 0; i--)
+    Log_blank(" ");
+  if (is_ret == 1) {
+    Log_ftrace("layer %d:ret to %s", level, name);
+    level--;
+  } else {
+    Log_ftrace("layer %d:jmp to %s", level, name);
+    level++;
+  }
 }
 
 void print_ftrace_log() {
