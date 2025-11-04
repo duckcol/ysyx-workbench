@@ -112,12 +112,12 @@ void add_ftrace(word_t target, bool is_ret) {
   char blank[100] = "";
   search_func_name(target, name);
   for (int i = level; i > 0; i--)
-    strncat(blank, "\t", 100);
+    strncat(blank, "   ", 100);
   if (is_ret == 1) {
-    Log("%s ret to func %s", blank, name);
+    Log("%sret to func %s", blank, name);
     level--;
   } else {
-    Log("%s jmp to func %s", blank, name);
+    Log("%sjmp to func %s", blank, name);
     level++;
   }
 }
