@@ -112,7 +112,7 @@ void add_ftrace(word_t target, bool is_ret) {
   char blank[100] = "";
   search_func_name(target, name);
   for (int i = level; i > 0; i--)
-    strncat(blank, "   ", 100);
+    strncat(blank, " ", 100);
   if (is_ret == 1) {
     Log("%sret to %s", blank, name);
     level--;
