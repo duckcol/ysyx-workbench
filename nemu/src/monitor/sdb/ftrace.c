@@ -114,10 +114,10 @@ void add_ftrace(word_t target, bool is_ret) {
   // for (int i = level; i > 0; i--)
   //   strncat(blank, " ", 100);
   if (is_ret == 1) {
-    Log("%d:ret to %s", level, name);
+    Log("layer %d:ret to %s", level, name);
     level--;
   } else {
-    Log("%d:jmp to %s", level, name);
+    Log("layer %d:jmp to %s", level, name);
     level++;
   }
 }
