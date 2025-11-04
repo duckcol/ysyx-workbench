@@ -94,6 +94,26 @@ void init_ftrace(const char *elf_file) {
   fclose(fp);
 }
 
+void search_func_name(paddr_t pc, char *name) {
+  LIST_FOREACH(ftrace_log, first, next, cur) {
+    func_log log = *(func_log *)cur->value;
+    if (log.start <= pc && pc < log.end) {
+      strncpy(name, log.name, 50 * sizeof(char));
+      return;
+    } else {
+      Assert(0, "NOT found func log");
+    }
+  }
+}
+
+void add_ftrace(word_t target, bool is_rs1) {
+  char name[50];
+  if (is_rs1 == 1) {
+    search_func_name(target, name);
+    Log("ret to func %s", name);
+  }
+}
+
 void print_ftrace_log() {
   LIST_FOREACH(ftrace_log, first, next, cur) {
     func_log a_log = *(func_log *)cur->value;

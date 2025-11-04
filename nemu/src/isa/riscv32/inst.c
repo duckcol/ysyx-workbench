@@ -129,13 +129,15 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi, I,
           R(rd) = src1 + imm);
 
+  void add_ftrace(word_t target, int rs1);
   INSTPAT(
       "??????? ????? ????? ??? ????? 11011 11", jal, J,
       Info("jal: rd = %d(%s)  imm = " FMT_WORD "", rd, isa_reg_name(rd), imm);
       Info("jal: pc = " FMT_WORD ", snpc = " FMT_WORD ", dnpc = " FMT_WORD "",
            s->pc, s->snpc, s->dnpc);
-      Info("jal: target dnpc = " FMT_WORD "", s->pc + imm); R(rd) = s->snpc;
-      s->dnpc = s->pc + imm // dynamic next pc point to pc + imm
+      Info("jal: target dnpc = " FMT_WORD "", s->pc + imm);
+      R(rd) = s->snpc;       // save current pc + 4 == snpc to rd
+      s->dnpc = s->pc + imm; // dynamic next pc point to pc + imm
   );
 
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S,
@@ -145,7 +147,8 @@ static int decode_exec(Decode *s) {
       "??????? ????? ????? 000 ????? 11001 11", jalr, I,
       Info("jalr: rd = %d(%s)  imm = " FMT_WORD " ", rd, isa_reg_name(rd), imm);
       Info("jalr: target dnpc = " FMT_WORD "", (src1 + imm) & ~((word_t)1));
-      R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1));
+      R(rd) = s->snpc; s->dnpc = (src1 + imm) & ~((word_t)1);
+      add_ftrace(s->dnpc, src1 == R(1)));
 
   //  more instructions:
   //  Integer Computational instructions
