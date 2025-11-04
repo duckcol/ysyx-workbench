@@ -109,15 +109,15 @@ void search_func_name(paddr_t pc, char *name) {
 int level = 0;
 void add_ftrace(word_t target, bool is_ret) {
   char name[50];
-  char blank[100] = "";
+  // char blank[100] = "";
   search_func_name(target, name);
-  for (int i = level; i > 0; i--)
-    strncat(blank, " ", 100);
+  // for (int i = level; i > 0; i--)
+  //   strncat(blank, " ", 100);
   if (is_ret == 1) {
-    Log("%sret to %s", blank, name);
+    Log("%d:ret to %s", level, name);
     level--;
   } else {
-    Log("%sjmp to %s", blank, name);
+    Log("%d:jmp to %s", level, name);
     level++;
   }
 }
