@@ -75,7 +75,8 @@ void init_ftrace(const char *elf_file) {
   int num_symbols = symtab_shdr.sh_size / symtab_shdr.sh_entsize;
   for (int i = 0; i < num_symbols; i++) {
     Elf32_Sym *sym_entry = &symtab[i];
-    if (ELF32_ST_TYPE(sym_entry->st_info) == STT_FUNC) {
+    if (ELF32_ST_TYPE(sym_entry->st_info) == STT_FUNC &&
+        sym_entry->st_size != 0) {
       char *func_name = &strtab[sym_entry->st_name];
       Log("Found function: %s begin " FMT_PADDR " end " FMT_PADDR " bytes",
           func_name, sym_entry->st_value,
@@ -102,6 +103,8 @@ void search_func_name(paddr_t pc, char *name) {
       strncpy(name, log.name, 50 * sizeof(char));
       return;
     }
+
+    Assert(0, "NOT found func name");
   }
 }
 
