@@ -121,7 +121,7 @@ void add_ftrace(word_t target, bool is_ret) {
   search_func_name(target, name);
   for (int i = level; i > 0; i--)
     //   strncat(blank, " ", 100);
-    Log_blank("   ");
+    Log_blank(" ");
   if (is_ret == 1) {
     Log_ftrace("layer %d:ret to %s", level, name);
     level--;
