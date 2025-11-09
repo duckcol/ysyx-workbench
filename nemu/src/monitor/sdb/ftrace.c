@@ -3,15 +3,18 @@
 #include <elf.h>
 
 List *ftrace_log = NULL;
+bool ftrace_flag;
 
 void init_ftrace(const char *elf_file) {
   //  check if there is an elf file
   if (elf_file == NULL) {
     Log("no elf file input, ftrace malfunction");
+    ftrace_flag = false;
     return;
   }
 
   //  init ftrace log list
+  ftrace_flag = true;
   ftrace_log = List_create();
   Assert(ftrace_log, "ftrace log init error");
 
@@ -116,6 +119,8 @@ void search_func_name(paddr_t pc, char *name) {
 
 int level = 0;
 void add_ftrace(word_t target, bool is_ret) {
+  if (ftrace_flag == false)
+    return;
   char name[50];
   Log_start();
   search_func_name(target, name);
@@ -131,6 +136,8 @@ void add_ftrace(word_t target, bool is_ret) {
 }
 
 void print_ftrace_log() {
+  if (ftrace_flag == false)
+    return;
   LIST_FOREACH(ftrace_log, first, next, cur) {
     func_log a_log = *(func_log *)cur->value;
     Log("Fn %s start at " FMT_PADDR " end at " FMT_PADDR "", a_log.name,
