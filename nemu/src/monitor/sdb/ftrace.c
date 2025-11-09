@@ -5,6 +5,7 @@
 List *ftrace_log = NULL;
 bool ftrace_flag;
 
+#ifdef CONFIG_FTRACE
 void init_ftrace(const char *elf_file) {
   //  check if there is an elf file
   if (elf_file == NULL) {
@@ -145,3 +146,8 @@ void print_ftrace_log() {
   }
   List_clear_destroy(ftrace_log);
 }
+#else
+void print_ftrace_log() {}
+void add_ftrace() {}
+void init_ftrace() {}
+#endif
