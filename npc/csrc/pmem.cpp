@@ -1,9 +1,9 @@
 #include "pmem.h"
-#include <assert.h>
-static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+
+uint8_t *guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 word_t pmem_read(paddr_t pc) {
-  Assert(pc < CONFIG_MBASE, "current pc %08x < BASE ADDR %08x", pc,
+  Assert(pc > CONFIG_MBASE, "current pc %08x < BASE ADDR %08x", pc,
          CONFIG_MBASE);
   uint8_t *addr_in_pmem = pmem + pc - CONFIG_MBASE;
   word_t ret = *(word_t *)addr_in_pmem;

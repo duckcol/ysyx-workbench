@@ -3,6 +3,10 @@ TOPNAME = antpc
 CPP_CODE=$(wildcard csrc/*.cpp csrc/*.c)
 VLOG_CODE=$(wildcard vsrc/*.v)
 WAVEFORM_FILE=$(wildcard *.fst *.vcd)
+
+IMG_PATH := $(YSYX_HOME)/am-kernels/tests/cpu-tests/build
+IMG := $(wildcard image/*.bin)
+
 VERILATOR = verilator
 VERILATOR_CFLAGS += --cc --MMD --build -j 0 \
 										--x-assign fast \
@@ -18,13 +22,19 @@ BIN = $(BUILD_DIR)/V$(TOPNAME)
 CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\""
 
 all: $(BIN)
-	#@echo "Write this Makefile by your self."
 	$(shell mkdir -p $(BUILD_DIR))
 
-$(BIN): $(VLOG_CODE) $(CPP_CODE) 
+$(IMG): | get-img
+get-img:
+	@mkdir -p image
+	@cp $(IMG_PATH)/*.txt image/ 2>/dev/null || true
+	@cp $(IMG_PATH)/*.elf image/ 2>/dev/null || true
+	@cp $(IMG_PATH)/*.bin image/ 2>/dev/null || true
+
+$(BIN): $(VLOG_CODE) $(CPP_CODE) get-img
 	@rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
-		--top-module $(TOPNAME) $^ \
+		--top-module $(TOPNAME) $(VLOG_CODE) $(CPP_CODE)\
 		$(addprefix -CFLAGS , $(CXXFLAGS)) \
 		--exe
 
@@ -32,24 +42,26 @@ gdb: $(BIN)
 	gdb $(BIN)
 
 run: $(BIN)
-	./obj_dir/V$(TOPNAME)
+	$(shell realpath ./obj_dir/V$(TOPNAME)) $(shell realpath $(IMG))
 
 check_waveform: $(WAVEFORM_FILE)
 	@gtkwave $(WAVEFORM_FILE)
 
-file_comfirm:
+file_comfirm: $(IMG)
 	@echo "cpp code is $(CPP_CODE)"
 	@echo "verilog code is $(VLOG_CODE)"
 	@echo "waveform file is $(WAVEFORM_FILE)"
+	@echo "img src path is $(IMG_PATH)"
+	@echo "img: $(IMG)"
 	@verilator --lint-only -Wall $(VLOG_CODE)
 
 sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@$^
 
-.PYONY: clean
+.PYONY: clean sim file_comfirm run gdb get-img
 
 clean:
-	@rm -rf $(BUILD_DIR) obj_dir *.fst*
+	@rm -rf $(BUILD_DIR) obj_dir *.fst* image
 
 include ../Makefile

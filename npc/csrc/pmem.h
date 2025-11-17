@@ -1,6 +1,4 @@
-#include <stdint.h>
-#include <stdio.h>
-
+#include "common.h"
 #define word_t uint32_t
 #define paddr_t uint32_t
 
@@ -8,17 +6,12 @@
 #define CONFIG_MSIZE 0x8000000
 #define CONFIG_MBASE 0x80000000
 
+#define RESET_VECTOR CONFIG_MBASE
+
+static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+
 void pmem_initial();
 void pmem_write(paddr_t pc, word_t data);
 word_t pmem_read(paddr_t pc);
 
-#define Assert(cond, format, ...)                                              \
-  if (cond) {                                                                  \
-    printf("Assert:[%s:%d %s]: " format "\n", __FILE__, __LINE__, __func__,    \
-           ##__VA_ARGS__);                                                     \
-    assert(0);                                                                 \
-  }
-
-#define INFO(format, ...)                                                      \
-  printf("INFO:[%s:%d %s]: " format "\n", __FILE__, __LINE__, __func__,        \
-         ##__VA_ARGS__);
+uint8_t *guest_to_host(paddr_t paddr);
