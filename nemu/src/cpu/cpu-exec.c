@@ -34,6 +34,7 @@ static bool g_print_step = false;
 void device_update();
 int push_iringbuff(char *inst);
 
+bool wp_list_change();
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) {

@@ -17,9 +17,6 @@
 #include "common.h"
 #include "debug.h"
 #include <isa.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
 
 const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
                       "s0", "s1", "a0",  "a1",  "a2", "a3", "a4", "a5",
@@ -30,7 +27,7 @@ char *isa_reg_name(int i) {
   Assert((i >= 0 && i <= 31), "i %d out of reg bound", i);
   char *reg_name = malloc(10);
   char *ret = NULL;
-  ret = strncpy(reg_name, regs[i], 10);
+  ret = strncpy(reg_name, regs[i], 9);
   Assert(ret != NULL, "strncpy failed");
   return reg_name;
 }

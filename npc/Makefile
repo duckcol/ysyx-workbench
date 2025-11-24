@@ -24,14 +24,7 @@ CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\""
 all: $(BIN)
 	$(shell mkdir -p $(BUILD_DIR))
 
-$(IMG): | get-img
-get-img:
-	@mkdir -p image
-	@cp $(IMG_PATH)/*.txt image/ 2>/dev/null || true
-	@cp $(IMG_PATH)/*.elf image/ 2>/dev/null || true
-	@cp $(IMG_PATH)/*.bin image/ 2>/dev/null || true
-
-$(BIN): $(VLOG_CODE) $(CPP_CODE) get-img
+$(BIN): $(VLOG_CODE) $(CPP_CODE)
 	@rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VLOG_CODE) $(CPP_CODE)\
