@@ -4,8 +4,8 @@ CPP_CODE=$(wildcard csrc/*.cpp csrc/*.c)
 VLOG_CODE=$(wildcard vsrc/*.v)
 WAVEFORM_FILE=$(wildcard *.fst *.vcd)
 
-IMG_PATH := $(YSYX_HOME)/am-kernels/tests/cpu-tests/build
-IMG := $(wildcard image/*.bin)
+# IMG_PATH := $(YSYX_HOME)/am-kernels/tests/cpu-tests/build
+# IMG := $(wildcard image/*.bin)
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += --cc --MMD --build -j 0 \
@@ -18,6 +18,9 @@ VERILATOR_CFLAGS += --cc --MMD --build -j 0 \
 BUILD_DIR = ./obj_dir
 OBJ_DIR = $(BUILD_DIR)
 BIN = $(BUILD_DIR)/V$(TOPNAME)
+
+DEFAULT_IMG = ./dummy-riscv32e-npc.bin
+IMG ?= ./dummy-riscv32e-npc.bin
 
 CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\""
 
@@ -35,7 +38,12 @@ gdb: $(BIN)
 	gdb $(BIN)
 
 run: $(BIN)
-	$(shell realpath ./obj_dir/V$(TOPNAME)) $(shell realpath $(IMG))
+	@echo exe: $(shell realpath $(BIN))
+	@echo img: $(shell realpath $(IMG))
+	@if [ "$(IMG)" = "$(DEFAULT_IMG)" ]; then \
+		echo USING DEFAULT_IMG; \
+	fi
+	$(shell realpath $(BIN)) $(shell realpath $(IMG))
 
 check_waveform: $(WAVEFORM_FILE)
 	@gtkwave $(WAVEFORM_FILE)

@@ -34,7 +34,7 @@ void init_ftrace(const char *elf_file) {
 
   //  find .symtab .strtab and shstrtab section header
   fseek(fp, elf_header.e_shoff, SEEK_SET);
-  Elf32_Shdr symtab_shdr, strtab_shdr, shstrtab_shdr;
+  Elf32_Shdr symtab_shdr = {0}, strtab_shdr = {0}, shstrtab_shdr = {0};
   for (int i = 0; i < elf_header.e_shnum; i++) {
     Elf32_Shdr section_header;
     ret = fread(&section_header, 1, sizeof(Elf32_Shdr), fp);
@@ -44,11 +44,12 @@ void init_ftrace(const char *elf_file) {
     if (section_header.sh_type == SHT_SYMTAB) {
       Log("find symtab when shnum == %d", i);
       symtab_shdr = section_header;
-    } else if (section_header.sh_type == SHT_STRTAB &&
-               i != elf_header.e_shstrndx) {
+    }
+    if (section_header.sh_type == SHT_STRTAB && i != elf_header.e_shstrndx) {
       Log("find strtab when shnum == %d", i);
       strtab_shdr = section_header;
-    } else if (i == elf_header.e_shstrndx) {
+    }
+    if (section_header.sh_type == SHT_STRTAB && i == elf_header.e_shstrndx) {
       Log("find shstrtab when shnum == %d", i);
       shstrtab_shdr = section_header;
     }
@@ -88,7 +89,7 @@ void init_ftrace(const char *elf_file) {
       func_log *a_log = calloc(1, sizeof(func_log));
       a_log->start = sym_entry->st_value;
       a_log->end = sym_entry->st_value + sym_entry->st_size;
-      strncpy(a_log->name, func_name, 50 * sizeof(char));
+      strncpy(a_log->name, func_name, 49 * sizeof(char));
       List_push(ftrace_log, a_log);
     }
   }

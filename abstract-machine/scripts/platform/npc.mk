@@ -21,4 +21,4 @@ image: $(IMAGE).elf
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: image
-	@make -C /home/coladuck/ysyx-workbench/npc run
+	@make -C /home/coladuck/ysyx-workbench/npc IMG=$(IMAGE).bin run
