@@ -21,6 +21,7 @@
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
+#include <stdint.h>
 
 #define R(i) gpr(i)
 #define Mr vaddr_read
@@ -178,7 +179,12 @@ static int decode_exec(Decode *s) {
           WARN("exec inst \"srai\": convert src1 uint32_t " FMT_WORD
                " to int32_t %d",
                src1, (int32_t)src1);
-          R(rd) = (word_t)((int32_t)src1 >> imm));
+          WARN("exec inst \"srai\": convert imm uint32_t " FMT_WORD
+               " to int32_t %d",
+               (word_t)BITS(imm, 4, 0), (int32_t)BITS(imm, 4, 0));
+          WARN("exec inst \"srai\": the result is " FMT_WORD "",
+               (word_t)((int32_t)src1 >> (int32_t)BITS(imm, 4, 0)));
+          R(rd) = (word_t)((int32_t)src1 >> (int32_t)BITS(imm, 4, 0)));
   INSTPAT("0000000 ????? ????? 101 ????? 00100 11", srli, I,
           R(rd) = (src1 >> imm));
   INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui, U, R(rd) = imm);
