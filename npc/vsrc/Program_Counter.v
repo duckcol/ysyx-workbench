@@ -11,11 +11,11 @@ module Program_Counter #(
       .WIDTH(ADDR_LEN),
       .RESET_VAL(MEM_BASE)
   ) pc (
-      sys_clk,
-      ~pc_rst_l,
-      next_pc,
-      pc_addr,
-      1'b1
+      .clk (sys_clk),
+      .rst (~pc_rst_l),
+      .din (next_pc),
+      .dout(pc_addr),
+      .wen (1'b1)
   );
 endmodule
 
