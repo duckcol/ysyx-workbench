@@ -56,6 +56,9 @@ module antpc #(
       .reg1(inst_reg1),
       .reg2(inst_reg2),
       .imm(inst_imm),
+      .pc_addr(cur_inst_addr),
+      .target_addr(target_addr),
+      .cur_inst_j_or_s(cur_inst_j_or_s),
       .result(result),
       .result_reg(regd)
   );
