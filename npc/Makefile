@@ -1,7 +1,7 @@
 TOPNAME = antpc
 
 CPP_CODE=$(wildcard csrc/*.cpp csrc/*.c)
-VLOG_CODE=$(wildcard vsrc/*.v)
+VLOG_CODE := $(sort $(shell find vsrc -type f -name "*.v"))
 WAVEFORM_FILE=$(wildcard *.fst *.vcd)
 
 # IMG_PATH := $(YSYX_HOME)/am-kernels/tests/cpu-tests/build
@@ -13,7 +13,7 @@ VERILATOR_CFLAGS += --cc --MMD --build -j 0 \
 										--x-initial fast \
 										-O3 --noassert \
 										--trace-fst
-										#-Wall 
+#-Wall 
 
 BUILD_DIR = ./obj_dir
 OBJ_DIR = $(BUILD_DIR)
@@ -27,7 +27,10 @@ CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\""
 all: $(BIN)
 	$(shell mkdir -p $(BUILD_DIR))
 
-$(BIN): $(VLOG_CODE) $(CPP_CODE)
+$(BUILD_DIR):
+	$(shell mkdir -p $@)
+
+$(BIN): $(VLOG_CODE) $(CPP_CODE) | $(BUILD_DIR)
 	@rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VLOG_CODE) $(CPP_CODE)\
@@ -54,6 +57,7 @@ file_comfirm: $(IMG)
 	@echo "waveform file is $(WAVEFORM_FILE)"
 	@echo "img src path is $(IMG_PATH)"
 	@echo "img: $(IMG)"
+	@echo "Verlator Linter Result:"
 	@verilator --lint-only -Wall $(VLOG_CODE)
 
 sim: $(BIN)
