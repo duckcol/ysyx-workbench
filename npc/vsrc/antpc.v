@@ -14,11 +14,14 @@ module antpc #(
     output [REG_LEN-1:0] regd
 );
 
-  wire [ADDR_LEN-1:0] cur_inst_addr;
+  wire [ADDR_LEN-1:0] cur_inst_addr, target_addr;
+  wire cur_inst_j_or_s;
   Program_Counter #(ADDR_LEN, MEM_BASE) pc1 (
-      .sys_clk (clk),
+      .sys_clk(clk),
       .pc_rst_l(sys_rst_l),
-      .pc_addr (cur_inst_addr)
+      .pc_addr(cur_inst_addr),
+      .target_addr(target_addr),
+      .inst_j_or_s(cur_inst_j_or_s)
   );
 
   wire [INST_LEN-1:0] cur_inst_data;
