@@ -10,10 +10,13 @@ void trigger_ebreak() {
 }
 
 int main(int argc, char *argv[]) {
-  //  initial pmem
+  //  initial pmem with image
   parse_args(argc, argv);
   load_img();
-  return 0;
+  // return 0;
+  //  initial pmem with testing
+  //  instructions in pmem_initial()
+  //  in pmem.cpp
   // pmem_initial();
 
   //  initial cpu pc counter
@@ -23,7 +26,7 @@ int main(int argc, char *argv[]) {
 
   //  read in inst and run
   top->sys_rst_l = 1;
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 15; i++) {
     step_times(1);
     if (ebreak_flag == 1)
       break;

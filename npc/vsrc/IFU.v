@@ -4,6 +4,8 @@ module IFU #(
 ) (
     input rst_l,
     input clk,
+    input inst_j_or_s,
+    input [ADDR_LEN-1:0] target_addr,
     input [ADDR_LEN-1:0] pc_addr,
     input [INST_LEN-1:0] pmem_read_result,
     output [ADDR_LEN-1:0] fetch_addr,
@@ -19,5 +21,5 @@ module IFU #(
       .dout(fetch_inst),
       .wen (1'b1)
   );
-  assign fetch_addr = pc_addr;
+  assign fetch_addr = inst_j_or_s ? target_addr : pc_addr;
 endmodule

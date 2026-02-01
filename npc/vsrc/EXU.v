@@ -18,18 +18,17 @@ module EXU #(
 );
 
   //  so far it only execute inst:
-  //  addi, auipc, jal, jalr
+  //  addi, auipc, jal, jalr, ebreak, sw(do nothing)
 
   //  get datain, which is different because of different inst
   //  pc_addr = pc + ４
   wire [INST_LEN-1:0] data1, data2, datain;
-  assign datain = imm + data1;
   MuxKeyWithDefault #(
-      .NR_KEY  (4),
+      .NR_KEY  (5),
       .KEY_LEN (OPCODE_LEN),
       .DATA_LEN(INST_LEN)
   ) data_rd_decoder (
-      .out(imm),
+      .out(datain),
       .key(opcode),
       .default_out(32'd0),
       .lut({
@@ -39,6 +38,9 @@ module EXU #(
         // auipc, U
         7'b0010111,
         pc_addr - 32'd4 + imm,
+        // lui, U
+        7'b0110111,
+        imm,
         // jal, J
         7'b1101111,
         pc_addr,
@@ -54,7 +56,7 @@ module EXU #(
       .NR_KEY  (2),
       .KEY_LEN (OPCODE_LEN),
       .DATA_LEN(INST_LEN)
-  ) target_addr_MUX (
+  ) target_addr_mux (
       .out(target_addr),
       .key(opcode),
       .default_out(32'd0),
@@ -86,13 +88,4 @@ module EXU #(
       .rdata_out(result)
   );
 
-  //  ebreak
-  import "DPI-C" function void trigger_ebreak();
-  always @(*) begin
-    if (opcode == 7'b1110011 && funct3 == 3'b000 && imm == 32'd1) begin
-      $display("Time=%02t: trigger ebreak", $time);
-      trigger_ebreak();
-    end
-  end
 endmodule
-

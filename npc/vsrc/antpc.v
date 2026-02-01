@@ -28,6 +28,8 @@ module antpc #(
   IFU #(ADDR_LEN, INST_LEN) inst_fetch_unit1 (
       .rst_l(sys_rst_l),
       .clk(clk),
+      .inst_j_or_s(cur_inst_j_or_s),
+      .target_addr(target_addr),
       .pc_addr(cur_inst_addr),
       .fetch_addr(fetch_inst_addr),
       .pmem_read_result(pmem_read),
@@ -39,6 +41,8 @@ module antpc #(
   wire [INST_LEN-1:0] inst_imm;
   wire [2:0] inst_funct3;
   IDU #(INST_LEN, REG_LEN, OPCODE_LEN) inst_decode_unit1 (
+      .sys_clk(clk),
+      .rst_l(sys_rst_l),
       .inst(cur_inst_data),
       .opcode(inst_opcode),
       .funct3(inst_funct3),
