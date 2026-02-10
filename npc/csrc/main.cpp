@@ -1,12 +1,14 @@
 #include "common.h"
 #include "sim_set.h"
 
-//  ebreak
+//  ebreak triggering function embedding into verilog
 int ebreak_flag = 0;
 extern int ebreak_flag;
 void trigger_ebreak() {
   INFO("triggering inst ebreak");
   ebreak_flag = 1;
+
+  // check $a0 or R(10) to see if it is 0
 }
 
 int main(int argc, char *argv[]) {
