@@ -11,7 +11,10 @@ module antpc #(
     input [INST_LEN-1:0] pmem_read,
     output [ADDR_LEN-1:0] fetch_inst_addr,
     output [INST_LEN-1:0] result,
-    output [REG_LEN-1:0] regd
+    output [REG_LEN-1:0] regd,
+    // pins for debug
+    input [REG_LEN-1:0] debug_reg_addr,
+    output [INST_LEN-1:0] debug_reg_data
 );
 
   wire [ADDR_LEN-1:0] cur_inst_addr, target_addr;
@@ -64,7 +67,10 @@ module antpc #(
       .target_addr(target_addr),
       .cur_inst_j_or_s(cur_inst_j_or_s),
       .result(result),
-      .result_reg(regd)
+      .result_reg(regd),
+      //  pins for debug
+      .debug_reg_addr(debug_reg_addr),
+      .debug_reg_data(debug_reg_data)
   );
 
 endmodule

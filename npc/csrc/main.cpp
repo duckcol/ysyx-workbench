@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sim_set.h"
+int halt_ret = 1;
 
 //  ebreak triggering function embedding into verilog
 int ebreak_flag = 0;
@@ -9,6 +10,10 @@ void trigger_ebreak() {
   ebreak_flag = 1;
 
   // check $a0 or R(10) to see if it is 0
+  top->debug_reg_addr = 10;
+  word_t reg10_data = top->debug_reg_data;
+  INFO("current reg10 data: %08x", reg10_data);
+  halt_ret = reg10_data;
 }
 
 int main(int argc, char *argv[]) {
@@ -36,5 +41,7 @@ int main(int argc, char *argv[]) {
 
   sim_exit();
 
-  return 0;
+  INFO("%s at pc = %08x", (halt_ret) ? "HIT BAD TRAP" : "HIT GOOD TRAP",
+       top->fetch_inst_addr - 4);
+  return halt_ret;
 }

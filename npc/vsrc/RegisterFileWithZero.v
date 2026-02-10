@@ -12,7 +12,10 @@ module RegisterFileWithZero #(
     input ren,
     output [DATA_WIDTH-1:0] rdata1,
     output [DATA_WIDTH-1:0] rdata2,
-    output [DATA_WIDTH-1:0] rdata_out
+    output [DATA_WIDTH-1:0] rdata_out,
+    //  pins for debug
+    input [ADDR_WIDTH-1:0] debug_addr,
+    output [DATA_WIDTH-1:0] debug_data
 );
   wire internel_wen = wen && (waddr != 0);
   RegisterFile #(
@@ -28,6 +31,8 @@ module RegisterFileWithZero #(
       .ren(ren),
       .rdata1(rdata1),
       .rdata2(rdata2),
-      .rdata_out(rdata_out)
+      .rdata_out(rdata_out),
+      .debug_addr(debug_addr),
+      .debug_data(debug_data)
   );
 endmodule

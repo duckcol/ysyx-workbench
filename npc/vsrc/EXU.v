@@ -14,7 +14,10 @@ module EXU #(
     output [INST_LEN-1:0] target_addr,
     output cur_inst_j_or_s,
     output [INST_LEN-1:0] result,
-    output [REG_LEN-1:0] result_reg
+    output [REG_LEN-1:0] result_reg,
+    //  pins for debug
+    input [REG_LEN-1:0] debug_reg_addr,
+    output [INST_LEN-1:0] debug_reg_data
 );
 
   //  so far it only execute inst:
@@ -85,7 +88,9 @@ module EXU #(
       .ren(1'b1),
       .rdata1(data1),
       .rdata2(data2),
-      .rdata_out(result)
+      .rdata_out(result),
+      .debug_addr(debug_reg_addr),
+      .debug_data(debug_reg_data)
   );
 
 endmodule
