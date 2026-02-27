@@ -5,35 +5,17 @@
 #include <verilated.h>
 #include <verilated_fst_c.h>
 
-#define step_and_dump_wave()                                                   \
-  top->eval();                                                                 \
-  if (top->fetch_inst_addr >= 0x80000000)                                      \
-    top->pmem_read = pmem_read(top->fetch_inst_addr);                          \
-  top->eval();                                                                 \
-  contextp->timeInc(1);                                                        \
-  tfp->dump(contextp->time());
+extern VerilatedContext *contextp;
+extern VerilatedFstC *tfp;
+extern TOP_NAME *top;
 
-#define sim_init()                                                             \
-  contextp = new VerilatedContext;                                             \
-  tfp = new VerilatedFstC;                                                     \
-  top = new TOP_NAME;                                                          \
-  contextp->traceEverOn(true);                                                 \
-  top->trace(tfp, 0);                                                          \
-  tfp->open("top.fst");
+int step_times(int n);
+int sim_exit();
+int sim_init();
+int step_and_dump_wave();
 
-#define sim_exit()                                                             \
-  step_and_dump_wave();                                                        \
-  tfp->close();                                                                \
-  delete tfp;                                                                  \
-  delete top;                                                                  \
-  delete contextp;
-
-#define step_times(n)                                                          \
-  for (int i = 0; i <= n; i++) {                                               \
-    top->clk = 1;                                                              \
-    step_and_dump_wave();                                                      \
-    top->clk = 0;                                                              \
-    step_and_dump_wave();                                                      \
-  }
+extern int ebreak_flag;
+extern int halt_ret;
+void trigger_ebreak();
 
 void cpu_exec(uint64_t n);

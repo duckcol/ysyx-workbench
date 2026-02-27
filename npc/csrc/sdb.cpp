@@ -2,7 +2,7 @@
 #include "sim_set.h"
 
 static int cmd_help(char *args);
-// static int cmd_si(char *args);
+static int cmd_si(char *args);
 // static int cmd_info(char *args);
 // static int cmd_x(char *args);
 // static int cmd_p(char *args);
@@ -11,18 +11,43 @@ static int cmd_help(char *args);
 // static int cmd_q(char *args);
 
 static int cmd_c(char *args) {
-  cpu_exec(25);
+  cpu_exec(-1);
   return 0;
 }
 
-void cpu_exec(uint64_t n) {
-  // for (; n > 0; n--) {
-  //   step_times(1);
-  // }
-  return;
+static int cmd_si(char *args) {
+  Log("the args: %s", args); //	for dbg
+
+  //	check if the args is NULL
+  if (args == NULL) {
+    INFO("You must type one args,plz try again");
+    return 0;
+  }
+
+  //	check if the args is multiple
+  char *arg = strtok(args, " ");
+  Log("the arg: %s", arg);
+  char *exceed = strtok(NULL, " "); // continue to split the args
+  if (exceed != NULL) {
+    Log("exceed args input, the exceeded part will be ignored");
+    Log("the exceed starting at %s", exceed);
+  }
+
+  //	check if the arg's number is valid
+  char *endptr;
+  long time = strtol(arg, &endptr, 10);
+  if (arg == endptr) {
+    Log("no number, try again");
+    return 0;
+  }
+
+  //	real to step in execution
+  cpu_exec((int)time);
+
+  return 0;
 }
 
-static int cmd_q(char *args) { return 0; }
+static int cmd_q(char *args) { return -1; }
 
 static struct {
   const char *name;
@@ -31,10 +56,10 @@ static struct {
 } cmd_table[] = {
     {"help", "Display information about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
-    {"q", "Exit NEMU", cmd_q},
+    {"q", "Exit NPC", cmd_q},
 
     /* TODO: Add more commands */
-    // {"si", "si N:execute the N commands and stop", cmd_si},
+    {"si", "si N:execute the N commands and stop", cmd_si},
     // {"info", "info r: print all regs;info w: print all watchpoint",
     // cmd_info},
     // {"x",
@@ -79,7 +104,7 @@ static char *rl_gets() {
     line_read = NULL;
   }
 
-  line_read = readline("(nemu) ");
+  line_read = readline("(npc) ");
 
   if (line_read && *line_read) {
     add_history(line_read);
