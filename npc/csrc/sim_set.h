@@ -5,12 +5,6 @@
 #include <verilated.h>
 #include <verilated_fst_c.h>
 
-VerilatedContext *contextp = NULL;
-VerilatedFstC *tfp = NULL;
-
-//  TOP_NAME = "Vantpc"
-TOP_NAME *top;
-
 #define step_and_dump_wave()                                                   \
   top->eval();                                                                 \
   if (top->fetch_inst_addr >= 0x80000000)                                      \
@@ -41,3 +35,5 @@ TOP_NAME *top;
     top->clk = 0;                                                              \
     step_and_dump_wave();                                                      \
   }
+
+void cpu_exec(uint64_t n);

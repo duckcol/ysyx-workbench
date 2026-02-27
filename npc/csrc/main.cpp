@@ -1,5 +1,13 @@
 #include "common.h"
+#include "sdb.h"
 #include "sim_set.h"
+
+VerilatedContext *contextp = NULL;
+VerilatedFstC *tfp = NULL;
+
+//  TOP_NAME = "Vantpc"
+TOP_NAME *top;
+
 int halt_ret = 1;
 
 //  ebreak triggering function embedding into verilog
@@ -30,14 +38,16 @@ int main(int argc, char *argv[]) {
   sim_init();
   top->sys_rst_l = 0;
   step_times(4);
+  INFO("CPU INITIAL COMPLETED");
 
   //  read in inst and run
   top->sys_rst_l = 1;
-  for (int i = 0; i < 15; i++) {
-    step_times(1);
-    if (ebreak_flag == 1)
-      break;
-  }
+  // for (int i = 0; i < 15; i++) {
+  //   step_times(1);
+  //   if (ebreak_flag == 1)
+  //     break;
+  // }
+  sdb_mainloop();
 
   sim_exit();
 

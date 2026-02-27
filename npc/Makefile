@@ -12,7 +12,7 @@ VERILATOR_CFLAGS += --cc --MMD --build -j 0 \
 										--x-assign fast \
 										--x-initial fast \
 										-O3 --noassert \
-										--trace-fst
+										--trace-fst -LDFLAGS "-lreadline"
 #-Wall 
 
 BUILD_DIR = ./obj_dir
