@@ -22,6 +22,9 @@ BIN = $(BUILD_DIR)/V$(TOPNAME)
 DEFAULT_IMG = ./dummy-riscv32e-npc.bin
 IMG ?= ./dummy-riscv32e-npc.bin
 
+DEFAULT_LOG = ./default-npc-log.txt
+LOG ?= ./default-npc-log.txt
+
 CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\""
 
 all: $(BIN)
@@ -43,10 +46,14 @@ gdb: $(BIN)
 run: $(BIN)
 	@echo exe: $(shell realpath $(BIN))
 	@echo img: $(shell realpath $(IMG))
+	@echo log: $(shell realpath $(LOG))
 	@if [ "$(IMG)" = "$(DEFAULT_IMG)" ]; then \
 		echo USING DEFAULT_IMG; \
 	fi
-	$(shell realpath $(BIN)) $(shell realpath $(IMG))
+	@if [ "$(LOG)" = "$(DEFAULT_LOG)" ]; then \
+		echo USING DEFAULT_LOG; \
+	fi
+	$(shell realpath $(BIN)) --log=$(shell realpath $(LOG)) $(shell realpath $(IMG)) 
 
 check_waveform: $(WAVEFORM_FILE)
 	@gtkwave $(WAVEFORM_FILE)

@@ -1,6 +1,9 @@
 #include "common.h"
 #include "pmem.h"
 
+void init_log(const char *log_file);
+static char *log_file = NULL;
+
 static char *img_file = NULL;
 int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
@@ -22,7 +25,8 @@ int parse_args(int argc, char *argv[]) {
       // sscanf(optarg, "%d", &difftest_port);
       break;
     case 'l':
-      // log_file = optarg;
+      log_file = optarg;
+      INFO("LOG: %s", log_file);
       break;
     case 'd':
       // diff_so_file = optarg;
@@ -68,4 +72,25 @@ long load_img() {
 
   fclose(fp);
   return size;
+}
+
+FILE *log_fp = NULL;
+void init_log(/*const char *log_file*/) {
+  log_fp = stdout;
+  if (log_file != NULL) {
+    FILE *fp = fopen(log_file, "w");
+    Assert(fp, "Can not open '%s'", log_file);
+    log_fp = fp;
+  }
+  Log("Log is written to %s", log_file ? log_file : "stdout");
+}
+
+bool log_enable() {
+  // return MUXDEF(CONFIG_TRACE,
+  //               (g_nr_guest_inst >= CONFIG_TRACE_START) &&
+  //                   (g_nr_guest_inst <= CONFIG_TRACE_END),
+  //               false);
+
+  // TODO: detact the instruction step to make it change
+  return true;
 }

@@ -14,8 +14,15 @@ int main(int argc, char *argv[]) {
 
   //  initial cpu pc counter
   sim_init();
-  init_regex();
   INFO("CPU INITIAL COMPLETED");
+
+  //  initial regex expression
+  init_regex();
+  INFO("REGEX INITIAL COMPLETED");
+
+  //  initial log
+  init_log();
+  INFO("LOGGING INITIAL COMPLETED");
 
   //  read in inst and run
   // top->sys_rst_l = 1;

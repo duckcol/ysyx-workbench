@@ -1,3 +1,8 @@
+#ifndef __COMMON_H__
+#define __COMMON_H__
+
+#include "macro.h"
+#include "utils.h"
 #include <assert.h>
 #include <getopt.h>
 #include <inttypes.h>
@@ -19,32 +24,41 @@ typedef word_t vaddr_t;
 #define FMT_PADDR "0x%08" PRIx32
 
 #define Assert(cond, format, ...)                                              \
-  if (!(cond)) {                                                               \
-    printf("Assert:[%s:%d %s]: " format "\n", __FILE__, __LINE__, __func__,    \
-           ##__VA_ARGS__);                                                     \
-    assert(0);                                                                 \
-  }
+  do {                                                                         \
+    if (!(cond)) {                                                             \
+      MUXDEF(                                                                  \
+          CONFIG_TARGET_AM,                                                    \
+          printf(ANSI_FMT(format, ANSI_FG_RED) "\n", ##__VA_ARGS__),           \
+          (fflush(stdout), fprintf(stderr, ANSI_FMT(format, ANSI_FG_RED) "\n", \
+                                   ##__VA_ARGS__)));                           \
+      IFNDEF(CONFIG_TARGET_AM, extern FILE * log_fp; fflush(log_fp));          \
+      assert(cond);                                                            \
+    }                                                                          \
+  } while (0)
 
 #define INFO(format, ...)                                                      \
-  printf("INFO:[%s:%d %s]: " format "\n", __FILE__, __LINE__, __func__,        \
-         ##__VA_ARGS__);
+  printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_CYAN) "\n", __FILE__,          \
+         __LINE__, __func__, ##__VA_ARGS__)
 
 #define Log(format, ...)                                                       \
-  printf("LOG:[%s:%d %s]: " format "\n", __FILE__, __LINE__, __func__,         \
-         ##__VA_ARGS__);
+  _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", __FILE__, __LINE__,  \
+       __func__, ##__VA_ARGS__)
 
 #define WARN(format, ...)                                                      \
-  printf("WARN:[%s:%d %s]: " format "\n", __FILE__, __LINE__, __func__,        \
-         ##__VA_ARGS__);
+  printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_YELLOW) "\n", __FILE__,        \
+         __LINE__, __func__, ##__VA_ARGS__)
 
 #define panic(format, ...) Assert(0, format, ##__VA_ARGS__)
 #define TODO() panic("please implement me")
 
 int parse_args(int argc, char *argv[]);
 long load_img();
+void init_log(/*const char *log_file*/);
 
 // strlen() for string constant
 #define STRLEN(CONST_STR) (sizeof(CONST_STR) - 1)
 
 // calculate the length of an array
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
+
+#endif
