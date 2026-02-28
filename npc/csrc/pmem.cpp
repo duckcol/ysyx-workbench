@@ -1,5 +1,4 @@
 #include "pmem.h"
-#include <cstdint>
 
 uint8_t *guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
@@ -10,6 +9,8 @@ word_t pmem_read(paddr_t pc) {
   word_t ret = *(word_t *)addr_in_pmem;
   return ret;
 }
+
+word_t vaddr_read(vaddr_t addr) { return pmem_read(addr); }
 
 void pmem_write(paddr_t pc, word_t data) {
   uint8_t *addr_in_pmem = pmem + pc - CONFIG_MBASE;

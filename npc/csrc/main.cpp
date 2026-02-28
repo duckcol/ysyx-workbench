@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
 
   //  initial cpu pc counter
   sim_init();
+  init_regex();
   INFO("CPU INITIAL COMPLETED");
 
   //  read in inst and run

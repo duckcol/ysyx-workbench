@@ -4,7 +4,7 @@
 static int cmd_help(char *args);
 static int cmd_si(char *args);
 // static int cmd_info(char *args);
-// static int cmd_x(char *args);
+static int cmd_x(char *args);
 // static int cmd_p(char *args);
 // static int cmd_w(char *args);
 // static int cmd_d(char *args);
@@ -49,6 +49,61 @@ static int cmd_si(char *args) {
 
 static int cmd_q(char *args) { return -1; }
 
+static int cmd_x(char *args) {
+  //	first, split the args to be N and EXPR
+
+  //	the N part
+  char *token = strtok(args, " ");
+  char *endptr;
+  int N = (int)strtol(token, &endptr, 10);
+  Log("the N: %d", N);
+  //	here are some checks to N
+  //	check if there's a number
+  if (token == endptr) {
+    WARN("no number, try again");
+    return 0;
+  }
+  //	check if the number > 0
+  if (N <= 0) {
+    WARN("N should be > 0, plz try again");
+    return 0;
+  }
+
+  //	the EXPR part
+  token = strtok(NULL, " ");
+  if (token == NULL) {
+    WARN("no EXPR found !");
+    return 0;
+  }
+  char *EXPR = (char *)malloc(sizeof(char) * 20);
+  strcpy(EXPR, token);
+
+  //  second, compute the EXPR and turn into address
+  //  the address
+  bool success = false;
+  vaddr_t address = (vaddr_t)expr(EXPR, &success);
+  Assert(success == true, "$EXPR failed!");
+  Log("the expr: " FMT_WORD "", address);
+  if (in_pmem(address)) {
+    Log("the paddr: " FMT_PADDR "", address);
+  } else {
+    Log("not a valid paddr, consider in pmem");
+    address = CONFIG_MBASE + address;
+    Log("converted to paddr:" FMT_PADDR "", address);
+  }
+
+  //	then, print the memory around
+  printf("address: content\n");
+  printf("" FMT_PADDR ":", address);
+  for (int i = 0; i < N; i++) {
+    printf(" " FMT_WORD "", vaddr_read(address + i * 4));
+  }
+  printf("\n");
+
+  free(EXPR);
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -62,10 +117,10 @@ static struct {
     {"si", "si N:execute the N commands and stop", cmd_si},
     // {"info", "info r: print all regs;info w: print all watchpoint",
     // cmd_info},
-    // {"x",
-    //  "x N EXPR: print 4*N bytes starting from EXPR(paddr, but will auto "
-    //  "convert invalid paddr)",
-    //  cmd_x},
+    {"x",
+     "x N EXPR: print 4*N bytes starting from EXPR(paddr, but will auto "
+     "convert invalid paddr)",
+     cmd_x},
     // {"p", "p $EXPR: print the compute result of $EXPR", cmd_p},
     // {"w", "w $EXPR: stop program if $EXPR changes", cmd_w},
     // {"d", "d N: delete the watchpoint N which has the NO == N", cmd_d},
