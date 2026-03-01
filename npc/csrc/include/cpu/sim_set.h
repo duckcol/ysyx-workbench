@@ -1,6 +1,6 @@
 #include "Vantpc.h"
 #include "Vantpc__Dpi.h"
-#include "pmem.h"
+#include "memory/pmem.h"
 #include "svdpi.h"
 #include <verilated.h>
 #include <verilated_fst_c.h>

@@ -14,8 +14,8 @@
  ***************************************************************************************/
 
 #include "common.h"
-#include "pmem.h"
-#include "reg.h"
+#include "memory/pmem.h"
+#include "reg/reg.h"
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.

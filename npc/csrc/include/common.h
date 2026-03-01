@@ -1,28 +1,29 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include "conf.h"
 #include "macro.h"
 #include "utils.h"
+
 #include <assert.h>
 #include <getopt.h>
 #include <inttypes.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define word_t uint32_t
-#define paddr_t uint32_t
+/* data type definition*/
+typedef MUXDEF(CONFIG_ISA64, uint64_t, uint32_t) word_t;
+typedef MUXDEF(CONFIG_ISA64, int64_t, int32_t) sword_t;
+#define FMT_WORD MUXDEF(CONFIG_ISA64, "0x%016" PRIx64, "0x%08" PRIx32)
 
-#define PG_ALIGN __attribute((aligned(4096)))
-#define CONFIG_MSIZE 0x8000000
-#define CONFIG_MBASE 0x80000000
-
-#define RESET_VECTOR CONFIG_MBASE
 typedef word_t vaddr_t;
-#define FMT_WORD "0x%08" PRIx32
-#define FMT_PADDR "0x%08" PRIx32
+typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
+#define FMT_PADDR MUXDEF(PMEM64, "0x%016" PRIx64, "0x%08" PRIx32)
 
+/* debug log function definition */
 #define Assert(cond, format, ...)                                              \
   do {                                                                         \
     if (!(cond)) {                                                             \
@@ -50,10 +51,6 @@ typedef word_t vaddr_t;
 
 #define panic(format, ...) Assert(0, format, ##__VA_ARGS__)
 #define TODO() panic("please implement me")
-
-int parse_args(int argc, char *argv[]);
-long load_img();
-void init_log(/*const char *log_file*/);
 
 // strlen() for string constant
 #define STRLEN(CONST_STR) (sizeof(CONST_STR) - 1)

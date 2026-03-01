@@ -1,6 +1,10 @@
 #include "common.h"
-#include "sdb.h"
-#include "sim_set.h"
+#include "cpu/sim_set.h"
+#include "monitor/sdb/sdb.h"
+
+int parse_args(int argc, char *argv[]);
+long load_img();
+void init_log(/*const char *log_file*/);
 
 int main(int argc, char *argv[]) {
   //  initial pmem with image
@@ -35,7 +39,7 @@ int main(int argc, char *argv[]) {
 
   sim_exit();
 
-  INFO("%s at pc = %08x", (halt_ret) ? "HIT BAD TRAP" : "HIT GOOD TRAP",
-       top->fetch_inst_addr - 4);
+  Log("%s at pc = %08x", (halt_ret) ? "HIT BAD TRAP" : "HIT GOOD TRAP",
+      top->fetch_inst_addr - 4);
   return halt_ret;
 }

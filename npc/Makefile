@@ -1,6 +1,7 @@
 TOPNAME = antpc
 
-CPP_CODE=$(wildcard csrc/*.cpp csrc/*.c)
+NPC_DIR := $(CURDIR)
+CPP_CODE := $(shell find csrc -type f \( -name "*.cpp" -o -name "*.c" \))
 VLOG_CODE := $(sort $(shell find vsrc -type f -name "*.v"))
 WAVEFORM_FILE=$(wildcard *.fst *.vcd)
 
@@ -12,20 +13,21 @@ VERILATOR_CFLAGS += --cc --MMD --build -j 0 \
 										--x-assign fast \
 										--x-initial fast \
 										-O3 --noassert \
-										--trace-fst -LDFLAGS "-lreadline"
+										--trace-fst
 #-Wall 
 
-BUILD_DIR = ./obj_dir
+BUILD_DIR = $(NPC_DIR)/build
 OBJ_DIR = $(BUILD_DIR)
 BIN = $(BUILD_DIR)/V$(TOPNAME)
 
-DEFAULT_IMG = ./dummy-riscv32e-npc.bin
-IMG ?= ./dummy-riscv32e-npc.bin
+DEFAULT_IMG = $(NPC_DIR)/dummy-riscv32e-npc.bin
+IMG ?= $(NPC_DIR)/dummy-riscv32e-npc.bin
 
-DEFAULT_LOG = ./default-npc-log.txt
-LOG ?= ./default-npc-log.txt
+DEFAULT_LOG = $(NPC_DIR)/default-npc-log.txt
+LOG ?= $(NPC_DIR)/default-npc-log.txt
 
-CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\""
+CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\"" -I$(NPC_DIR)/csrc/include/
+LDFLAGS += -lreadline
 
 all: $(BIN)
 	$(shell mkdir -p $(BUILD_DIR))
@@ -37,7 +39,9 @@ $(BIN): $(VLOG_CODE) $(CPP_CODE) | $(BUILD_DIR)
 	@rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VLOG_CODE) $(CPP_CODE)\
+		--Mdir $(BUILD_DIR) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) \
+		$(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--exe
 
 gdb: $(BIN)
@@ -59,6 +63,7 @@ check_waveform: $(WAVEFORM_FILE)
 	@gtkwave $(WAVEFORM_FILE)
 
 file_comfirm: $(IMG)
+	@echo "npc dir path is $(NPC_DIR)"
 	@echo "cpp code is $(CPP_CODE)"
 	@echo "verilog code is $(VLOG_CODE)"
 	@echo "waveform file is $(WAVEFORM_FILE)"
@@ -74,6 +79,6 @@ sim: $(BIN)
 .PYONY: clean sim file_comfirm run gdb get-img
 
 clean:
-	@rm -rf $(BUILD_DIR) obj_dir *.fst* image
+	rm -rf $(BUILD_DIR) obj_dir *.fst* image *log.txt
 
 include ../Makefile

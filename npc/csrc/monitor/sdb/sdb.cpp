@@ -1,5 +1,5 @@
 #include "sdb.h"
-#include "sim_set.h"
+#include "cpu/sim_set.h"
 
 static int cmd_help(char *args);
 static int cmd_si(char *args);
