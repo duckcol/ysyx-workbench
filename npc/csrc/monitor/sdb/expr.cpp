@@ -15,7 +15,9 @@
 
 #include "common.h"
 #include "memory/pmem.h"
-#include "reg/reg.h"
+
+// #include "cpu/reg.h"
+word_t isa_reg_str2val(const char *s, bool *success);
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.

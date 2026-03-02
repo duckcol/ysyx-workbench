@@ -5,7 +5,7 @@ static int cmd_help(char *args);
 static int cmd_si(char *args);
 // static int cmd_info(char *args);
 static int cmd_x(char *args);
-// static int cmd_p(char *args);
+static int cmd_p(char *args);
 // static int cmd_w(char *args);
 // static int cmd_d(char *args);
 // static int cmd_q(char *args);
@@ -121,7 +121,7 @@ static struct {
      "x N EXPR: print 4*N bytes starting from EXPR(paddr, but will auto "
      "convert invalid paddr)",
      cmd_x},
-    // {"p", "p $EXPR: print the compute result of $EXPR", cmd_p},
+    {"p", "p $EXPR: print the compute result of $EXPR", cmd_p},
     // {"w", "w $EXPR: stop program if $EXPR changes", cmd_w},
     // {"d", "d N: delete the watchpoint N which has the NO == N", cmd_d},
 
@@ -148,6 +148,25 @@ static int cmd_help(char *args) {
     }
     printf("Unknown command '%s'\n", arg);
   }
+  return 0;
+}
+
+static int cmd_p(char *args) {
+  Log("the args: %s", args);
+  if (args == NULL) {
+    WARN("no expr input !");
+    return 0;
+  }
+
+  bool *success = (bool *)malloc(sizeof(bool));
+  word_t result = success ? expr(args, success) : -1;
+  if (success)
+    INFO("expr success");
+  else
+    WARN("expr failed");
+  printf("the result: " FMT_WORD "\n", result);
+  // printf("the result: %u\n", (uint32_t)result);
+
   return 0;
 }
 

@@ -17,6 +17,7 @@ module RegisterFile #(
     input [ADDR_WIDTH-1:0] debug_addr,
     output [DATA_WIDTH-1:0] debug_data
 );
+  //  key: add verilator public tag to exposure api
   reg [DATA_WIDTH-1:0] rf[2**ADDR_WIDTH-1:0]  /*verilator public*/;
   always @(posedge clk) begin
     if (wen) rf[waddr] <= wdata;

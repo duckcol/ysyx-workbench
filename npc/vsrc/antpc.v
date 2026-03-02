@@ -1,4 +1,4 @@
-// antpc is an only toy process core
+// antpc is an toy process core
 module antpc #(
     ADDR_LEN = 32,
     INST_LEN = 32,
