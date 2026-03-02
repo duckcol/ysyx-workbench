@@ -30,4 +30,18 @@ module RegisterFile #(
 
   //  for debug and see trap state
   assign debug_data = (ren && debug_addr != 0) ? rf[debug_addr] : 0;
+
+  // 导入DPI-C函数，来同步寄存器组写的内容
+  import "DPI-C" function void sync_rf_data(
+    input int unsigned addr,
+    input int unsigned data
+  );
+
+  // 写操作时同步到C侧
+  always @(posedge clk) begin
+    if (wen && waddr != 0) begin  // RISC-V x0寄存器恒为0，通常不写
+      rf[waddr] <= wdata;
+      sync_rf_data({27'd0, waddr}, wdata);  // 调用DPI函数同步
+    end
+  end
 endmodule

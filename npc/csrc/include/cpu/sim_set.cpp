@@ -1,4 +1,7 @@
 #include "sim_set.h"
+#include "common.h"
+#include "reg.h"
+#include <cstdint>
 
 VerilatedContext *contextp = NULL;
 VerilatedFstC *tfp = NULL;
@@ -77,4 +80,18 @@ void trigger_ebreak() {
   word_t reg10_data = top->debug_reg_data;
   INFO("current reg10 data: %08x", reg10_data);
   halt_ret = reg10_data;
+}
+
+void sync_rf_data(uint32_t addr, uint32_t data) {
+  INFO("sync reg data");
+  gpr(addr) = data;
+  INFO("sync reg ends");
+  return;
+}
+
+void sync_pc_data(uint32_t pc) {
+  INFO("sync pc data");
+  cpu.pc = pc;
+  INFO("sync reg ends");
+  return;
 }

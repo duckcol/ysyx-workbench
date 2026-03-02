@@ -22,4 +22,16 @@ module IFU #(
       .wen (1'b1)
   );
   assign fetch_addr = inst_j_or_s ? target_addr : pc_addr;
+
+  // 导入DPI-C函数，来同步pc
+  import "DPI-C" function void sync_pc_data(input int unsigned pc);
+
+  // 写操作时同步到C侧
+  always @(posedge clk) begin
+    if (~rst_l) begin
+      sync_pc_data(32'h80000000);
+    end else begin
+      sync_pc_data(fetch_addr);
+    end
+  end
 endmodule
