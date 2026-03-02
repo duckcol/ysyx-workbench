@@ -3,7 +3,7 @@
 
 static int cmd_help(char *args);
 static int cmd_si(char *args);
-// static int cmd_info(char *args);
+static int cmd_info(char *args);
 static int cmd_x(char *args);
 static int cmd_p(char *args);
 // static int cmd_w(char *args);
@@ -115,8 +115,7 @@ static struct {
 
     /* TODO: Add more commands */
     {"si", "si N:execute the N commands and stop", cmd_si},
-    // {"info", "info r: print all regs;info w: print all watchpoint",
-    // cmd_info},
+    {"info", "info r: print all regs;info w: print all watchpoint", cmd_info},
     {"x",
      "x N EXPR: print 4*N bytes starting from EXPR(paddr, but will auto "
      "convert invalid paddr)",
@@ -168,6 +167,36 @@ static int cmd_p(char *args) {
   // printf("the result: %u\n", (uint32_t)result);
 
   return 0;
+}
+
+void isa_reg_display();
+static int cmd_info(char *args) {
+  // check args:
+  // 1.NULL or not
+  // 2.only "r" and "w" is valid
+  Log("the args: %s", args);
+
+  if (args == NULL) {
+    Log("need an arg, plz try again");
+    return 0;
+  }
+
+  if (strcmp(args, "r") == 0) {
+    isa_reg_display();
+    return 0;
+  }
+
+  if (strcmp(args, "w") == 0) {
+#ifdef CONFIG_WATCHPOINT
+    info_w();
+#else
+    INFO("CONFIG_WATCHPOINT false, watchpoint disabled");
+#endif
+    return 0;
+  } else {
+    Log("invalid arg, plz try again");
+    return 0;
+  }
 }
 
 static char *rl_gets() {
