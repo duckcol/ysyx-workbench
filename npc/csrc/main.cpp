@@ -9,12 +9,6 @@ void init_log(/*const char *log_file*/);
 int main(int argc, char *argv[]) {
   //  initial pmem with image
   parse_args(argc, argv);
-  load_img();
-  // return 0;
-  //  initial pmem with testing
-  //  instructions in pmem_initial()
-  //  in pmem.cpp
-  // pmem_initial();
 
   //  initial cpu pc counter
   sim_init();
@@ -27,6 +21,14 @@ int main(int argc, char *argv[]) {
   //  initial log
   init_log();
   INFO("LOGGING INITIAL COMPLETED");
+
+  //  initial mem
+  load_img();
+  INFO("MEM INITIAL COMPLETED");
+  //  initial pmem with testing
+  //  instructions in pmem_initial()
+  //  in pmem.cpp
+  // pmem_initial();
 
   //  read in inst and run
   // top->sys_rst_l = 1;

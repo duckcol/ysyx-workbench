@@ -15,10 +15,14 @@ LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
+NPC_HOME = $(YSYX_HOME)/npc
+NPCFLAGS += --log $(shell dirname $(IMAGE).bin)/npc-log.txt
+
 image: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: image
-	@make -C /home/coladuck/ysyx-workbench/npc IMG=$(IMAGE).bin run
+	-@echo npc home is $(NPC_HOME)
+	$(MAKE) -C $(NPC_HOME) ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin run

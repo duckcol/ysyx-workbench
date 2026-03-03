@@ -44,20 +44,26 @@ $(BIN): $(VLOG_CODE) $(CPP_CODE) | $(BUILD_DIR)
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--exe
 
-gdb: $(BIN)
-	gdb $(BIN)
+# Command to run npc
+# "override" is used to prevent the following lines with ARGS being ignored
+override ARGS ?= --log=$(shell realpath $(DEFAULT_LOG))
 
-run: $(BIN)
+NPC_EXEC := $(shell realpath $(BIN)) $(ARGS) $(shell realpath $(IMG))
+
+run-env: $(BIN)
+
+run: run-env
 	@echo exe: $(shell realpath $(BIN))
 	@echo img: $(shell realpath $(IMG))
-	@echo log: $(shell realpath $(LOG))
+	@echo args: $(ARGS)
 	@if [ "$(IMG)" = "$(DEFAULT_IMG)" ]; then \
 		echo USING DEFAULT_IMG; \
 	fi
-	@if [ "$(LOG)" = "$(DEFAULT_LOG)" ]; then \
-		echo USING DEFAULT_LOG; \
-	fi
-	$(shell realpath $(BIN)) --log=$(shell realpath $(LOG)) $(shell realpath $(IMG)) 
+	@echo Full Command are as following:
+	$(NPC_EXEC)
+
+gdb: run-env
+	gdb $(BIN)
 
 check_waveform: $(WAVEFORM_FILE)
 	@gtkwave $(WAVEFORM_FILE)

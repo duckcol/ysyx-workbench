@@ -23,7 +23,7 @@ compile_git:
 $(BINARY):: compile_git
 
 # Some convenient rules
-
+# "override" is used to prevent the following two lines being ignored
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
 override ARGS += $(ARGS_DIFF)
 

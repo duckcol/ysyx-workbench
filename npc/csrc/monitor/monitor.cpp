@@ -54,7 +54,7 @@ int parse_args(int argc, char *argv[]) {
 
 long load_img() {
   if (img_file == NULL) {
-    INFO("No image is given. Use the default build-in image.");
+    Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
   }
 
@@ -64,11 +64,11 @@ long load_img() {
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
 
-  INFO("The image is %s, size = %ld", img_file, size);
+  Log("The image is %s, size = %ld", img_file, size);
 
   fseek(fp, 0, SEEK_SET);
   int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
-  assert(ret == 1);
+  Assert(ret == 1, "image read error");
 
   fclose(fp);
   return size;
