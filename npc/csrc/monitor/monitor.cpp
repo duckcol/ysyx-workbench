@@ -1,5 +1,6 @@
 #include "common.h"
 #include "memory/pmem.h"
+#include "utils.h"
 
 void init_log(const char *log_file);
 static char *log_file = NULL;

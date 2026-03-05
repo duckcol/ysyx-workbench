@@ -1,7 +1,6 @@
 #include "sim_set.h"
 #include "common.h"
 #include "reg.h"
-#include <cstdint>
 
 VerilatedContext *contextp = NULL;
 VerilatedFstC *tfp = NULL;
@@ -71,7 +70,7 @@ void cpu_exec(uint64_t n) {
 
 int halt_ret = 1;
 int ebreak_flag = 0;
-void trigger_ebreak() {
+extern "C" void trigger_ebreak() {
   INFO("triggering inst ebreak");
   ebreak_flag = 1;
 
@@ -82,16 +81,20 @@ void trigger_ebreak() {
   halt_ret = reg10_data;
 }
 
-void sync_rf_data(uint32_t addr, uint32_t data) {
+extern "C" void sync_rf_data(uint32_t addr, uint32_t data) {
   INFO("sync reg data");
   gpr(addr) = data;
   INFO("sync reg ends");
   return;
 }
 
-void sync_pc_data(uint32_t pc) {
+extern "C" void sync_pc_data(uint32_t pc) {
   INFO("sync pc data");
   cpu.pc = pc;
   INFO("sync reg ends");
   return;
+}
+
+extern "C" void trace_instruction(word_t inst, word_t pc) {
+  _Log("addr:" FMT_WORD " inst: " FMT_WORD "\n", pc, inst);
 }

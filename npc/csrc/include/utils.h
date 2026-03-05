@@ -23,6 +23,8 @@
 
 #define ANSI_FMT(str, fmt) fmt str ANSI_NONE
 
+extern "C" bool log_enable();
+
 #define log_write(...)                                                         \
   do {                                                                         \
     extern FILE *log_fp;                                                       \

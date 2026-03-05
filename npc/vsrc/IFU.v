@@ -34,4 +34,16 @@ module IFU #(
       sync_pc_data(fetch_addr);
     end
   end
+
+  //  itrace
+  import "DPI-C" function void trace_instruction(
+    input int unsigned inst,
+    input int unsigned pc
+  );
+  always @(posedge clk) begin
+    if (rst_l) begin
+      trace_instruction(pmem_read_result, fetch_addr);
+    end
+  end
+
 endmodule
