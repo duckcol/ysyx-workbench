@@ -5,6 +5,7 @@
 int parse_args(int argc, char *argv[]);
 long load_img();
 void init_log(/*const char *log_file*/);
+extern "C" void init_disasm(const char *triple);
 
 int main(int argc, char *argv[]) {
   //  initial pmem with image
@@ -13,6 +14,9 @@ int main(int argc, char *argv[]) {
   //  initial cpu pc counter
   sim_init();
   INFO("CPU INITIAL COMPLETED");
+
+  init_disasm("riscv32-pc-linux-gnu");
+  INFO("disassemble INITIAL COMPLETED");
 
   //  initial regex expression
   init_regex();

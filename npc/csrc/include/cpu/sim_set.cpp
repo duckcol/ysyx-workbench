@@ -95,6 +95,26 @@ extern "C" void sync_pc_data(uint32_t pc) {
   return;
 }
 
+extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code,
+                            int nbyte);
+std::string get_asm_mnemonic(uint32_t inst, uint32_t pc) {
+  char buf[128];
+  uint8_t bytes[4];
+
+  // 注意端序！RISC-V 是小端序 (Little Endian)
+  // inst 是 uint32_t，内存中低位在前
+  bytes[0] = inst & 0xFF;
+  bytes[1] = (inst >> 8) & 0xFF;
+  bytes[2] = (inst >> 16) & 0xFF;
+  bytes[3] = (inst >> 24) & 0xFF;
+
+  disassemble(buf, sizeof(buf), pc, bytes, 4);
+
+  return std::string(buf);
+}
+
 extern "C" void trace_instruction(word_t inst, word_t pc) {
-  _Log("addr:" FMT_WORD " inst: " FMT_WORD "\n", pc, inst);
+  //  disassemle the inst and print it out
+  std::string asm_str = get_asm_mnemonic((uint32_t)inst, (uint32_t)pc);
+  _Log("" FMT_WORD ":\t" FMT_WORD "\t%s\n", pc, inst, asm_str.c_str());
 }

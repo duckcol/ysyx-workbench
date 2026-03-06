@@ -28,6 +28,13 @@ LOG ?= $(NPC_DIR)/default-npc-log.txt
 
 CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\"" -I$(NPC_DIR)/csrc/include/
 LDFLAGS += -lreadline
+# to link lib llvm
+LLVM_RAW_FLAGS := $(shell llvm-config --cxxflags)
+# remove some old macros that will cause error
+LLVM_SAFE_FLAGS := $(filter-out -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS,$(LLVM_RAW_FLAGS))
+CXXFLAGS += $(LLVM_SAFE_FLAGS) -fPIE
+LIBS += $(shell llvm-config --libs)
+LDFLAGS += $(LIBS)
 
 all: $(BIN)
 	$(shell mkdir -p $(BUILD_DIR))
