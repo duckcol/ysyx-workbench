@@ -1,9 +1,12 @@
-#include "list.h"
-#include "sdb.h"
-#include <elf.h>
+#include "ftrace.h"
 
 List *ftrace_log = NULL;
 bool ftrace_flag;
+typedef struct {
+  paddr_t start;
+  paddr_t end;
+  char name[50];
+} func_log;
 
 #ifdef CONFIG_FTRACE
 void init_ftrace(const char *elf_file) {
@@ -34,7 +37,7 @@ void init_ftrace(const char *elf_file) {
 
   //  find .symtab .strtab and shstrtab section header
   fseek(fp, elf_header.e_shoff, SEEK_SET);
-  Elf32_Shdr symtab_shdr = {0}, strtab_shdr = {0}, shstrtab_shdr = {0};
+  Elf32_Shdr symtab_shdr = {}, strtab_shdr = {}, shstrtab_shdr = {};
   for (int i = 0; i < elf_header.e_shnum; i++) {
     Elf32_Shdr section_header;
     ret = fread(&section_header, 1, sizeof(Elf32_Shdr), fp);
@@ -57,17 +60,17 @@ void init_ftrace(const char *elf_file) {
 
   //  read in .symtab .strtab and .shstrtab data
   fseek(fp, symtab_shdr.sh_offset, SEEK_SET);
-  Elf32_Sym *symtab = malloc(symtab_shdr.sh_size);
+  Elf32_Sym *symtab = (Elf32_Sym *)malloc(symtab_shdr.sh_size);
   ret = fread(symtab, 1, symtab_shdr.sh_size, fp);
   Assert(ret, "symtab readin error");
 
   fseek(fp, strtab_shdr.sh_offset, SEEK_SET);
-  char *strtab = malloc(strtab_shdr.sh_size);
+  char *strtab = (char *)malloc(strtab_shdr.sh_size);
   ret = fread(strtab, 1, strtab_shdr.sh_size, fp);
   Assert(ret, "strtab readin error");
 
   fseek(fp, shstrtab_shdr.sh_offset, SEEK_SET);
-  char *shstrtab = malloc(shstrtab_shdr.sh_size);
+  char *shstrtab = (char *)malloc(shstrtab_shdr.sh_size);
   ret = fread(shstrtab, 1, shstrtab_shdr.sh_size, fp);
   Assert(ret, "shstrtab readin error");
 
@@ -82,11 +85,11 @@ void init_ftrace(const char *elf_file) {
     if (ELF32_ST_TYPE(sym_entry->st_info) == STT_FUNC &&
         sym_entry->st_size != 0) {
       char *func_name = &strtab[sym_entry->st_name];
-      Log("Found function: %s begin " FMT_PADDR " end " FMT_PADDR " bytes",
+      Log("Found function: %s begin from " FMT_PADDR " to " FMT_PADDR "",
           func_name, sym_entry->st_value,
           sym_entry->st_value + sym_entry->st_size);
 
-      func_log *a_log = calloc(1, sizeof(func_log));
+      func_log *a_log = (func_log *)calloc(1, sizeof(func_log));
       a_log->start = sym_entry->st_value;
       a_log->end = sym_entry->st_value + sym_entry->st_size;
       strncpy(a_log->name, func_name, 49 * sizeof(char));

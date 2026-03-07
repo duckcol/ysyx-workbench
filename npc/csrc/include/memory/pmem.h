@@ -1,3 +1,5 @@
+#ifndef __PMEM_H__
+#define __PMEM_H__
 #include "common.h"
 
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
@@ -13,3 +15,4 @@ static inline bool in_pmem(paddr_t addr) {
 }
 
 word_t vaddr_read(vaddr_t addr);
+#endif

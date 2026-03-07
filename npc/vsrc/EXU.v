@@ -54,7 +54,9 @@ module EXU #(
   );
 
   // so far, only for jal and jalr
-  assign cur_inst_j_or_s = (opcode == 7'b1101111) | (opcode == 7'b1100111) ? 1 : 0;
+  assign cur_inst_j_or_s =
+  (opcode == 7'b1101111) | (opcode == 7'b1100111 && funct3 == 3'b000) 
+  ? 1 : 0;
   MuxKeyWithDefault #(
       .NR_KEY  (2),
       .KEY_LEN (OPCODE_LEN),

@@ -22,7 +22,8 @@ extern "C" void sync_rf_data(uint32_t addr, uint32_t data);
 extern "C" void sync_pc_data(uint32_t pc);
 
 #ifdef CONFIG_ITRACE
-extern "C" void trace_instruction(word_t inst, vaddr_t pc);
+extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
+                                  word_t snpc);
 #endif // CONFIG_ITRACE
 
 void cpu_exec(uint64_t n);

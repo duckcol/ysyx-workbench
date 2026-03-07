@@ -1,9 +1,10 @@
-#include "common.h"
-#include "memory/pmem.h"
-#include "utils.h"
+#include "monitor.h"
 
 void init_log(const char *log_file);
 static char *log_file = NULL;
+void init_ftrace(const char *elf_file);
+static char *elf_file = NULL;
+extern "C" void init_disasm(const char *triple);
 
 static char *img_file = NULL;
 int parse_args(int argc, char *argv[]) {
@@ -33,7 +34,8 @@ int parse_args(int argc, char *argv[]) {
       // diff_so_file = optarg;
       break;
     case 'f':
-      // elf_file = optarg;
+      elf_file = optarg;
+      INFO("ELF: %s", elf_file);
       break;
     case 1:
       img_file = optarg;
@@ -56,6 +58,10 @@ int parse_args(int argc, char *argv[]) {
 long load_img() {
   if (img_file == NULL) {
     Log("No image is given. Use the default build-in image.");
+    //  initial pmem with testing
+    //  instructions in pmem_initial()
+    //  in pmem.cpp
+    pmem_initial();
     return 4096; // built-in image size
   }
 
@@ -76,7 +82,7 @@ long load_img() {
 }
 
 FILE *log_fp = NULL;
-void init_log(/*const char *log_file*/) {
+void init_log(const char *log_file) {
   log_fp = stdout;
   if (log_file != NULL) {
     FILE *fp = fopen(log_file, "w");
@@ -94,4 +100,28 @@ bool log_enable() {
 
   // TODO: detact the instruction step to make it change
   return true;
+}
+
+void init_monitor(int argc, char *argv[]) {
+  /* Parse arguments. */
+  parse_args(argc, argv);
+
+  //  initial regex expression
+  init_regex();
+  INFO("REGEX INITIAL COMPLETED");
+
+  /* Open the log file. */
+  init_log(log_file);
+  INFO("LOGGING INITIAL COMPLETED");
+
+  /* Open the elf file. */
+  init_ftrace(elf_file);
+  INFO("FTRACE INITIAL COMPLETED");
+
+  /* Load the image to memory. This will overwrite the built-in image. */
+  load_img();
+  INFO("MEM INITIAL COMPLETED");
+
+  init_disasm("riscv32-pc-linux-gnu");
+  INFO("disassemble INITIAL COMPLETED");
 }

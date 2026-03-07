@@ -38,11 +38,13 @@ module IFU #(
   //  itrace
   import "DPI-C" function void trace_instruction(
     input int unsigned inst,
-    input int unsigned pc
+    input int unsigned pc,
+    input int unsigned dnpc,
+    input int unsigned snpc
   );
   always @(posedge clk) begin
     if (rst_l) begin
-      trace_instruction(pmem_read_result, fetch_addr);
+      trace_instruction(fetch_inst, pc_addr - 32'd4, target_addr, pc_addr);
     end
   end
 

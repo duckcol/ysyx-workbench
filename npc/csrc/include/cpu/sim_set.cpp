@@ -1,6 +1,10 @@
 #include "sim_set.h"
 #include "common.h"
+#include "cpu/decode.h"
+#include "ftrace.h"
 #include "reg.h"
+#include "utils.h"
+#include <cstdint>
 
 VerilatedContext *contextp = NULL;
 VerilatedFstC *tfp = NULL;
@@ -71,7 +75,7 @@ void cpu_exec(uint64_t n) {
 int halt_ret = 1;
 int ebreak_flag = 0;
 extern "C" void trigger_ebreak() {
-  INFO("triggering inst ebreak");
+  Log("triggering inst ebreak");
   ebreak_flag = 1;
 
   // check $a0 or R(10) to see if it is 0
@@ -113,8 +117,40 @@ std::string get_asm_mnemonic(uint32_t inst, uint32_t pc) {
   return std::string(buf);
 }
 
-extern "C" void trace_instruction(word_t inst, word_t pc) {
+Decode inst_decode;
+void itrace(word_t inst, word_t pc) {
   //  disassemle the inst and print it out
   std::string asm_str = get_asm_mnemonic((uint32_t)inst, (uint32_t)pc);
   _Log("" FMT_WORD ":\t" FMT_WORD "\t%s\n", pc, inst, asm_str.c_str());
+}
+
+void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc) {
+  uint8_t opcode, funct3;
+  opcode = inst & 0x7F;
+  funct3 = (inst >> 12) & 0x03;
+
+  if (opcode == 0b01101111) {
+    _Log("jal  pc: " FMT_WORD " dnpc: " FMT_WORD " snpc: " FMT_WORD "\n", pc,
+         dnpc, snpc);
+    add_ftrace(dnpc, 0);
+  } else if (funct3 == 0x00 && opcode == 0b01100111) {
+    _Log("jalr pc: " FMT_WORD " dnpc: " FMT_WORD " snpc: " FMT_WORD "\n", pc,
+         dnpc, snpc);
+    uint8_t rs1 = (inst >> 15) & 0x1F;
+    word_t offset = (inst >> 20) & 0xFFFF;
+    if (rs1 == 1 && offset == 0)
+      _Log("this inst is a ret\n");
+
+    add_ftrace(dnpc, (rs1 == 1 && offset == 0));
+  }
+}
+
+extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
+                                  word_t snpc) {
+  inst_decode.pc = pc;
+  inst_decode.snpc = snpc;
+  inst_decode.dnpc = dnpc;
+  inst_decode.isa.inst.val = inst;
+  itrace(inst, pc);
+  ftrace(inst, pc, dnpc, snpc);
 }
