@@ -130,9 +130,9 @@ void log_iringbuff();
 void print_inst_ringbuff() {
 #ifdef CONFIG_ITRACE
   Log("the instruction ringbuffer are as following");
-  puts("========instructions ringbuffer========");
+  _Log("========instructions ringbuffer========\n");
   log_iringbuff();
-  puts("================end====================");
+  _Log("================end====================\n");
 #endif
 }
 
@@ -140,9 +140,9 @@ void log_mem_trace();
 void print_mem_trace() {
 #ifdef CONFIG_MTRACE
   Log("the memory trace are as following");
-  puts("===========memory trace===========");
+  _Log("===========memory trace===========\n");
   log_mem_trace();
-  puts("===============end================");
+  _Log("===============end================\n");
 #endif
 }
 

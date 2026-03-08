@@ -5,6 +5,7 @@ static char *log_file = NULL;
 void init_ftrace(const char *elf_file);
 static char *elf_file = NULL;
 extern "C" void init_disasm(const char *triple);
+void init_iringbuff();
 
 static char *img_file = NULL;
 int parse_args(int argc, char *argv[]) {
@@ -117,6 +118,9 @@ void init_monitor(int argc, char *argv[]) {
   /* Open the elf file. */
   init_ftrace(elf_file);
   INFO("FTRACE INITIAL COMPLETED");
+
+  /* Init instruction ringbuffer */
+  init_iringbuff();
 
   /* Load the image to memory. This will overwrite the built-in image. */
   load_img();

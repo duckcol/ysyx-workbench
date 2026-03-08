@@ -5,6 +5,7 @@
 void init_monitor(int argc, char *argv[]);
 void sdb_mainloop();
 void print_ftrace_log();
+void log_iringbuff();
 
 int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
@@ -25,6 +26,7 @@ int main(int argc, char *argv[]) {
   sim_exit();
 
   print_ftrace_log();
+  log_iringbuff();
   Log("%s at pc = %08x", (halt_ret) ? "HIT BAD TRAP" : "HIT GOOD TRAP",
       top->fetch_inst_addr - 4);
   return halt_ret;

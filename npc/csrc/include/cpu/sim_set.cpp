@@ -4,7 +4,7 @@
 #include "ftrace.h"
 #include "reg.h"
 #include "utils.h"
-#include <cstdint>
+#include <cstdio>
 
 VerilatedContext *contextp = NULL;
 VerilatedFstC *tfp = NULL;
@@ -118,10 +118,14 @@ std::string get_asm_mnemonic(uint32_t inst, uint32_t pc) {
 }
 
 Decode inst_decode;
+int push_iringbuff(char *inst, bool bad_ending);
 void itrace(word_t inst, word_t pc) {
   //  disassemle the inst and print it out
   std::string asm_str = get_asm_mnemonic((uint32_t)inst, (uint32_t)pc);
   _Log("" FMT_WORD ":\t" FMT_WORD "\t%s\n", pc, inst, asm_str.c_str());
+  snprintf(inst_decode.logbuf, 128, "" FMT_WORD ":\t" FMT_WORD "\t%s", pc, inst,
+           asm_str.c_str());
+  push_iringbuff(inst_decode.logbuf, 0);
 }
 
 void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc) {
