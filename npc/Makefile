@@ -29,6 +29,10 @@ LOG ?= $(NPC_DIR)/default-npc-log.txt
 DEFAULT_ELF = $(NPC_DIR)/dummy-riscv32e-npc.elf
 ELF ?= $(NPC_DIR)/dummy-riscv32e-npc.elf
 
+DEFAULT_DIFF_SO = /home/coladuck/ysyx-workbench/npc/riscv32-nemu-interpreter-so
+DIFF_SO ?= /home/coladuck/ysyx-workbench/npc/riscv32-nemu-interpreter-so
+
+
 CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\"" -I$(NPC_DIR)/csrc/include/
 LDFLAGS += -lreadline
 # to link lib llvm
@@ -56,7 +60,10 @@ $(BIN): $(VLOG_CODE) $(CPP_CODE) | $(BUILD_DIR)
 
 # Command to run npc
 # "override" is used to prevent the following lines with ARGS being ignored
-override ARGS ?= --log=$(shell realpath $(DEFAULT_LOG)) --ftrace=$(shell realpath $(DEFAULT_ELF))
+override ARGS ?= \
+	--log=$(shell realpath $(DEFAULT_LOG)) \
+	--ftrace=$(shell realpath $(DEFAULT_ELF)) \
+	--diff=$(shell realpath $(DEFAULT_DIFF_SO))
 
 NPC_EXEC := $(shell realpath $(BIN)) $(ARGS) $(shell realpath $(IMG))
 

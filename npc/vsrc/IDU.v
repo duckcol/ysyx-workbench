@@ -61,7 +61,7 @@ module IDU #(
 
   //  ebreak
   import "DPI-C" function void trigger_ebreak();
-  always @(*) begin
+  always @(posedge sys_clk) begin
     if (opcode == 7'b1110011 && funct3 == 3'b000 && imm == 32'd1) begin
       $display("Time=%02t: trigger ebreak", $time);
       trigger_ebreak();

@@ -5,3 +5,5 @@
 #define CONFIG_ITRACE 1
 #define CONFIG_FTRACE 1
 #define LLVM_VERSION_MAJOR 18
+#define CONFIG_DIFFTEST 1
+#define CONFIG_ISA_riscv 1

@@ -1,4 +1,5 @@
 #include "sdb.h"
+#include "common.h"
 #include "cpu/sim_set.h"
 
 static int cmd_help(char *args);
@@ -8,7 +9,7 @@ static int cmd_x(char *args);
 static int cmd_p(char *args);
 // static int cmd_w(char *args);
 // static int cmd_d(char *args);
-// static int cmd_q(char *args);
+static int cmd_q(char *args);
 
 static int cmd_c(char *args) {
   cpu_exec(-1);

@@ -60,6 +60,7 @@ int step_times(int n) {
   return n;
 }
 
+void difftest_step(vaddr_t pc, vaddr_t npc);
 void cpu_exec(uint64_t n) {
   for (; n > 0; n--) {
     if (ebreak_flag == 1) {
@@ -69,6 +70,11 @@ void cpu_exec(uint64_t n) {
       return;
     }
     step_times(1);
+    if (inst_decode.pc >= RESET_VECTOR)
+      IFDEF(CONFIG_DIFFTEST,
+            difftest_step(
+                inst_decode.pc,
+                (inst_decode.dnpc ? inst_decode.snpc : inst_decode.dnpc)));
   }
 }
 
@@ -95,7 +101,7 @@ extern "C" void sync_rf_data(uint32_t addr, uint32_t data) {
 extern "C" void sync_pc_data(uint32_t pc) {
   INFO("sync pc data");
   cpu.pc = pc;
-  INFO("sync reg ends");
+  INFO("sync pc ends");
   return;
 }
 
@@ -156,5 +162,6 @@ extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
   inst_decode.dnpc = dnpc;
   inst_decode.isa.inst.val = inst;
   itrace(inst, pc);
+  INFO("snpc: " FMT_WORD " dnpc: " FMT_WORD "", snpc, dnpc);
   ftrace(inst, pc, dnpc, snpc);
 }

@@ -8,8 +8,6 @@ void print_ftrace_log();
 void log_iringbuff();
 
 int main(int argc, char *argv[]) {
-  init_monitor(argc, argv);
-
   //  initial cpu
   //  read in inst and run
   // top->sys_rst_l = 1;
@@ -21,12 +19,16 @@ int main(int argc, char *argv[]) {
   sim_init();
   INFO("CPU INITIAL COMPLETED");
 
+  init_monitor(argc, argv);
+
   sdb_mainloop();
 
   sim_exit();
 
-  print_ftrace_log();
-  log_iringbuff();
+  if (halt_ret == 0) {
+    print_ftrace_log();
+    log_iringbuff();
+  }
   Log("%s at pc = %08x", (halt_ret) ? "HIT BAD TRAP" : "HIT GOOD TRAP",
       top->fetch_inst_addr - 4);
   return halt_ret;

@@ -2,8 +2,14 @@
 
 void init_log(const char *log_file);
 static char *log_file = NULL;
+
 void init_ftrace(const char *elf_file);
 static char *elf_file = NULL;
+
+static char *diff_so_file = NULL;
+static int difftest_port = 1234;
+void init_difftest(char *ref_so_file, long img_size, int port);
+
 extern "C" void init_disasm(const char *triple);
 void init_iringbuff();
 
@@ -32,7 +38,8 @@ int parse_args(int argc, char *argv[]) {
       INFO("LOG: %s", log_file);
       break;
     case 'd':
-      // diff_so_file = optarg;
+      diff_so_file = optarg;
+      INFO("DIFF REF SO: %s", diff_so_file);
       break;
     case 'f':
       elf_file = optarg;
@@ -121,11 +128,17 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Init instruction ringbuffer */
   init_iringbuff();
+  INFO("INST RINGBUFFER INITIAL COMPLETED");
 
   /* Load the image to memory. This will overwrite the built-in image. */
-  load_img();
+  long img_size = load_img();
   INFO("MEM INITIAL COMPLETED");
 
+  /* Init disassemble functions */
   init_disasm("riscv32-pc-linux-gnu");
   INFO("disassemble INITIAL COMPLETED");
+
+  /* Initialize differential testing. */
+  init_difftest(diff_so_file, img_size, difftest_port);
+  INFO("DIFFTEST INITIAL COMPLETED");
 }
