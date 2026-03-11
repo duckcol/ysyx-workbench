@@ -4,7 +4,6 @@
 #include "ftrace.h"
 #include "reg.h"
 #include "utils.h"
-#include <cstdio>
 
 VerilatedContext *contextp = NULL;
 VerilatedFstC *tfp = NULL;

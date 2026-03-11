@@ -7,4 +7,4 @@
 #define LLVM_VERSION_MAJOR 18
 #define CONFIG_DIFFTEST 1
 #define CONFIG_ISA_riscv 1
-#define CONFIG_RVE
+#define CONFIG_RVE 1
