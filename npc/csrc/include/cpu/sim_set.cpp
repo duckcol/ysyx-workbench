@@ -3,7 +3,6 @@
 #include "cpu/decode.h"
 #include "ftrace.h"
 #include "reg.h"
-#include "utils.h"
 
 VerilatedContext *contextp = NULL;
 VerilatedFstC *tfp = NULL;
@@ -39,7 +38,7 @@ int sim_exit() {
 int step_and_dump_wave() {
   top->eval();
   if (top->fetch_inst_addr >= 0x80000000)
-    top->pmem_read = pmem_read(top->fetch_inst_addr);
+    top->pmem_read = paddr_read(top->fetch_inst_addr);
   top->eval();
   contextp->timeInc(1);
   tfp->dump(contextp->time());
@@ -123,6 +122,7 @@ std::string get_asm_mnemonic(uint32_t inst, uint32_t pc) {
 }
 
 Decode inst_decode;
+#ifdef CONFIG_ITRACE
 int push_iringbuff(char *inst, bool bad_ending);
 void itrace(word_t inst, word_t pc) {
   //  disassemle the inst and print it out
@@ -132,7 +132,11 @@ void itrace(word_t inst, word_t pc) {
            asm_str.c_str());
   push_iringbuff(inst_decode.logbuf, 0);
 }
+#else
+void itrace(word_t inst, word_t pc);
+#endif
 
+#ifdef CONFIG_FTRACE
 void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc) {
   uint8_t opcode, funct3;
   opcode = inst & 0x7F;
@@ -153,6 +157,9 @@ void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc) {
     add_ftrace(dnpc, (rs1 == 1 && offset == 0));
   }
 }
+#else
+void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc);
+#endif
 
 extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
                                   word_t snpc) {
@@ -163,4 +170,35 @@ extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
   itrace(inst, pc);
   INFO("snpc: " FMT_WORD " dnpc: " FMT_WORD "", snpc, dnpc);
   ftrace(inst, pc, dnpc, snpc);
+}
+
+extern "C" int pmem_read(int raddr) {
+  // 总是读取地址为`raddr & ~0x3u`的4字节返回
+  // raddr & 0x3u is for 4 byte alignment
+  word_t ret = paddr_read(raddr & ~0x3u);
+  Log("read data " FMT_WORD "from addr " FMT_PADDR "", ret, raddr & 0x3u);
+  return ret;
+}
+
+extern "C" void pmem_write(int waddr, int wdata, char wmask) {
+  // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
+  // `wmask`中每比特表示`wdata`中1个字节的掩码,
+  // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
+  word_t wdata_after_mask;
+  switch (wmask) {
+  case (0x1):
+    wdata_after_mask = wdata & 0x000F;
+    break;
+  case (0x3):
+    wdata_after_mask = wdata & 0x00FF;
+    break;
+  case (0xF):
+    wdata_after_mask = wdata & 0xFFFF;
+    break;
+  default:
+    Assert(0, "wmask is %X not supported", (uint8_t)wmask);
+  }
+  Log("write data " FMT_WORD " into addr " FMT_PADDR "", wdata_after_mask,
+      waddr & ~0x3u);
+  paddr_write(waddr & ~0x3u, wdata & wmask);
 }

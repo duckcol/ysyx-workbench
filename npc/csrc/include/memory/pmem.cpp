@@ -2,7 +2,7 @@
 
 uint8_t *guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
-word_t pmem_read(paddr_t pc) {
+word_t paddr_read(paddr_t pc) {
   Assert(pc >= CONFIG_MBASE, "current pc %08x < BASE ADDR %08x", pc,
          CONFIG_MBASE);
   uint8_t *addr_in_pmem = pmem + pc - CONFIG_MBASE;
@@ -10,9 +10,9 @@ word_t pmem_read(paddr_t pc) {
   return ret;
 }
 
-word_t vaddr_read(vaddr_t addr) { return pmem_read(addr); }
+word_t vaddr_read(vaddr_t addr) { return paddr_read(addr); }
 
-void pmem_write(paddr_t pc, word_t data) {
+void paddr_write(paddr_t pc, word_t data) {
   uint8_t *addr_in_pmem = pmem + pc - CONFIG_MBASE;
   *(word_t *)addr_in_pmem = data;
   INFO("write data %08x into %p:%08x", data, addr_in_pmem,
@@ -105,7 +105,7 @@ word_t ebreak() { return inst_I(0b1, 0, 0b000, 0, 0b1110011); }
 
 //  testing instructions write in pmem
 #define inst_write(inst)                                                       \
-  pmem_write(CONFIG_MBASE + i * 4, inst);                                      \
+  paddr_write(CONFIG_MBASE + i * 4, inst);                                     \
   i++;
 void pmem_initial() {
   int i = 0;

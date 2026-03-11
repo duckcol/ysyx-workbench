@@ -5,8 +5,8 @@
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 
 void pmem_initial();
-void pmem_write(paddr_t pc, word_t data);
-word_t pmem_read(paddr_t pc);
+void paddr_write(paddr_t pc, word_t data);
+word_t paddr_read(paddr_t pc);
 
 uint8_t *guest_to_host(paddr_t paddr);
 
