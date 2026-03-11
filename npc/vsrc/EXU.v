@@ -1,7 +1,7 @@
 module EXU #(
-    INST_LEN = 32,
-    REG_LEN = 5,
-    OPCODE_LEN = 7
+    parameter integer INST_LEN = 32,
+    parameter integer REG_LEN = 5,
+    parameter integer OPCODE_LEN = 7
 ) (
     input clk,
     input [OPCODE_LEN-1:0] opcode,
@@ -55,7 +55,7 @@ module EXU #(
 
   // so far, only for jal and jalr
   assign cur_inst_j_or_s =
-  (opcode == 7'b1101111) | (opcode == 7'b1100111 && funct3 == 3'b000) 
+  (opcode == 7'b1101111) | (opcode == 7'b1100111 && funct3 == 3'b000)
   ? 1 : 0;
   MuxKeyWithDefault #(
       .NR_KEY  (2),
@@ -77,21 +77,23 @@ module EXU #(
 
   assign result_reg = regd;
 
+  // riscv32e only have 16 reg in the regfile
+  // so we need some modification to the rf
   RegisterFileWithZero #(
-      .ADDR_WIDTH(REG_LEN),
+      .ADDR_WIDTH(REG_LEN - 1),
       .DATA_WIDTH(INST_LEN)
   ) GPR32 (
       .clk(clk),
       .wdata(datain),
-      .waddr(regd),
-      .raddr1(reg1),
-      .raddr2(reg2),
+      .waddr(regd[REG_LEN-2:0]),
+      .raddr1(reg1[REG_LEN-2:0]),
+      .raddr2(reg2[REG_LEN-2:0]),
       .wen(1'b1),
       .ren(1'b1),
       .rdata1(data1),
       .rdata2(data2),
-      .rdata_out(result),
-      .debug_addr(debug_reg_addr),
+      .wdata_out(result),
+      .debug_addr(debug_reg_addr[REG_LEN-2:0]),
       .debug_data(debug_reg_data)
   );
 

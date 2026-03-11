@@ -1,6 +1,6 @@
 module Program_Counter #(
-    ADDR_LEN = 32,
-    MEM_BASE = 32'h80000000
+    parameter integer ADDR_LEN = 32,
+    parameter integer MEM_BASE = 32'h80000000
 ) (
     input sys_clk,
     input pc_rst_l,

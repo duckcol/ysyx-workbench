@@ -1,10 +1,10 @@
 // antpc is an toy process core
 module antpc #(
-    ADDR_LEN = 32,
-    INST_LEN = 32,
-    REG_LEN = 5,
-    OPCODE_LEN = 7,
-    MEM_BASE = 32'h80000000
+    parameter integer ADDR_LEN = 32,
+    parameter integer INST_LEN = 32,
+    parameter integer REG_LEN = 5,
+    parameter integer OPCODE_LEN = 7,
+    parameter integer MEM_BASE = 32'h80000000
 ) (
     input clk,
     input sys_rst_l,
@@ -19,7 +19,10 @@ module antpc #(
 
   wire [ADDR_LEN-1:0] cur_inst_addr, target_addr;
   wire cur_inst_j_or_s;
-  Program_Counter #(ADDR_LEN, MEM_BASE) pc1 (
+  Program_Counter #(
+      .ADDR_LEN(ADDR_LEN),
+      .MEM_BASE(MEM_BASE)
+  ) pc1 (
       .sys_clk(clk),
       .pc_rst_l(sys_rst_l),
       .pc_addr(cur_inst_addr),
@@ -28,7 +31,10 @@ module antpc #(
   );
 
   wire [INST_LEN-1:0] cur_inst_data;
-  IFU #(ADDR_LEN, INST_LEN) inst_fetch_unit1 (
+  IFU #(
+      .ADDR_LEN(ADDR_LEN),
+      .INST_LEN(INST_LEN)
+  ) inst_fetch_unit1 (
       .rst_l(sys_rst_l),
       .clk(clk),
       .inst_j_or_s(cur_inst_j_or_s),
@@ -43,7 +49,11 @@ module antpc #(
   wire [REG_LEN-1:0] inst_regd, inst_reg1, inst_reg2;
   wire [INST_LEN-1:0] inst_imm;
   wire [2:0] inst_funct3;
-  IDU #(INST_LEN, REG_LEN, OPCODE_LEN) inst_decode_unit1 (
+  IDU #(
+      .INST_LEN(INST_LEN),
+      .REG_LEN(REG_LEN),
+      .OPCODE_LEN(OPCODE_LEN)
+  ) inst_decode_unit1 (
       .sys_clk(clk),
       .rst_l(sys_rst_l),
       .inst(cur_inst_data),
@@ -55,7 +65,11 @@ module antpc #(
       .imm(inst_imm)
   );
 
-  EXU #(INST_LEN, REG_LEN, OPCODE_LEN) inst_execute_unit1 (
+  EXU #(
+      .INST_LEN(INST_LEN),
+      .REG_LEN(REG_LEN),
+      .OPCODE_LEN(OPCODE_LEN)
+  ) inst_execute_unit1 (
       .clk(clk),
       .opcode(inst_opcode),
       .funct3(inst_funct3),

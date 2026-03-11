@@ -1,6 +1,6 @@
 module IFU #(
-    ADDR_LEN = 32,
-    INST_LEN = 32
+    parameter integer ADDR_LEN = 32,
+    parameter integer INST_LEN = 32
 ) (
     input rst_l,
     input clk,

@@ -1,6 +1,6 @@
 module Reg #(
-    WIDTH = 1,
-    RESET_VAL = 0
+    parameter integer WIDTH = 1,
+    parameter integer RESET_VAL = 0
 ) (
     input clk,
     input rst,

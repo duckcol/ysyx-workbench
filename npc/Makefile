@@ -29,9 +29,10 @@ LOG ?= $(NPC_DIR)/default-npc-log.txt
 DEFAULT_ELF = $(NPC_DIR)/dummy-riscv32e-npc.elf
 ELF ?= $(NPC_DIR)/dummy-riscv32e-npc.elf
 
-DEFAULT_DIFF_SO = /home/coladuck/ysyx-workbench/npc/riscv32-nemu-interpreter-so
-DIFF_SO ?= /home/coladuck/ysyx-workbench/npc/riscv32-nemu-interpreter-so
+DEFAULT_DIFF_SO = $(YSYX_HOME)/nemu/build/riscv32-nemu-interpreter-so
+DIFF_SO ?= $(YSYX_HOME)/nemu/build/riscv32-nemu-interpreter-so
 
+BIN_VERIALATOR_OUTPUT ?= $(NPC_DIR)/verilator-compilation-output
 
 CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\"" -I$(NPC_DIR)/csrc/include/
 LDFLAGS += -lreadline
@@ -56,7 +57,7 @@ $(BIN): $(VLOG_CODE) $(CPP_CODE) | $(BUILD_DIR)
 		--Mdir $(BUILD_DIR) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) \
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
-		--exe
+		--exe > $(BIN_VERIALATOR_OUTPUT)
 
 # Command to run npc
 # "override" is used to prevent the following lines with ARGS being ignored
@@ -83,7 +84,7 @@ gdb: run-env
 	gdb $(BIN)
 
 check_waveform: $(WAVEFORM_FILE)
-	@gtkwave $(WAVEFORM_FILE)
+	@gtkwave $(WAVEFORM_FILE) --dark
 
 file_comfirm: $(IMG)
 	@echo "npc dir path is $(NPC_DIR)"

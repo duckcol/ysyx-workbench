@@ -1,7 +1,7 @@
 module IDU #(
-    INST_LEN = 32,
-    REG_LEN = 5,
-    OPCODE_LEN = 7
+    parameter integer INST_LEN = 32,
+    parameter integer REG_LEN = 5,
+    parameter integer OPCODE_LEN = 7
 ) (
     input [INST_LEN-1:0] inst,
     input sys_clk,
@@ -13,19 +13,15 @@ module IDU #(
     output [REG_LEN-1:0] reg2,
     output [INST_LEN-1:0] imm
 );
-  // opcode, funct3, rd, rs1, and rs2 position is fixed
+  // opcode and funct3 position is fixed
   // so no need to use a MUX to decode them
   assign opcode = inst[6:0];
   assign funct3 = inst[14:12];
-  // assign regd   = inst[11:7];
-  // assign reg1   = inst[19:15];
-  // assign reg2   = inst[24:20];
 
-  //  the position of imm is not fixed,
-  //  plus the addr of regd is also up to inst,
+  //  the position of imm, rs1, rs2, rd are not fixed,
   //  so I need MUX to decode
-  //  so far, I decode inst to get imm depending
-  //  on opcode, and only support 6 instructions
+  //  so far, I decode inst to get them depending
+  //  on opcode, and only support 7 instructions
   MuxKeyWithDefault #(
       .NR_KEY  (7),
       .KEY_LEN (OPCODE_LEN),
