@@ -20,7 +20,7 @@ int sim_init() {
 
   top->sys_rst_l = 0;
   top->clk = 0;
-  step_times(4);
+  step_times(5);
   top->sys_rst_l = 1;
 
   return 0;
