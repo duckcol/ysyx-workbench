@@ -110,6 +110,7 @@ bool log_enable() {
   return true;
 }
 
+int sim_init();
 void init_monitor(int argc, char *argv[]) {
   /* Parse arguments. */
   parse_args(argc, argv);
@@ -137,6 +138,9 @@ void init_monitor(int argc, char *argv[]) {
   /* Init disassemble functions */
   init_disasm("riscv32-pc-linux-gnu");
   INFO("disassemble INITIAL COMPLETED");
+
+  sim_init();
+  INFO("CPU INITIAL COMPLETED");
 
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);

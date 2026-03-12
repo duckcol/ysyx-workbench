@@ -19,6 +19,7 @@ int sim_init() {
   tfp->open("top.fst");
 
   top->sys_rst_l = 0;
+  top->clk = 0;
   step_times(4);
   top->sys_rst_l = 1;
 
@@ -37,9 +38,9 @@ int sim_exit() {
 
 int step_and_dump_wave() {
   top->eval();
-  if (top->pmem_read_addr >= 0x80000000)
-    top->pmem_read_result = paddr_read(top->pmem_read_addr);
-  top->eval();
+  // if (top->pmem_read_addr >= 0x80000000)
+  //   top->pmem_read_result = paddr_read(top->pmem_read_addr);
+  // top->eval();
   contextp->timeInc(1);
   tfp->dump(contextp->time());
 
@@ -175,8 +176,19 @@ extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
 extern "C" int pmem_read(int raddr) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回
   // raddr & 0x3u is for 4 byte alignment
-  word_t ret = paddr_read(raddr & ~0x3u);
-  Log("read data " FMT_WORD " from addr " FMT_PADDR "", ret, raddr & ~0x3u);
+  word_t ret;
+  INFO("raddr & ~0x3u =" FMT_PADDR "", (paddr_t)raddr & ~0x3u);
+  if ((raddr & ~0x3u) < CONFIG_MBASE) {
+    WARN("raddr " FMT_PADDR " < CONFIG_MBASE " FMT_PADDR
+         " read in 0x8000000 data",
+         raddr & ~0x3u, CONFIG_MBASE);
+    ret = paddr_read(CONFIG_MBASE);
+  } else {
+    ret = paddr_read((paddr_t)raddr & ~0x3u);
+  }
+  // word_t ret = paddr_read(raddr & ~0x3u);
+  Log("read data " FMT_WORD " from addr " FMT_PADDR "", ret,
+      (paddr_t)raddr & ~0x3u);
   return ret;
 }
 

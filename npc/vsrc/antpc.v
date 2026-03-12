@@ -8,8 +8,8 @@ module antpc #(
 ) (
     input clk,
     input sys_rst_l,
-    input [INST_LEN-1:0] pmem_read_result,
-    output [ADDR_LEN-1:0] pmem_read_addr,
+    // input [INST_LEN-1:0] pmem_read_result,
+    // output [ADDR_LEN-1:0] pmem_read_addr,
     output [INST_LEN-1:0] result,
     output [REG_LEN-1:0] regd,
     // pins for debug
@@ -40,8 +40,8 @@ module antpc #(
       .inst_j_or_s(cur_inst_j_or_s),
       .j_or_s_target_addr(j_or_s_target_addr),
       .pc_addr(cur_pc_addr),
-      .pmem_read_addr(pmem_read_addr),
-      .pmem_read_inst(pmem_read_result),
+      // .pmem_read_addr(pmem_read_addr),
+      // .pmem_read_inst(pmem_read_result),
       .cur_inst(cur_inst_data)
   );
 
