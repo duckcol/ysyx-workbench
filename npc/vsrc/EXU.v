@@ -23,8 +23,10 @@ module EXU #(
   //  so far it only execute inst:
   //  addi, auipc, jal, jalr, ebreak, sw(do nothing)
 
-  //  get datain, which is different because of different inst
-  //  pc_addr = pc + ４
+  //  CULCULATE datain
+  //  which is different because of different inst
+  //  NOTE:
+  //  pc_addr is the current running inst's pc + ４
   wire [INST_LEN-1:0] data1, data2, datain;
   MuxKeyWithDefault #(
       .NR_KEY  (5),
@@ -53,6 +55,7 @@ module EXU #(
       })
   );
 
+  // CALCULATE target_addr when inst is j or switch
   // so far, only for jal and jalr
   assign cur_inst_j_or_s =
   (opcode == 7'b1101111) | (opcode == 7'b1100111 && funct3 == 3'b000)
@@ -74,6 +77,40 @@ module EXU #(
         (data1 + imm) & ~32'd1
       })
   );
+
+  // CALCULATE mem addr, then write data
+  // so far, it only support sw
+  import "DPI-C" function void pmem_write(
+    input int  waddr,
+    input int  wdata,
+    input byte wmask
+  );
+  wire mem_wen;
+  wire [INST_LEN-1:0] pmem_write_addr;
+  wire [7:0] pmem_write_mask;
+  //store type has the same opcode but differs in funct3
+  assign mem_wen = (opcode == 7'b0100011) ? 1 : 0;
+  MuxKeyWithDefault #(
+      .NR_KEY  (1),
+      .KEY_LEN (1 + 3),
+      .DATA_LEN(INST_LEN + 8)
+  ) pmem_write_addr_and_mask_calculator (
+      .out({pmem_write_addr, pmem_write_mask}),
+      .key({mem_wen, funct3}),
+      .default_out('d0),
+      .lut({
+        // sw
+        {
+          1'b1, 3'b010
+        },
+        {data1 + imm, 8'h0F}
+      })
+  );
+  always @(*) begin
+    if (mem_wen) begin
+      pmem_write(pmem_write_addr, data2, pmem_write_mask);
+    end
+  end
 
   assign result_reg = regd;
 

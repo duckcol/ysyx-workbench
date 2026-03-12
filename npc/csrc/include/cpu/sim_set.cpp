@@ -201,14 +201,14 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   word_t wdata_after_mask;
   paddr_t waddr_after_align = (paddr_t)waddr & ~0x3u;
   switch (wmask) {
-  case (0x1):
-    wdata_after_mask = wdata & 0x000F;
+  case (0x01):
+    wdata_after_mask = wdata & 0x000000FF;
     break;
-  case (0x3):
-    wdata_after_mask = wdata & 0x00FF;
+  case (0x03):
+    wdata_after_mask = wdata & 0x0000FFFF;
     break;
-  case (0xF):
-    wdata_after_mask = wdata & 0xFFFF;
+  case (0x0F):
+    wdata_after_mask = wdata & 0xFFFFFFFF;
     break;
   default:
     Assert(0, "wmask is %X not supported", (uint8_t)wmask);
