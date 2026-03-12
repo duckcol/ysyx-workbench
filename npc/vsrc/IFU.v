@@ -25,7 +25,9 @@ module IFU #(
   import "DPI-C" function int pmem_read(input int raddr);
   always @(*) begin
     if (rst_l) begin
-      $display("time:%t DPI-C func pmem_read return %08h\n", $time, pmem_read(pmem_read_addr));
+      $display("time:%03t DPI-C  func pmem_read:       %08h", $time, pmem_read(pmem_read_addr));
+      $display("time:%03t input  wire pmem_read_inst:  %08h", $time, pmem_read_inst);
+      $display("time:%03t output Reg  cur_inst:        %08h", $time, cur_inst);
     end
   end
 
