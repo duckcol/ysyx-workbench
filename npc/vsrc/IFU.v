@@ -22,6 +22,12 @@ module IFU #(
       .wen (1'b1)
   );
   assign pmem_read_addr = inst_j_or_s ? j_or_s_target_addr : pc_addr;
+  import "DPI-C" function int pmem_read(input int raddr);
+  always @(*) begin
+    if (rst_l) begin
+      $display("time:%t DPI-C func pmem_read return %08h\n", $time, pmem_read(pmem_read_addr));
+    end
+  end
 
   // 导入DPI-C函数，来同步pc
   import "DPI-C" function void sync_pc_data(input int unsigned pc);
