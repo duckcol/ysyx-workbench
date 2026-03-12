@@ -134,7 +134,7 @@ void itrace(word_t inst, word_t pc) {
   push_iringbuff(inst_decode.logbuf, 0);
 }
 #else
-void itrace(word_t inst, word_t pc);
+void itrace(word_t inst, word_t pc) { return; };
 #endif
 
 #ifdef CONFIG_FTRACE
@@ -159,7 +159,7 @@ void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc) {
   }
 }
 #else
-void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc);
+void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc) { return; };
 #endif
 
 extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
@@ -173,22 +173,24 @@ extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
   ftrace(inst, pc, dnpc, snpc);
 }
 
+int push_mem_trace(paddr_t addr, int type, word_t data);
 extern "C" int pmem_read(int raddr) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回
   // raddr & 0x3u is for 4 byte alignment
   word_t ret;
-  INFO("raddr & ~0x3u =" FMT_PADDR "", (paddr_t)raddr & ~0x3u);
-  if ((raddr & ~0x3u) < CONFIG_MBASE) {
+  paddr_t raddr_after_align = (paddr_t)raddr & ~0x3u;
+  INFO("raddr & ~0x3u =" FMT_PADDR "", raddr);
+  if (raddr_after_align < CONFIG_MBASE) {
     WARN("raddr " FMT_PADDR " < CONFIG_MBASE " FMT_PADDR
          " read in 0x8000000 data",
-         raddr & ~0x3u, CONFIG_MBASE);
+         raddr_after_align, CONFIG_MBASE);
     ret = paddr_read(CONFIG_MBASE);
   } else {
-    ret = paddr_read((paddr_t)raddr & ~0x3u);
+    ret = paddr_read(raddr_after_align);
   }
   // word_t ret = paddr_read(raddr & ~0x3u);
-  Log("read data " FMT_WORD " from addr " FMT_PADDR "", ret,
-      (paddr_t)raddr & ~0x3u);
+  push_mem_trace(raddr_after_align, 1, ret);
+  Log("read data " FMT_WORD " from addr " FMT_PADDR "", ret, raddr_after_align);
   return ret;
 }
 
@@ -197,6 +199,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
   word_t wdata_after_mask;
+  paddr_t waddr_after_align = (paddr_t)waddr & ~0x3u;
   switch (wmask) {
   case (0x1):
     wdata_after_mask = wdata & 0x000F;
@@ -211,6 +214,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
     Assert(0, "wmask is %X not supported", (uint8_t)wmask);
   }
   Log("write data " FMT_WORD " into addr " FMT_PADDR "", wdata_after_mask,
-      waddr & ~0x3u);
-  paddr_write(waddr & ~0x3u, wdata & wmask);
+      waddr_after_align);
+  paddr_write(waddr_after_align, wdata_after_mask);
+  push_mem_trace(waddr_after_align, 0, wdata_after_mask);
 }

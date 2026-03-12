@@ -111,6 +111,7 @@ bool log_enable() {
 }
 
 int sim_init();
+void init_mtrace();
 void init_monitor(int argc, char *argv[]) {
   /* Parse arguments. */
   parse_args(argc, argv);
@@ -119,26 +120,31 @@ void init_monitor(int argc, char *argv[]) {
   init_regex();
   INFO("REGEX INITIAL COMPLETED");
 
+  /* Init disassemble functions */
+  init_disasm("riscv32-pc-linux-gnu");
+  INFO("disassemble INITIAL COMPLETED");
+
   /* Open the log file. */
   init_log(log_file);
-  INFO("LOGGING INITIAL COMPLETED");
+  INFO("LOG INITIAL COMPLETED");
+
+  /* Load the image to memory. This will overwrite the built-in image. */
+  long img_size = load_img();
+  INFO("MEMORY INITIAL COMPLETED");
 
   /* Open the elf file. */
   init_ftrace(elf_file);
-  INFO("FTRACE INITIAL COMPLETED");
+  INFO("FUNCTION TRACE INITIAL COMPLETED");
 
   /* Init instruction ringbuffer */
   init_iringbuff();
   INFO("INST RINGBUFFER INITIAL COMPLETED");
 
-  /* Load the image to memory. This will overwrite the built-in image. */
-  long img_size = load_img();
-  INFO("MEM INITIAL COMPLETED");
+  /* Init memory trace */
+  init_mtrace();
+  INFO("MEMORY TRACE INITIAL COMPLETED");
 
-  /* Init disassemble functions */
-  init_disasm("riscv32-pc-linux-gnu");
-  INFO("disassemble INITIAL COMPLETED");
-
+  /* Init cpu and its register*/
   sim_init();
   INFO("CPU INITIAL COMPLETED");
 

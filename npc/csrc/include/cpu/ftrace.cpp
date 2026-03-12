@@ -154,7 +154,7 @@ void print_ftrace_log() {
   List_clear_destroy(ftrace_log);
 }
 #else
-void print_ftrace_log() {}
-void add_ftrace() {}
-void init_ftrace() {}
+void print_ftrace_log() { return; }
+void add_ftrace() { return; }
+void init_ftrace() { return; }
 #endif

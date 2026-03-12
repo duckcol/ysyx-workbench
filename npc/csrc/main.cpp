@@ -7,6 +7,7 @@ void init_monitor(int argc, char *argv[]);
 void sdb_mainloop();
 void print_ftrace_log();
 void log_iringbuff();
+void log_mem_trace();
 
 int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
@@ -18,6 +19,7 @@ int main(int argc, char *argv[]) {
   if (halt_ret == 0) {
     print_ftrace_log();
     log_iringbuff();
+    log_mem_trace();
   }
   Log("%s at pc = %08x", (halt_ret) ? "HIT BAD TRAP" : "HIT GOOD TRAP",
       inst_decode.pc);

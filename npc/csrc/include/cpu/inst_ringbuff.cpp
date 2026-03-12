@@ -1,6 +1,7 @@
 #include "common.h"
 #define NR_INST 20
 
+#ifdef CONFIG_ITRACE
 typedef struct {
   char insts[NR_INST][128];
   int rp;
@@ -37,3 +38,8 @@ void log_iringbuff() {
   }
   _Log("================end====================\n");
 }
+#else
+void init_iringbuff() { return; }
+int push_iringbuff(char *inst, bool bad_ending) { return 0; };
+void log_iringbuff() { return; };
+#endif
