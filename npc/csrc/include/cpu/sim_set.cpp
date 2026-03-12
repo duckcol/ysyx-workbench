@@ -37,8 +37,8 @@ int sim_exit() {
 
 int step_and_dump_wave() {
   top->eval();
-  if (top->fetch_inst_addr >= 0x80000000)
-    top->pmem_read = paddr_read(top->fetch_inst_addr);
+  if (top->pmem_read_addr >= 0x80000000)
+    top->pmem_read_result = paddr_read(top->pmem_read_addr);
   top->eval();
   contextp->timeInc(1);
   tfp->dump(contextp->time());

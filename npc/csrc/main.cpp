@@ -30,6 +30,6 @@ int main(int argc, char *argv[]) {
     log_iringbuff();
   }
   Log("%s at pc = %08x", (halt_ret) ? "HIT BAD TRAP" : "HIT GOOD TRAP",
-      top->fetch_inst_addr - 4);
+      top->pmem_read_addr - 4);
   return halt_ret;
 }

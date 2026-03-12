@@ -5,11 +5,11 @@ module Program_Counter #(
     input sys_clk,
     input pc_rst_l,
     input inst_j_or_s,
-    input [ADDR_LEN-1:0] target_addr,
+    input [ADDR_LEN-1:0] j_or_s_target_addr,
     output [ADDR_LEN-1:0] pc_addr
 );
   //  simple MUX to differ normal or jump/switch
-  wire [ADDR_LEN-1:0] next_pc = inst_j_or_s ? target_addr : pc_addr;
+  wire [ADDR_LEN-1:0] next_pc = inst_j_or_s ? j_or_s_target_addr : pc_addr;
 
   Reg #(
       .WIDTH(ADDR_LEN),

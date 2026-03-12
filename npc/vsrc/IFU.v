@@ -5,11 +5,11 @@ module IFU #(
     input rst_l,
     input clk,
     input inst_j_or_s,
-    input [ADDR_LEN-1:0] target_addr,
+    input [ADDR_LEN-1:0] j_or_s_target_addr,
     input [ADDR_LEN-1:0] pc_addr,
-    input [INST_LEN-1:0] pmem_read_result,
-    output [ADDR_LEN-1:0] fetch_addr,
-    output [INST_LEN-1:0] fetch_inst
+    input [INST_LEN-1:0] pmem_read_inst,
+    output [ADDR_LEN-1:0] pmem_read_addr,
+    output [INST_LEN-1:0] cur_inst
 );
   Reg #(
       .WIDTH(INST_LEN),
@@ -17,11 +17,11 @@ module IFU #(
   ) IR (
       .clk (clk),
       .rst (~rst_l),
-      .din (pmem_read_result),
-      .dout(fetch_inst),
+      .din (pmem_read_inst),
+      .dout(cur_inst),
       .wen (1'b1)
   );
-  assign fetch_addr = inst_j_or_s ? target_addr : pc_addr;
+  assign pmem_read_addr = inst_j_or_s ? j_or_s_target_addr : pc_addr;
 
   // 导入DPI-C函数，来同步pc
   import "DPI-C" function void sync_pc_data(input int unsigned pc);
@@ -31,7 +31,7 @@ module IFU #(
     if (~rst_l) begin
       sync_pc_data(32'h80000000);
     end else begin
-      sync_pc_data(fetch_addr);
+      sync_pc_data(pmem_read_addr);
     end
   end
 
@@ -44,7 +44,7 @@ module IFU #(
   );
   always @(posedge clk) begin
     if (rst_l) begin
-      trace_instruction(fetch_inst, pc_addr - 32'd4, target_addr, pc_addr);
+      trace_instruction(cur_inst, pc_addr - 32'd4, j_or_s_target_addr, pc_addr);
     end
   end
 

@@ -11,7 +11,7 @@ module EXU #(
     input [REG_LEN-1:0] reg2,
     input [INST_LEN-1:0] imm,
     input [INST_LEN-1:0] pc_addr,
-    output [INST_LEN-1:0] target_addr,
+    output [INST_LEN-1:0] j_or_s_target_addr,
     output cur_inst_j_or_s,
     output [INST_LEN-1:0] result,
     output [REG_LEN-1:0] result_reg,
@@ -62,7 +62,7 @@ module EXU #(
       .KEY_LEN (OPCODE_LEN),
       .DATA_LEN(INST_LEN)
   ) target_addr_mux (
-      .out(target_addr),
+      .out(j_or_s_target_addr),
       .key(opcode),
       .default_out(32'd0),
       .lut({
