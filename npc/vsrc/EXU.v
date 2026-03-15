@@ -6,6 +6,7 @@ module EXU #(
     input clk,
     input [OPCODE_LEN-1:0] opcode,
     input [2:0] funct3,
+    input [6:0] funct7,
     input [REG_LEN-1:0] regd,
     input [REG_LEN-1:0] reg1,
     input [REG_LEN-1:0] reg2,

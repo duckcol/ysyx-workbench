@@ -49,6 +49,7 @@ module antpc #(
   wire [REG_LEN-1:0] inst_regd, inst_reg1, inst_reg2;
   wire [INST_LEN-1:0] inst_imm;
   wire [2:0] inst_funct3;
+  wire [6:0] inst_funct7;
   IDU #(
       .INST_LEN(INST_LEN),
       .REG_LEN(REG_LEN),
@@ -59,6 +60,7 @@ module antpc #(
       .inst(cur_inst_data),
       .opcode(inst_opcode),
       .funct3(inst_funct3),
+      .funct7(inst_funct7),
       .regd(inst_regd),
       .reg1(inst_reg1),
       .reg2(inst_reg2),
@@ -73,6 +75,7 @@ module antpc #(
       .clk(clk),
       .opcode(inst_opcode),
       .funct3(inst_funct3),
+      .funct7(inst_funct7),
       .regd(inst_regd),
       .reg1(inst_reg1),
       .reg2(inst_reg2),
