@@ -2,6 +2,7 @@ module AluInCtrl #(
     parameter integer DATA_LEN  = 32,
     parameter integer INST_CTRL = 9
 ) (
+    input                  clk,
     input  [ DATA_LEN-1:0] imm,
     input  [ DATA_LEN-1:0] rs1,
     input  [ DATA_LEN-1:0] rs2,
@@ -82,5 +83,30 @@ module AluInCtrl #(
         }
       })
   );
+
+`ifdef DEBUG_ALUINCTRL
+  always @(posedge clk) begin  // 假设系统有 clk 信号，在时钟上升沿采样稳定数据
+    if (|inst_ctrl) begin  // 仅在有有效控制信号时打印
+      $write("[Time=%05t] [ALU_IN_CTRL]: ", $time);
+
+      case (1'b1)
+        inst_ctrl[8]: $write("[LOAD  ] ");
+        inst_ctrl[7]: $write("[STORE ] ");
+        inst_ctrl[6]: $write("[I-TYPE] ");
+        inst_ctrl[5]: $write("[R-TYPE] ");
+        inst_ctrl[4]: $write("[LUI   ] ");
+        inst_ctrl[3]: $write("[AUIPC ] ");
+        inst_ctrl[2]: $write("[BRANCH] ");
+        inst_ctrl[1]: $write("[JAL   ] ");
+        inst_ctrl[0]: $write("[JALR  ] ");
+        default:      $write("[UNKOWN] ");
+      endcase
+
+      // 重点排列：输出结果 -> 核心输入参数
+      $display("OUT: {0x%h, 0x%h} | RS1: 0x%h, RS2: 0x%h, IMM: 0x%h, PC: 0x%h", alu_in_1, alu_in_2,
+               rs1, rs2, imm, pc);
+    end
+  end
+`endif
 
 endmodule

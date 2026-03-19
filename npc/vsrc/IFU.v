@@ -4,8 +4,8 @@ module IFU #(
 ) (
     input rst_l,
     input clk,
-    input inst_j_or_s,
-    input [ADDR_LEN-1:0] j_or_s_target_addr,
+    input inst_j_or_b,
+    input [ADDR_LEN-1:0] j_or_b_target_addr,
     input [ADDR_LEN-1:0] pc_addr,
     // input [INST_LEN-1:0] pmem_read_inst,
     // output [ADDR_LEN-1:0] pmem_read_addr,
@@ -14,12 +14,12 @@ module IFU #(
   //  get instruction from memory
   wire [INST_LEN-1:0] pmem_read_inst;
   wire [INST_LEN-1:0] pmem_read_addr;
-  assign pmem_read_addr = inst_j_or_s ? j_or_s_target_addr : pc_addr;
+  assign pmem_read_addr = inst_j_or_b ? j_or_b_target_addr : pc_addr;
   import "DPI-C" function int pmem_read(input int raddr);
   assign pmem_read_inst = pmem_read(pmem_read_addr);
   Reg #(
       .WIDTH(INST_LEN),
-      .RESET_VAL(32'd0)
+      .RESET_VAL(32'h000000013)
   ) IR (
       .clk (clk),
       .rst (~rst_l),
@@ -28,13 +28,16 @@ module IFU #(
       .wen (1'b1)
   );
   //  for monitor
-  // always @(*) begin
-  //   if (rst_l) begin
-  //     $display("time:%03t DPI-C  func pmem_read:       %08h", $time, pmem_read(pmem_read_addr));
-  //     $display("time:%03t input  wire pmem_read_inst:  %08h", $time, pmem_read_inst);
-  //     $display("time:%03t output Reg  cur_inst:        %08h", $time, cur_inst);
-  //   end
-  // end
+`ifdef DEBUG_IFU
+  always @(clk) begin
+    if (rst_l) begin
+      $display("[Time=%05t] [IFU] DPI-C  func pmem_read:       %08h", $time, pmem_read(
+               pmem_read_addr));
+      $display("[Time=%05t] [IFU] input  wire pmem_read_inst:  %08h", $time, pmem_read_inst);
+      $display("[Time=%05t] [IFU] output Reg  cur_inst:        %08h", $time, cur_inst);
+    end
+  end
+`endif
 
   // import DPI-C function to sync pc to CPU_state cpu
   import "DPI-C" function void sync_pc_data(input int unsigned pc);
@@ -55,7 +58,7 @@ module IFU #(
   );
   always @(posedge clk) begin
     if (rst_l) begin
-      trace_instruction(cur_inst, pc_addr - 32'd4, j_or_s_target_addr, pc_addr);
+      trace_instruction(cur_inst, pc_addr - 32'd4, j_or_b_target_addr, pc_addr);
     end
   end
 

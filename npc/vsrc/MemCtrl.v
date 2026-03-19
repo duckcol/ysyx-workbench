@@ -5,7 +5,7 @@ module MemCtrl #(
     input  [DATA_LEN-1:0] rs2,
     input                 inst_L,
     input                 inst_S,
-    input                 funct3,
+    input  [         2:0] funct3,
     output [DATA_LEN-1:0] read_result
 );
   import "DPI-C" function void pmem_write(
@@ -23,7 +23,7 @@ module MemCtrl #(
   ) pmem_write_mask_mux (
       .out(pmem_write_mask),
       .key({inst_S, funct3}),
-      .default_out({(DATA_LEN) {1'b0}}),
+      .default_out({(8) {1'b0}}),
       .lut({
         // format:
         // inst
@@ -48,6 +48,7 @@ module MemCtrl #(
   reg [DATA_LEN-1:0] read_data;
   always @(*) begin
     if (inst_L | inst_S) begin  // 有读写请求时
+      $display("pmem_addr:%x", alu_result_addr);
       read_data = pmem_read(alu_result_addr);
       if (inst_S) begin  // 有写请求时
         pmem_write(alu_result_addr, rs2, pmem_write_mask);

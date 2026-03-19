@@ -55,6 +55,13 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 }
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
+  //  first check if cpu.pc == ref_r->pc
+  if (cpu.pc != ref_r->pc) {
+    WARN("diff at cpu pc = " FMT_PADDR " ref pc = " FMT_WORD "", cpu.pc,
+         ref_r->pc);
+    return false;
+  }
+  //  then check if cpu.gpr == ref_r->gpr
   for (int i = 0; i < RISCV_GPR_NUM; i++) {
     if (ref_r->gpr[i] != gpr(i)) {
       pc = ref_r->pc;

@@ -17,8 +17,8 @@ module antpc #(
     output [INST_LEN-1:0] debug_reg_data
 );
 
-  wire [ADDR_LEN-1:0] cur_pc_addr, j_or_s_target_addr;
-  wire cur_inst_j_or_s;
+  wire [ADDR_LEN-1:0] cur_pc_addr, j_or_b_target_addr;
+  wire cur_inst_j_or_b;
   Program_Counter #(
       .ADDR_LEN(ADDR_LEN),
       .MEM_BASE(MEM_BASE)
@@ -26,8 +26,8 @@ module antpc #(
       .sys_clk(clk),
       .pc_rst_l(sys_rst_l),
       .pc_addr(cur_pc_addr),
-      .j_or_s_target_addr(j_or_s_target_addr),
-      .inst_j_or_s(cur_inst_j_or_s)
+      .j_or_b_target_addr(j_or_b_target_addr),
+      .inst_j_or_b(cur_inst_j_or_b)
   );
 
   wire [INST_LEN-1:0] cur_inst_data;
@@ -37,8 +37,8 @@ module antpc #(
   ) inst_fetch_unit1 (
       .rst_l(sys_rst_l),
       .clk(clk),
-      .inst_j_or_s(cur_inst_j_or_s),
-      .j_or_s_target_addr(j_or_s_target_addr),
+      .inst_j_or_b(cur_inst_j_or_b),
+      .j_or_b_target_addr(j_or_b_target_addr),
       .pc_addr(cur_pc_addr),
       // .pmem_read_addr(pmem_read_addr),
       // .pmem_read_inst(pmem_read_result),
@@ -81,8 +81,8 @@ module antpc #(
       .reg2(inst_reg2),
       .imm(inst_imm),
       .pc_addr(cur_pc_addr),
-      .j_or_s_target_addr(j_or_s_target_addr),
-      .cur_inst_j_or_s(cur_inst_j_or_s),
+      .j_or_b_target_addr(j_or_b_target_addr),
+      .cur_inst_j_or_b(cur_inst_j_or_b),
       .result(result),
       .result_reg(regd),
       //  pins for debug

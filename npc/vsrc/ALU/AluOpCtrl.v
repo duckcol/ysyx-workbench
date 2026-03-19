@@ -2,6 +2,7 @@ module AluOpCtrl #(
     parameter integer ALUOP_LEN  = 4,
     parameter integer OPCODE_LEN = 7
 ) (
+    input                   clk,
     input  [OPCODE_LEN-1:0] opcode,
     input  [           2:0] funct3,
     input  [           6:0] funct7,
@@ -145,5 +146,34 @@ module AluOpCtrl #(
   );
 
   assign inst_illegal = ~decode_hit;
+  // --- AluOpCtrl Monitor ---
+`ifdef DEBUG_ALUOPCTRL
+  always @(posedge clk) begin
+    // 1. 捕捉非法指令 (关键！)
+    if (inst_illegal) begin
+      $display(
+          "[Time:%05t] [ALU_OP_CTRL_ERROR] Illegal Instruction! Opcode: 7'h%h, F3: 3'h%h, F7: 7'h%h",
+          $time, opcode, funct3, funct7);
+    end  // 2. 正常指令译码跟踪
+    else if (|{inst_L, inst_S, inst_commpute_imm, inst_commpute_reg, inst_lui, inst_auipc, inst_B, inst_jal, inst_jalr}) begin
+      $write("[Time:%05t] [ALU_OP_CTRL] ", $time);
 
+      // 使用 case(1'b1) 判定当前指令大类
+      case (1'b1)
+        inst_L:            $write("Type: LOAD   ");
+        inst_S:            $write("Type: STORE  ");
+        inst_commpute_imm: $write("Type: I-ALU  ");
+        inst_commpute_reg: $write("Type: R-ALU  ");
+        inst_lui:          $write("Type: LUI    ");
+        inst_auipc:        $write("Type: AUIPC  ");
+        inst_B:            $write("Type: BRANCH ");
+        inst_jal:          $write("Type: JAL    ");
+        inst_jalr:         $write("Type: JALR   ");
+      endcase
+
+      // 打印具体的控制参数
+      $display("| AluSel: %2d | Raw: {Op:0x%h, F3:0x%h, F7:0x%h}", alu_sel, opcode, funct3, funct7);
+    end
+  end
+`endif
 endmodule

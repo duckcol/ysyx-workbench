@@ -92,18 +92,13 @@ module IDU #(
   import "DPI-C" function void trigger_ebreak();
   always @(posedge sys_clk) begin
     if (opcode == 7'b1110011 && funct3 == 3'b000 && imm == 32'd1) begin
-      $display("Time=%02t: trigger ebreak", $time);
+      $display("[Time=%05t] trigger ebreak", $time);
       trigger_ebreak();
     end
   end
 
-  //monitor signal
-  // initial begin
-  //   $monitor("Time=%02t: inst=%h | opcode=%b regd=%02d reg1=%02d reg2=%02d imm=%h", $time, inst,
-  //            opcode, regd, reg1, reg2, imm);
-  // end
-
   // 替换原有的 $monitor
+`ifdef DEBUG_IDU
   string cur_inst_type = "";
   always @(*) begin
     case (inst_type)
@@ -120,15 +115,17 @@ module IDU #(
   always @(posedge sys_clk or negedge rst_l) begin
     if (!rst_l) begin
       // 可选：复位时打印提示
-      $display("Time=%0t: [RESET] IDU reset asserted", $time);
+      $display("[Time=%05t] [RESET] IDU reset asserted", $time);
     end else begin
       if (inst == 32'd0) begin
-        $display("Time=%0t: ALL ZERO instruction", $time);
+        $display("[Time=%05t] [IDU] ALL ZERO instruction", $time);
       end else begin
-        $display("Time=%0t: inst=%h | type=%s opcode=%b regd=%02d reg1=%02d reg2=%02d imm=%h",
-                 $time, inst, cur_inst_type, opcode, regd, reg1, reg2, imm);
+        $display(
+            "[Time=%05t] [IDU] inst=%h | type=%s opcode=%b regd=%02d reg1=%02d reg2=%02d imm=%h",
+            $time, inst, cur_inst_type, opcode, regd, reg1, reg2, imm);
       end
     end
   end
+`endif
 
 endmodule

@@ -14,7 +14,7 @@ VERILATOR_CFLAGS += --cc --MMD --build -j 0 \
 										--x-initial fast \
 										-O3 --noassert \
 										--trace-fst
-#-Wall 
+#-Wall
 
 BUILD_DIR = $(NPC_DIR)/build
 OBJ_DIR = $(BUILD_DIR)
@@ -44,6 +44,10 @@ CXXFLAGS += $(LLVM_SAFE_FLAGS) -fPIE
 LIBS += $(shell llvm-config --libs)
 LDFLAGS += $(LIBS)
 
+# verilog display macros
+VERILOG_DEBUG_MARCO = IFU IDU ALUOPCTRL ALUINCTRL ALU TARGET_ADDR_CTRL
+VERILATOR_DEBUG_MACRO = $(addprefix -DDEBUG_, $(VERILOG_DEBUG_MARCO))
+
 all: $(BIN)
 	$(shell mkdir -p $(BUILD_DIR))
 
@@ -55,6 +59,7 @@ $(BIN): $(VLOG_CODE) $(CPP_CODE) | $(BUILD_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VLOG_CODE) $(CPP_CODE)\
 		--Mdir $(BUILD_DIR) \
+		$(VERILATOR_DEBUG_MACRO) \
 		$(addprefix -CFLAGS , $(CXXFLAGS)) \
 		$(addprefix -LDFLAGS , $(LDFLAGS)) \
 		--exe > $(BIN_VERIALATOR_OUTPUT)
