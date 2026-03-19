@@ -129,7 +129,7 @@ void itrace(word_t inst, word_t pc) {
   //  disassemle the inst and print it out
   std::string asm_str = get_asm_mnemonic((uint32_t)inst, (uint32_t)pc);
   _Log("" FMT_WORD ":\t" FMT_WORD "\t%s\n", pc, inst, asm_str.c_str());
-  snprintf(inst_decode.logbuf, 128, "" FMT_WORD ":\t" FMT_WORD "\t%s", pc, inst,
+  snprintf(inst_decode.logbuf, 256, "" FMT_WORD ":\t" FMT_WORD "\t%s", pc, inst,
            asm_str.c_str());
   push_iringbuff(inst_decode.logbuf, 0);
 }

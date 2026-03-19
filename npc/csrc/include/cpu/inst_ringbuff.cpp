@@ -3,7 +3,7 @@
 
 #ifdef CONFIG_ITRACE
 typedef struct {
-  char insts[NR_INST][128];
+  char insts[NR_INST][256];
   int rp;
   int wp;
 } inst_ring_buffer;
@@ -19,7 +19,7 @@ void init_iringbuff() {
 }
 
 int push_iringbuff(char *inst, bool bad_ending) {
-  strncpy(iringbuff.insts[iringbuff.rp], inst, 128);
+  strncpy(iringbuff.insts[iringbuff.rp], inst, 256);
   if (bad_ending) {
     strncat(iringbuff.insts[iringbuff.rp], "<-- ERROR!", 15);
   }
@@ -29,7 +29,8 @@ int push_iringbuff(char *inst, bool bad_ending) {
 }
 
 void log_iringbuff() {
-  strncat(iringbuff.insts[iringbuff.rp - 1], " <-- END HERE!", 20);
+  int last_idx = iringbuff.rp == 0 ? NR_INST - 1 : iringbuff.rp - 1;
+  strncat(iringbuff.insts[last_idx], " <-- END HERE!", 20);
   Log("the instruction ringbuffer are as following");
   _Log("========instructions ringbuffer========\n");
   for (int i = 0; i < NR_INST; i++) {

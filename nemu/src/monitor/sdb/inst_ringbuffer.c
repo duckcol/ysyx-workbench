@@ -32,6 +32,8 @@ int push_iringbuff(char *inst) {
 }
 
 void log_iringbuff() {
+  int last_idx = iringbuff.rp == 0 ? NR_INST - 1 : iringbuff.rp - 1;
+  strncat(iringbuff.insts[last_idx], " <-- END HERE!", 20);
   for (int i = 0; i < NR_INST; i++) {
     log_write("%s\n", iringbuff.insts[i]);
     puts(iringbuff.insts[i]);

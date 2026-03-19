@@ -5,7 +5,7 @@ bool ftrace_flag;
 typedef struct {
   paddr_t start;
   paddr_t end;
-  char name[50];
+  char name[100];
 } func_log;
 
 #ifdef CONFIG_FTRACE
@@ -107,7 +107,7 @@ void search_func_name(paddr_t pc, char *name) {
   LIST_FOREACH(ftrace_log, first, next, cur) {
     func_log log = *(func_log *)cur->value;
     if (log.start <= pc && pc < log.end) {
-      strncpy(name, log.name, 50 * sizeof(char));
+      strncpy(name, log.name, 100 * sizeof(char));
       return;
     }
   }
@@ -126,7 +126,7 @@ int level = 0;
 void add_ftrace(word_t target, bool is_ret) {
   if (ftrace_flag == false)
     return;
-  char name[50];
+  char name[100];
   Log_start();
   search_func_name(target, name);
 

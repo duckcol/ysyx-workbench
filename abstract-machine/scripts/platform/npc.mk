@@ -15,8 +15,16 @@ LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
+DEFAULT_DIFF_SO = $(YSYX_HOME)/nemu/build/riscv32-nemu-interpreter-so
+DIFF_SO ?= $(YSYX_HOME)/nemu/build/riscv32-nemu-interpreter-so
+
+DEFAULT_ELF = $(NPC_DIR)/dummy-riscv32e-npc.elf
+ELF ?= $(NPC_DIR)/dummy-riscv32e-npc.elf
+
 NPC_HOME = $(YSYX_HOME)/npc
-NPCFLAGS += --log $(shell dirname $(IMAGE).bin)/npc-log.txt
+NPCFLAGS += --log=$(shell dirname $(IMAGE).bin)/npc-log.txt \
+						--ftrace=$(IMAGE).elf \
+						--diff=$(shell realpath $(DEFAULT_DIFF_SO))
 
 image: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
