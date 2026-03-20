@@ -65,8 +65,9 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   for (int i = 0; i < RISCV_GPR_NUM; i++) {
     if (ref_r->gpr[i] != gpr(i)) {
       pc = ref_r->pc;
-      WARN("diff at ref pc = " FMT_PADDR " ref gpr %s = " FMT_WORD "", pc,
-           reg_name(i), ref_r->gpr[i]);
+      WARN("diff at ref pc = " FMT_PADDR "\n ref gpr %s = " FMT_WORD
+           " cpu gpr %s = " FMT_WORD "",
+           pc, reg_name(i), ref_r->gpr[i], reg_name(i), gpr(i));
       return false;
     }
   }

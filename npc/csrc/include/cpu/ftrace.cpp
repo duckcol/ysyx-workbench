@@ -155,6 +155,6 @@ void print_ftrace_log() {
 }
 #else
 void print_ftrace_log() { return; }
-void add_ftrace() { return; }
-void init_ftrace() { return; }
+void add_ftrace(word_t target, bool is_ret) { return; }
+void init_ftrace(const char *elf_file) { return; }
 #endif

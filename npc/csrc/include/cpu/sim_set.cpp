@@ -179,7 +179,7 @@ extern "C" int pmem_read(int raddr) {
   // raddr & 0x3u is for 4 byte alignment
   word_t ret;
   paddr_t raddr_after_align = (paddr_t)raddr & ~0x3u;
-  INFO("raddr & ~0x3u =" FMT_PADDR "", raddr);
+
   if (raddr_after_align < CONFIG_MBASE) {
     WARN("raddr " FMT_PADDR " < CONFIG_MBASE " FMT_PADDR
          " read in 0x8000000 data",
@@ -188,9 +188,10 @@ extern "C" int pmem_read(int raddr) {
   } else {
     ret = paddr_read(raddr_after_align);
   }
-  // word_t ret = paddr_read(raddr & ~0x3u);
+
+  Log("raddr " FMT_WORD " 4-byte align to " FMT_PADDR " data=" FMT_WORD "",
+      raddr, raddr_after_align, ret);
   push_mem_trace(raddr_after_align, 1, ret);
-  Log("read data " FMT_WORD " from addr " FMT_PADDR "", ret, raddr_after_align);
   return ret;
 }
 
@@ -198,23 +199,32 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-  word_t wdata_after_mask;
   paddr_t waddr_after_align = (paddr_t)waddr & ~0x3u;
-  switch (wmask) {
-  case (0x01):
-    wdata_after_mask = wdata & 0x000000FF;
-    break;
-  case (0x03):
-    wdata_after_mask = wdata & 0x0000FFFF;
-    break;
-  case (0x0F):
-    wdata_after_mask = wdata & 0xFFFFFFFF;
-    break;
-  default:
-    Assert(0, "wmask is %X not supported", (uint8_t)wmask);
+  INFO("waddr " FMT_WORD " 4-byte align to " FMT_PADDR " data=" FMT_WORD
+       " mask=0x%02X",
+       waddr, waddr_after_align, wdata, wmask);
+
+  word_t original_data = paddr_read(waddr_after_align);
+  word_t final_data = 0;
+
+  //  calculate new data accroding to wmask and original_data and wdata
+  for (int i = 0; i < 4; i++) {
+    if (wmask & (1 << i)) {
+      // 该字节需要更新
+      // 1. 从 wdata 中提取第 i 个字节
+      // 2. 放到 final_data 的第 i 个字节位置
+      final_data |= ((wdata >> (i * 8)) & 0xFF) << (i * 8);
+    } else {
+      // 该字节保持不变
+      // 1. 从 original_data 中提取第 i 个字节
+      // 2. 【修复点】必须左移回第 i 个字节的位置！
+      final_data |= ((original_data >> (i * 8)) & 0xFF) << (i * 8);
+    }
   }
-  Log("write data " FMT_WORD " into addr " FMT_PADDR "", wdata_after_mask,
-      waddr_after_align);
-  paddr_write(waddr_after_align, wdata_after_mask);
-  push_mem_trace(waddr_after_align, 0, wdata_after_mask);
+
+  INFO("original_data:" FMT_WORD " final_data:" FMT_WORD "", original_data,
+       final_data);
+
+  paddr_write(waddr_after_align, final_data);
+  push_mem_trace(waddr, 0, final_data);
 }

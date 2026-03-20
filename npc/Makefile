@@ -1,6 +1,6 @@
 TOPNAME = antpc
 
-NPC_DIR := $(CURDIR)
+NPC_DIR := $(YSYX_HOME)/npc
 CPP_CODE := $(shell find csrc -type f \( -name "*.cpp" -o -name "*.c" \))
 VLOG_CODE := $(sort $(shell find vsrc -type f -name "*.v"))
 WAVEFORM_FILE=$(wildcard *.fst *.vcd)
@@ -76,14 +76,21 @@ NPC_EXEC := $(shell realpath $(BIN)) $(ARGS) $(shell realpath $(IMG))
 run-env: $(BIN)
 
 run: run-env
-	@echo exe: $(shell realpath $(BIN))
-	@echo img: $(shell realpath $(IMG))
-	@echo args: $(ARGS)
 	@if [ "$(IMG)" = "$(DEFAULT_IMG)" ]; then \
 		echo USING DEFAULT_IMG; \
 	fi
-	@echo Full Command are as following:
-	$(NPC_EXEC)
+	@# print full Command to exec npc
+	@echo "=== Full Command Breakdown ==="
+	@# 打印可执行文件
+	@printf "  [EXE] %s\n" "$(shell realpath $(BIN))"
+	@# 遍历打印参数 (假设 ARGS 由空格分隔)
+	@for arg in $(ARGS); do \
+		printf "  [ARG] %s\n" "$$arg"; \
+	done
+	@# 打印镜像文件
+	@printf "  [IMG] %s\n" "$(shell realpath $(IMG))"
+	@echo "=============================="
+	@$(NPC_EXEC)
 
 gdb: run-env
 	gdb $(BIN)
@@ -91,14 +98,24 @@ gdb: run-env
 check_waveform: $(WAVEFORM_FILE)
 	@gtkwave $(WAVEFORM_FILE) --dark
 
-file_comfirm: $(IMG)
+file_comfirm:
+	@echo "=== Project Configuration ==="
 	@echo "npc dir path is $(NPC_DIR)"
 	@echo "cpp code is $(CPP_CODE)"
 	@echo "verilog code is $(VLOG_CODE)"
 	@echo "waveform file is $(WAVEFORM_FILE)"
 	@echo "img src path is $(IMG_PATH)"
 	@echo "img: $(IMG)"
-	@echo "Verlator Linter Result:"
+	@echo ""
+	@echo "=== Code Statistics ==="
+	@# 统计 C++ 代码行数
+	@echo "C++ Lines: $$(wc -l $(CPP_CODE) | tail -n 1 | awk '{print $$1}')"
+	@# 统计 Verilog 代码行数
+	@echo "Verilog Lines: $$(wc -l $(VLOG_CODE) | tail -n 1 | awk '{print $$1}')"
+	@echo ""
+
+verilog_lint: $(VLOG_CODE)
+	@echo "=== Verilator Linter Result ==="
 	@verilator --lint-only -Wall $(VLOG_CODE)
 
 sim: $(BIN)

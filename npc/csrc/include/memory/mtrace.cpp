@@ -60,6 +60,6 @@ void log_mem_trace() {
 }
 #else
 void init_mtrace() { WARN("CONFIG_MTRACE not defined, MTRACE disable"); };
-int push_mem_trace() { return 0; };
+int push_mem_trace(paddr_t addr, int type, word_t data) { return 0; }
 void log_mem_trace() { WARN("CONFIG_MTRACE not defined, MTRACE disable"); };
 #endif
