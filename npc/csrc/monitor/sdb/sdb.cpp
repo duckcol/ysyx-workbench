@@ -160,10 +160,11 @@ static int cmd_p(char *args) {
 
   bool *success = (bool *)malloc(sizeof(bool));
   word_t result = success ? expr(args, success) : -1;
-  if (success)
+  if (success) {
     INFO("expr success");
-  else
+  } else {
     WARN("expr failed");
+  }
   printf("the result: " FMT_WORD "\n", result);
   // printf("the result: %u\n", (uint32_t)result);
 
@@ -217,12 +218,15 @@ static char *rl_gets() {
   return line_read;
 }
 
+static int is_batch_mode = false;
+void sdb_set_batch_mode() { is_batch_mode = true; }
+
 void sdb_mainloop() {
 
-  // if (is_batch_mode) {
-  //   cmd_c(NULL);
-  //   return;
-  // }
+  if (is_batch_mode) {
+    cmd_c(NULL);
+    return;
+  }
 
   for (char *str; (str = rl_gets()) != NULL;) {
     char *str_end = str + strlen(str);

@@ -108,8 +108,6 @@ module MemCtrl #(
   reg [DATA_LEN-1:0] read_data;
   always @(*) begin
     if (inst_L | inst_S) begin  // 有读写请求时
-      $display("pmem_addr: real=%x, aligned=%x, offset=%d", alu_result_addr, aligned_addr,
-               addr_offset);
       read_data = pmem_read(alu_result_addr);
       if (inst_S) begin  // 有写请求时
         pmem_write(alu_result_addr, rs2 << (addr_offset * 8), pmem_write_mask);
@@ -233,4 +231,21 @@ module MemCtrl #(
         {{(DATA_LEN - 16) {1'b0}}, read_data[31:16]}
       })
   );
+
+`ifdef DEBUG_MEMCTRL
+  always @(*) begin
+    if (inst_L | inst_S) begin  // 仅在有有效控制信号时打印
+      $write("[Time=%05t] [MEM CTRL]: ", $time);
+
+      case (1'b1)
+        inst_L:  $write("[LOAD  ] ");
+        inst_S:  $write("[STORE ] ");
+        default: $write("[UNKOWN] ");
+      endcase
+
+      // 重点排列：输出结果 -> 核心输入参数
+      $display("ADDR: real=%x, aligned=%x, offset=%d", alu_result_addr, aligned_addr, addr_offset);
+    end
+  end
+`endif
 endmodule

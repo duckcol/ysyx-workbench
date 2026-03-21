@@ -45,7 +45,9 @@ LIBS += $(shell llvm-config --libs)
 LDFLAGS += $(LIBS)
 
 # verilog display macros
-VERILOG_DEBUG_MARCO = IFU IDU ALUOPCTRL ALUINCTRL ALU TARGET_ADDR_CTRL
+# BE CAUTIONS!
+# enable this will extremely lag the simulation speed
+VERILOG_DEBUG_MARCO = IFU IDU ALUOPCTRL ALUINCTRL ALU TARGET_ADDR_CTRL MEMCTRL inst_j_or_b
 VERILATOR_DEBUG_MACRO = $(addprefix -DDEBUG_, $(VERILOG_DEBUG_MARCO))
 
 all: $(BIN)

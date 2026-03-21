@@ -31,6 +31,10 @@ image: $(IMAGE).elf
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
+brun: NPCFLAGS += --batch
+brun: run
+	@echo L2 batch mode execute NEMU done
+
 run: image
 	-@echo npc home is $(NPC_HOME)
 	$(MAKE) -C $(NPC_HOME) ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin run

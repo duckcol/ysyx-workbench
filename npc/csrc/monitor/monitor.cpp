@@ -13,6 +13,8 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 extern "C" void init_disasm(const char *triple);
 void init_iringbuff();
 
+void sdb_set_batch_mode();
+
 static char *img_file = NULL;
 int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
@@ -28,7 +30,7 @@ int parse_args(int argc, char *argv[]) {
   while ((o = getopt_long(argc, argv, "-bhl:d:p:f:", table, NULL)) != -1) {
     switch (o) {
     case 'b':
-      // sdb_set_batch_mode();
+      sdb_set_batch_mode();
       break;
     case 'p':
       // sscanf(optarg, "%d", &difftest_port);

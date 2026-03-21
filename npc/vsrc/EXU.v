@@ -126,11 +126,13 @@ module EXU #(
   // when inst_J or inst_B is effctive
   wire inst_B_effect = inst_ctrl[2] & alu_out[0];
   assign cur_inst_j_or_b = (inst_ctrl[1] | inst_ctrl[0] | inst_B_effect);
+`ifdef DEBUG_inst_j_or_b
   always_comb begin
     if (cur_inst_j_or_b) begin
       $display("detact inst_J or inst_B_effect");
     end
   end
+`endif
 
   TargetAddrCtrl #(
       .ADDR_WIDTH(INST_LEN)

@@ -38,16 +38,18 @@ typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
   } while (0)
 
 #define INFO(format, ...)                                                      \
-  printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_CYAN) "\n", __FILE__,          \
-         __LINE__, __func__, ##__VA_ARGS__)
+  IFDEF(CONFIG_DEBUG_PRINT_INFO,                                               \
+        printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_CYAN) "\n", __FILE__,    \
+               __LINE__, __func__, ##__VA_ARGS__))
 
 #define Log(format, ...)                                                       \
   _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", __FILE__, __LINE__,  \
        __func__, ##__VA_ARGS__)
 
 #define WARN(format, ...)                                                      \
-  printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_YELLOW) "\n", __FILE__,        \
-         __LINE__, __func__, ##__VA_ARGS__)
+  IFDEF(CONFIG_DEBUG_PRINT_INFO,                                               \
+        printf(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_YELLOW) "\n", __FILE__,  \
+               __LINE__, __func__, ##__VA_ARGS__))
 
 #define panic(format, ...) Assert(0, format, ##__VA_ARGS__)
 #define TODO() panic("please implement me")

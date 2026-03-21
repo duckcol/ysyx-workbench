@@ -2,6 +2,7 @@
 #include "common.h"
 #include "cpu/decode.h"
 #include "ftrace.h"
+#include "macro.h"
 #include "reg.h"
 
 VerilatedContext *contextp = NULL;
@@ -86,21 +87,19 @@ extern "C" void trigger_ebreak() {
   // check $a0 or R(10) to see if it is 0
   top->debug_reg_addr = 10;
   word_t reg10_data = top->debug_reg_data;
-  INFO("current reg10 data: %08x", reg10_data);
+  Log("current reg10 data: %08x", reg10_data);
   halt_ret = reg10_data;
 }
 
 extern "C" void sync_rf_data(uint32_t addr, uint32_t data) {
-  INFO("sync reg data");
   gpr(addr) = data;
-  INFO("sync reg ends");
+  INFO("sync rf data");
   return;
 }
 
 extern "C" void sync_pc_data(uint32_t pc) {
-  INFO("sync pc data");
   cpu.pc = pc;
-  INFO("sync pc ends");
+  INFO("sync pc data");
   return;
 }
 
@@ -189,8 +188,9 @@ extern "C" int pmem_read(int raddr) {
     ret = paddr_read(raddr_after_align);
   }
 
-  Log("raddr " FMT_WORD " 4-byte align to " FMT_PADDR " data=" FMT_WORD "",
-      raddr, raddr_after_align, ret);
+  IFDEF(CONFIG_DEBUG_PMEM, Log("raddr " FMT_WORD " 4-byte align to " FMT_PADDR
+                               " data=" FMT_WORD "",
+                               raddr, raddr_after_align, ret);)
   push_mem_trace(raddr_after_align, 1, ret);
   return ret;
 }
@@ -200,9 +200,9 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
   paddr_t waddr_after_align = (paddr_t)waddr & ~0x3u;
-  INFO("waddr " FMT_WORD " 4-byte align to " FMT_PADDR " data=" FMT_WORD
-       " mask=0x%02X",
-       waddr, waddr_after_align, wdata, wmask);
+  IFDEF(CONFIG_DEBUG_PMEM, Log("waddr:" FMT_WORD " 4-byte align to:" FMT_PADDR
+                               " data:" FMT_WORD " mask=0x%02X",
+                               waddr, waddr_after_align, wdata, wmask);)
 
   word_t original_data = paddr_read(waddr_after_align);
   word_t final_data = 0;
@@ -222,8 +222,9 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
     }
   }
 
-  INFO("original_data:" FMT_WORD " final_data:" FMT_WORD "", original_data,
-       final_data);
+  IFDEF(CONFIG_DEBUG_PMEM,
+        Log("original_data:" FMT_WORD " final_data:" FMT_WORD "", original_data,
+            final_data);)
 
   paddr_write(waddr_after_align, final_data);
   push_mem_trace(waddr, 0, final_data);
