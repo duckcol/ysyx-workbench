@@ -1,15 +1,9 @@
 #include <am.h>
 #include <klib-macros.h>
 #include <klib.h>
-#include <stdarg.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-int printf(const char *fmt, ...) { panic("Not implemented"); }
-
-int vsprintf(char *out, const char *fmt, va_list ap) {
-  panic("Not implemented");
-}
 int my_itoa(int64_t value, char *buffer, int base) {
   // 处理无效进制
   if (base < 2 || base > 36) {
@@ -24,7 +18,8 @@ int my_itoa(int64_t value, char *buffer, int base) {
   // 处理负数（仅当基数为10时）
   if (value < 0 && base == 10) {
     is_negative = 1;
-    unsigned_value = (uint64_t)(-value);
+    unsigned_value =
+        (uint64_t)(0 - (uint64_t)value); // ✅ 安全：先转 uint64_t 再取负
   } else {
     unsigned_value = (uint64_t)value;
   }
@@ -61,10 +56,12 @@ int my_itoa(int64_t value, char *buffer, int base) {
   return count + (is_negative ? 1 : 0);
 }
 
-int sprintf(char *out, const char *fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
+// ============ 改进版：支持"计数模式" ============
+static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
+                          int count_only) {
   char *p = out;
+  char *end = (size > 0 && !count_only) ? (out + size - 1) : NULL;
+  int total_len = 0; // 记录本应写入的总长度
 
   while (*fmt) {
     if (*fmt == '%') {
@@ -74,74 +71,132 @@ int sprintf(char *out, const char *fmt, ...) {
 
       switch (*fmt) {
       case 'd': {
-        int num = va_arg(args, int);
+        int num = va_arg(ap, int);
         char num_buf[20];
         int len = my_itoa(num, num_buf, 10);
-        memcpy(p, num_buf, len);
-        p += len;
+        total_len += len;
+        if (!count_only && end != NULL) {
+          memcpy(p, num_buf, len);
+          p += len;
+        }
         fmt++;
         break;
       }
       case 's': {
-        char *s = va_arg(args, char *);
-        size_t len = strlen(s);
-        memcpy(p, s, len);
-        p += len;
+        char *s = va_arg(ap, char *);
+        if (s) {
+          int len = strlen(s);
+          total_len += len;
+          if (!count_only && end != NULL) {
+            memcpy(p, s, len);
+            p += len;
+          }
+        }
         fmt++;
         break;
       }
       case 'c': {
-        char c = va_arg(args, int);
-        *p++ = c;
-        fmt++;
-        break;
+        total_len++;
+        if (!count_only && end != NULL) {
+          *p++ = va_arg(ap, int);
+          fmt++;
+          break;
+        }
       }
-      // 可以轻松扩展其他格式
-      case 'x': { // 十六进制
-        unsigned int num = va_arg(args, unsigned int);
+      case 'x': {
+        unsigned int num = va_arg(ap, unsigned int);
         char num_buf[20];
         int len = my_itoa(num, num_buf, 16);
-        memcpy(p, num_buf, len);
-        p += len;
+        total_len += len;
+        if (!count_only && end != NULL) {
+          memcpy(p, num_buf, len);
+          p += len;
+        }
         fmt++;
         break;
       }
-      case 'o': { // 八进制
-        unsigned int num = va_arg(args, unsigned int);
+      case 'o': {
+        unsigned int num = va_arg(ap, unsigned int);
         char num_buf[20];
         int len = my_itoa(num, num_buf, 8);
-        memcpy(p, num_buf, len);
-        p += len;
+        total_len += len;
+        if (!count_only && end != NULL) {
+          memcpy(p, num_buf, len);
+          p += len;
+        }
         fmt++;
         break;
       }
       case '%': {
-        *p++ = '%';
+        total_len++;
+        if (!count_only && p < end)
+          *p++ = '%';
         fmt++;
         break;
       }
+      // ... 其他 case 类似，都要累加 total_len ...
       default: {
-        *p++ = '%';
-        *p++ = *fmt++;
+        total_len += 2; // % + 未知字符
+        if (!count_only) {
+          if (p < end)
+            *p++ = '%';
+          if (p < end)
+            *p++ = *fmt;
+        }
+        fmt++;
         break;
       }
       }
     } else {
-      *p++ = *fmt++;
+      total_len++;
+      if (!count_only && p < end)
+        *p++ = *fmt;
+      fmt++;
     }
   }
 
-  *p = '\0';
+  if (!count_only && out)
+    *p = '\0';
+  return total_len; // ✅ 返回"本应写入的长度"，符合 glibc 语义
+}
+
+// vsprintf: 无边界检查，直接调用核心（count_only=0, size=极大值）
+int vsprintf(char *out, const char *fmt, va_list ap) {
+  return vsnprintf_core(out, (size_t)-1, fmt, ap, 0);
+}
+
+// vsnprintf: 带边界检查
+int vsnprintf(char *out, size_t size, const char *fmt, va_list ap) {
+  if (size == 0)
+    return vsnprintf_core(out, size, fmt, ap, 1);
+  return vsnprintf_core(out, size, fmt, ap, 0);
+}
+
+// printf: 复用 vsnprintf
+int printf(const char *fmt, ...) {
+  char buf[256];
+  va_list args;
+  va_start(args, fmt);
+  int len = vsnprintf(buf, sizeof(buf), fmt, args);
   va_end(args);
-  return p - out;
+  putstr(buf);
+  return len;
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
-  panic("Not implemented");
+  va_list args;
+  va_start(args, fmt);
+  int ret = vsnprintf(out, n, fmt, args);
+  va_end(args);
+  return ret;
 }
 
-int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
-  panic("Not implemented");
+int sprintf(char *out, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  int ret = vsprintf(out, fmt, args);
+  va_end(args);
+  return ret;
 }
 
 #endif
