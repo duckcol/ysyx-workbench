@@ -130,9 +130,14 @@ config DEBUG_PRINT_INFO
   bool "Enable print debug info"
   default y
 
+config DEBUG_SDB_EXPR
+  depends on DEBUG_PRINT_INFO
+  bool "Enable print debug info when using sdb expr"
+  default n
+
 config WATCHPOINT
 	bool "Enable watchpoint"
-	default y
+	default n
 
 config TRACE
   bool "Enable tracer"
@@ -161,13 +166,27 @@ config ITRACE_COND
 config MTRACE
   depends on TRACE
   bool "Enable memory tracer"
-  default y
+  default n
+
+config MTRACE_LOG
+  depends on MTRACE
+  bool "Log every mtrace [NOTE:lag cpu speed]"
+  default n
 
 config FTRACE
   depends on TRACE
   bool "Enable function tracer"
   default n
 
+config DTRACE
+  depends on TRACE && DEVICE
+  bool "Enable device tracer"
+  default n
+
+config DTRACE_LOG
+  depends on DTRACE
+  bool "Log every dtrace [NOTE:lag cpu speed]"
+  default n
 
 config DIFFTEST
   depends on TARGET_NATIVE_ELF

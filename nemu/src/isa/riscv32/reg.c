@@ -16,6 +16,7 @@
 #include "local-include/reg.h"
 #include "common.h"
 #include "debug.h"
+#include "macro.h"
 #include <isa.h>
 
 #ifdef CONFIG_RVE
@@ -61,7 +62,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
     *success = (strncmp(s + 1, regs[i], 11) == 0) ? true : false;
     if (*success == true) {
       value = gpr(i);
-      Info("reg found!");
+      IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("reg found!");)
       return value;
       break; //  maybe don't needed
     }
@@ -71,7 +72,7 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   *success = (strncmp(s, regs[0], 11) == 0) ? true : *success;
   value = *success ? gpr(0) : 0;
   if (*success) {
-    Info("reg found!");
+    IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("reg found!");)
     return value;
   }
 
@@ -79,10 +80,10 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   *success = (strncmp(s + 1, "pc", 11) == 0) ? true : *success;
   value = *success ? cpu.pc : 0;
   if (*success) {
-    Info("reg found!");
+    IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("reg found!");)
     return value;
   } else {
-    Info("reg not found!");
+    IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("reg not found!");)
   }
   return 0;
 }

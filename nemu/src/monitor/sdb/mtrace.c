@@ -1,3 +1,4 @@
+#include "macro.h"
 #include "sdb.h"
 
 #define NR_MEM_TRACE 20
@@ -11,7 +12,7 @@ memtrace mt = {};
 void init_mtrace() {
   Log("init memory trace");
   for (int i = 0; i < NR_MEM_TRACE; i++) {
-    strncpy(mt.ringbuff[i], "1111_1111", 20 * sizeof(char));
+    strncpy(mt.ringbuff[i], "1111_1111_1111", 20 * sizeof(char));
   }
   mt.rp = 0;
   mt.wp = 0;
@@ -21,9 +22,11 @@ int push_mem_trace(paddr_t addr, int type, word_t data) {
   if (type == 0) {
     sprintf(mt.ringbuff[mt.wp],
             "type:write addr:" FMT_PADDR " data:" FMT_WORD " ", addr, data);
+    IFDEF(CONFIG_MTRACE_LOG, _Log("\n%s\n", mt.ringbuff[mt.wp]);)
   } else if (type == 1) {
     sprintf(mt.ringbuff[mt.wp],
             "type:read  addr:" FMT_PADDR " data:" FMT_WORD " ", addr, data);
+    IFDEF(CONFIG_MTRACE_LOG, _Log("\n%s\n", mt.ringbuff[mt.wp]);)
   }
 
   mt.wp++;
@@ -32,11 +35,12 @@ int push_mem_trace(paddr_t addr, int type, word_t data) {
 }
 
 void log_mem_trace() {
+  _Log("===========memory trace===========\n");
   for (int i = 0; i < NR_MEM_TRACE; i++) {
     if ((mt.wp - 1) == i) {
       strncat(mt.ringbuff[i], "<--current position", 50);
     }
-    log_write("%s\n", mt.ringbuff[i]);
-    puts(mt.ringbuff[i]);
+    _Log("%s\n", mt.ringbuff[i]);
   }
+  _Log("===============end================\n");
 }

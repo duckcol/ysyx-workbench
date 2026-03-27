@@ -237,7 +237,6 @@ static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
 }
 
 // ============ 公开接口 ============
-// (保持与你之前的一致)
 int vsprintf(char *out, const char *fmt, va_list ap) {
   return vsnprintf_core(out, (size_t)-1, fmt, ap, 0);
 }

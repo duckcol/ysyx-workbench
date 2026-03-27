@@ -14,7 +14,6 @@
  ***************************************************************************************/
 
 #include "common.h"
-#include "debug.h"
 #include <isa.h>
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
@@ -112,9 +111,10 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i,
-            rules[i].regex, position, substr_len, substr_len, substr_start);
-
+        IFDEF(CONFIG_DEBUG_SDB_EXPR,
+              Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+                  i, rules[i].regex, position, substr_len, substr_len,
+                  substr_start);)
         position += substr_len;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
@@ -136,8 +136,9 @@ static bool make_token(char *e) {
         case ')':
         case '(': //	for sign, record in tokens
           tokens[nr_token].type = rules[i].token_type;
-          Info("tokens[%d].type: %d, str: %c", nr_token, tokens[nr_token].type,
-               (char)tokens[nr_token].type);
+          IFDEF(CONFIG_DEBUG_SDB_EXPR,
+                Info("tokens[%d].type: %d, str: %c", nr_token,
+                     tokens[nr_token].type, (char)tokens[nr_token].type);)
           nr_token++;
           break;
 
@@ -149,8 +150,9 @@ static bool make_token(char *e) {
           //  add '\0' to the end of digit
           //  and remove the "ul" in digit like "123ul"
           tokens[nr_token].str[substr_len] = '\0';
-          Info("tokens[%d].type: %d, str: %s", nr_token, tokens[nr_token].type,
-               tokens[nr_token].str);
+          IFDEF(CONFIG_DEBUG_SDB_EXPR,
+                Info("tokens[%d].type: %d, str: %s", nr_token,
+                     tokens[nr_token].type, tokens[nr_token].str);)
           nr_token++;
           break;
 
@@ -159,8 +161,9 @@ static bool make_token(char *e) {
           Assert(substr_len < 11, "the hex digit's len is to long");
           strncpy(tokens[nr_token].str, substr_start, substr_len);
           tokens[nr_token].str[substr_len] = '\0'; //	really important
-          Info("tokens[%d].type: %d, str: %s", nr_token, tokens[nr_token].type,
-               tokens[nr_token].str);
+          IFDEF(CONFIG_DEBUG_SDB_EXPR,
+                Info("tokens[%d].type: %d, str: %s", nr_token,
+                     tokens[nr_token].type, tokens[nr_token].str);)
           nr_token++;
           break;
 
@@ -170,8 +173,9 @@ static bool make_token(char *e) {
           Assert(substr_len < 10, "too long for a reg name");
           strncpy(tokens[nr_token].str, substr_start, substr_len);
           tokens[nr_token].str[substr_len] = '\0'; //	really important
-          Info("tokens[%d].type: %d, str: %s", nr_token, tokens[nr_token].type,
-               tokens[nr_token].str);
+          IFDEF(CONFIG_DEBUG_SDB_EXPR,
+                Info("tokens[%d].type: %d, str: %s", nr_token,
+                     tokens[nr_token].type, tokens[nr_token].str);)
           nr_token++;
           break;
 
@@ -189,7 +193,7 @@ static bool make_token(char *e) {
     }
   }
 
-  Log("the length of tokens:%d", nr_token);
+  IFDEF(CONFIG_DEBUG_SDB_EXPR, Log("the length of tokens:%d", nr_token);)
   return true;
 }
 
@@ -227,18 +231,20 @@ bool check_parentheses(int p, int q) {
 word_t eval(int p, int q) {
   if (p > q) {
     /* bad expr*/
-    Info("expr p > q");
+    IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("expr p > q");)
     Assert(0, "bad expr: p:%d, q:%d", p, q);
 
   } else if (p == q) {
-    Info("expr p == q");
+    IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("expr p == q");)
     /*should be a single number*/
     if (tokens[p].type == TK_DIGIT) {
       char *endptr;
       word_t value = strtoul(tokens[p].str, &endptr, 10);
-      if (*endptr == '\0' || *endptr != 'u' || *endptr != 'l')
-        Info("Turn str %s into number " FMT_WORD "", tokens[p].str, value);
-      else
+      if (*endptr == '\0' || *endptr != 'u' || *endptr != 'l') {
+        IFDEF(CONFIG_DEBUG_SDB_EXPR,
+              Info("Turn str %s into number " FMT_WORD "", tokens[p].str,
+                   value););
+      } else
         Assert(0, "not a number");
       return value;
     } else if (tokens[p].type == TK_HEX) {
@@ -249,7 +255,7 @@ word_t eval(int p, int q) {
       return value;
     } else if (tokens[p].type == TK_REG) {
       bool success = false;
-      Info("the reg name:%s", tokens[p].str);
+      IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("the reg name:%s", tokens[p].str);)
       word_t value = isa_reg_str2val(tokens[p].str, &success);
       return (success) ? value : -1;
     } else {
@@ -260,7 +266,8 @@ word_t eval(int p, int q) {
   } else if (check_parentheses(p, q) == true) {
     // the expr surrounded by a matched parentheses,
     // remove them and eval
-    Info("expr in parentheses, remove the parentheses");
+    IFDEF(CONFIG_DEBUG_SDB_EXPR,
+          Info("expr in parentheses, remove the parentheses");)
     if (q == p + 1)
       return 0; // in case "()"
     else
@@ -270,7 +277,7 @@ word_t eval(int p, int q) {
     // find the main op and eval, for example "1 + (2 + 3) / 4"
 
     // find main op, for example "(val) op (val)"
-    Info("expr not in parentheses");
+    IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("expr not in parentheses");)
     int surrounded = 0;
     int op = 0;
     for (int i = p; i <= q; i++) {
@@ -339,7 +346,9 @@ word_t eval(int p, int q) {
       }
     }
 
-    Info("the main op found, type:%c , position:%d", tokens[op].type, op);
+    IFDEF(
+        CONFIG_DEBUG_SDB_EXPR,
+        Info("the main op found, type:%c , position:%d", tokens[op].type, op);)
 
     // do compute
     // in case "-1", which is actually 0-1, but p=0, op=0,
@@ -358,7 +367,9 @@ word_t eval(int p, int q) {
       return val1 / val2;
     case TK_DEREF:
       if (in_pmem(val2)) {
-        Info("the paddr: " FMT_PADDR "", val2);
+
+        IFDEF(CONFIG_DEBUG_SDB_EXPR, Info("the paddr: " FMT_PADDR "", val2);)
+
       } else {
         WARN("not a valid paddr, consider in pmem");
         val2 = CONFIG_MBASE + val2;
@@ -387,7 +398,4 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   return eval(0, nr_token - 1);
-  // for debug
-  // printf("the result:"FMT_WORD"\n", eval(0, nr_token-1));
-  // TODO();
 }

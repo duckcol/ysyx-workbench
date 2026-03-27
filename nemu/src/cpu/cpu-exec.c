@@ -130,9 +130,7 @@ void log_iringbuff();
 void print_inst_ringbuff() {
 #ifdef CONFIG_ITRACE
   Log("the instruction ringbuffer are as following");
-  _Log("========instructions ringbuffer========\n");
   log_iringbuff();
-  _Log("================end====================\n");
 #endif
 }
 
@@ -140,13 +138,19 @@ void log_mem_trace();
 void print_mem_trace() {
 #ifdef CONFIG_MTRACE
   Log("the memory trace are as following");
-  _Log("===========memory trace===========\n");
   log_mem_trace();
-  _Log("===============end================\n");
 #endif
 }
 
 void print_ftrace_log();
+
+void log_device_trace();
+void print_device_trace() {
+#ifdef CONFIG_DTRACE
+  Log("the device trace are as following");
+  log_device_trace();
+#endif
+}
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
@@ -187,6 +191,7 @@ void cpu_exec(uint64_t n) {
     print_inst_ringbuff();
     print_mem_trace();
     print_ftrace_log();
+    print_device_trace();
     statistic();
   }
 }
