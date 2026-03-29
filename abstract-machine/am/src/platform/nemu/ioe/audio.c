@@ -9,18 +9,46 @@
 #define AUDIO_COUNT_ADDR     (AUDIO_ADDR + 0x14)
 
 void __am_audio_init() {
+  // set INIT to be 0 to wait for setting parameters
+  outl(AUDIO_INIT_ADDR, 0);
 }
 
 void __am_audio_config(AM_AUDIO_CONFIG_T *cfg) {
-  cfg->present = false;
+  cfg->present = true;
+  cfg->bufsize = inl(AUDIO_SBUF_SIZE_ADDR);
 }
 
 void __am_audio_ctrl(AM_AUDIO_CTRL_T *ctrl) {
+  // setting parameters
+  outl(AUDIO_FREQ_ADDR, ctrl->freq);
+  outl(AUDIO_CHANNELS_ADDR, ctrl->channels);
+  outl(AUDIO_SAMPLES_ADDR, ctrl->samples);
+
+  // set INIT to be 1 to init SDL
+  outl(AUDIO_INIT_ADDR, 1);
 }
 
 void __am_audio_status(AM_AUDIO_STATUS_T *stat) {
-  stat->count = 0;
+  stat->count = inl(AUDIO_COUNT_ADDR);
 }
 
+int total_len = 0;
 void __am_audio_play(AM_AUDIO_PLAY_T *ctl) {
+  int len = ctl->buf.end - ctl->buf.start;
+  uint8_t *data = (uint8_t *)ctl->buf.start;
+
+  uint8_t *sbuf = (uint8_t *)(uintptr_t)AUDIO_SBUF_ADDR;
+  // int sbuf_size = inl(AUDIO_SBUF_SIZE_ADDR);
+
+  for (int i = 0; i < len; i++) {
+    outb((uintptr_t)(sbuf + i + inl(AUDIO_COUNT_ADDR)), data[i]);
+  }
+
+  // if (total_len + len < inl(AUDIO_COUNT_ADDR))
+  //   total_len = 0;
+  // else
+  //   total_len += len;
+
+  outl(AUDIO_COUNT_ADDR, inl(AUDIO_COUNT_ADDR) + len);
+
 }
