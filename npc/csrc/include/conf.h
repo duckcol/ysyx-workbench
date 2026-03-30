@@ -8,7 +8,7 @@
 #define CONFIG_ISA_riscv 1
 #define CONFIG_RVE 1
 
-// #define CONFIG_TRACE 1
+#define CONFIG_TRACE 1
 
 // #define CONFIG_DEBUG_PRINT_INFO 1
 

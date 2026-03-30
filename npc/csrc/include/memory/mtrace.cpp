@@ -18,29 +18,15 @@ void init_mtrace() {
   mt.wp = 0;
 }
 
-paddr_t prev_mt_read_addr = 0;
-paddr_t prev_mt_write_addr = 0;
-word_t prev_mt_read_data = 0;
-word_t prev_mt_write_data = 0;
 int push_mem_trace(paddr_t addr, int type, word_t data) {
   if (type == 0) {
-    if (addr == prev_mt_write_addr && data == prev_mt_write_data) {
-      return 0;
-    }
     sprintf(mt.ringbuff[mt.wp],
             "type:write addr:" FMT_PADDR " data:" FMT_WORD " ", addr, data);
     IFDEF(CONFIG_LOG_EVERY_MTRACE, _Log("%s\n", mt.ringbuff[mt.wp]);)
-    prev_mt_write_addr = addr;
-    prev_mt_write_data = data;
   } else if (type == 1) {
-    if (addr == prev_mt_read_addr && data == prev_mt_read_data) {
-      return 0;
-    }
     sprintf(mt.ringbuff[mt.wp],
             "type:read  addr:" FMT_PADDR " data:" FMT_WORD " ", addr, data);
     IFDEF(CONFIG_LOG_EVERY_MTRACE, _Log("%s\n", mt.ringbuff[mt.wp]);)
-    prev_mt_read_addr = addr;
-    prev_mt_read_data = data;
   }
 
   mt.wp++;

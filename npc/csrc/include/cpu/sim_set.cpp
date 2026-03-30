@@ -231,12 +231,6 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
       }
     }
 
-    // if ((last_waddr == waddr_after_align) && (last_wdata == final_data)) {
-    //   return;
-    // } else {
-    //   last_waddr = waddr_after_align;
-    //   last_wdata = final_data;
-    // }
     if (top->clk)
       return;
 
@@ -264,12 +258,6 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
       }
     }
 
-    // if ((last_waddr == waddr_after_align) && (last_wdata == final_data)) {
-    //   return;
-    // } else {
-    //   last_waddr = waddr_after_align;
-    //   last_wdata = final_data;
-    // }
     if (top->clk)
       return;
 
