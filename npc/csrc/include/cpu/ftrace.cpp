@@ -1,4 +1,5 @@
 #include "ftrace.h"
+#include "macro.h"
 
 List *ftrace_log = NULL;
 bool ftrace_flag;
@@ -115,12 +116,15 @@ void search_func_name(paddr_t pc, char *name) {
 }
 
 #define Log_start(format, ...)                                                 \
-  _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "", __FILE__, __LINE__,    \
-       __func__, ##__VA_ARGS__)
+  MUXDEF(CONFIG_PRINT_FUNC_JMP, _Log,                                          \
+         log_write)(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "", __FILE__, \
+                    __LINE__, __func__, ##__VA_ARGS__)
 #define Log_blank(format, ...)                                                 \
-  _Log(ANSI_FMT(format, ANSI_FG_BLUE), ##__VA_ARGS__)
+  MUXDEF(CONFIG_PRINT_FUNC_JMP, _Log,                                          \
+         log_write)(ANSI_FMT(format, ANSI_FG_BLUE), ##__VA_ARGS__)
 #define Log_ftrace(format, ...)                                                \
-  _Log(ANSI_FMT(format, ANSI_FG_BLUE) "\n", ##__VA_ARGS__)
+  MUXDEF(CONFIG_PRINT_FUNC_JMP, _Log,                                          \
+         log_write)(ANSI_FMT(format, ANSI_FG_BLUE) "\n", ##__VA_ARGS__)
 
 int level = 0;
 void add_ftrace(word_t target, bool is_ret) {
@@ -146,12 +150,16 @@ void add_ftrace(word_t target, bool is_ret) {
 void print_ftrace_log() {
   if (ftrace_flag == false)
     return;
+
+  Log("the function trace log are as following");
+  _Log("===========function log===========\n");
   LIST_FOREACH(ftrace_log, first, next, cur) {
     func_log a_log = *(func_log *)cur->value;
-    Log("Fn %s start at " FMT_PADDR " end at " FMT_PADDR "", a_log.name,
-        a_log.start, a_log.end);
+    _Log("start:" FMT_PADDR " end:" FMT_PADDR " Fn:%s\n", a_log.start,
+         a_log.end, a_log.name);
   }
   List_clear_destroy(ftrace_log);
+  _Log("================end===============\n");
 }
 #else
 void print_ftrace_log() { return; }

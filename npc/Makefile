@@ -2,6 +2,7 @@ TOPNAME = antpc
 
 NPC_DIR := $(YSYX_HOME)/npc
 CPP_CODE := $(shell find csrc -type f \( -name "*.cpp" -o -name "*.c" \))
+HEAD_CODE := $(shell find csrc -type f -name "*.h")
 VLOG_CODE := $(sort $(shell find vsrc -type f -name "*.v"))
 WAVEFORM_FILE=$(wildcard *.fst *.vcd)
 
@@ -47,8 +48,8 @@ LDFLAGS += $(LIBS)
 # verilog display macros
 # BE CAUTIONS!
 # enable this will extremely lag the simulation speed
-VERILOG_DEBUG_MARCO = IFU IDU ALUOPCTRL ALUINCTRL ALU TARGET_ADDR_CTRL MEMCTRL inst_j_or_b
-VERILATOR_DEBUG_MACRO = $(addprefix -DDEBUG_, $(VERILOG_DEBUG_MARCO))
+# VERILOG_DEBUG_MARCO = IFU IDU ALUOPCTRL ALUINCTRL ALU TARGET_ADDR_CTRL MEMCTRL inst_j_or_b
+# VERILATOR_DEBUG_MACRO = $(addprefix -DDEBUG_, $(VERILOG_DEBUG_MARCO))
 
 all: $(BIN)
 	$(shell mkdir -p $(BUILD_DIR))
@@ -56,8 +57,8 @@ all: $(BIN)
 $(BUILD_DIR):
 	$(shell mkdir -p $@)
 
-$(BIN): $(VLOG_CODE) $(CPP_CODE) | $(BUILD_DIR)
-	@rm -rf $(OBJ_DIR)
+$(BIN): $(VLOG_CODE) $(CPP_CODE) $(HEAD_CODE) | $(BUILD_DIR)
+	-# @rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 		--top-module $(TOPNAME) $(VLOG_CODE) $(CPP_CODE)\
 		--Mdir $(BUILD_DIR) \
@@ -104,6 +105,7 @@ file_comfirm:
 	@echo "=== Project Configuration ==="
 	@echo "npc dir path is $(NPC_DIR)"
 	@echo "cpp code is $(CPP_CODE)"
+	@echo "header code is $(HEAD_CODE)"
 	@echo "verilog code is $(VLOG_CODE)"
 	@echo "waveform file is $(WAVEFORM_FILE)"
 	@echo "img src path is $(IMG_PATH)"

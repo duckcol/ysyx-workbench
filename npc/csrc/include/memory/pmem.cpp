@@ -2,21 +2,19 @@
 
 uint8_t *guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
-word_t paddr_read(paddr_t pc) {
-  Assert(pc >= CONFIG_MBASE, "current pc %08x < BASE ADDR %08x", pc,
-         CONFIG_MBASE);
-  uint8_t *addr_in_pmem = pmem + pc - CONFIG_MBASE;
+word_t paddr_read(paddr_t addr) {
+  Assert(in_pmem(addr), "current addr %08x not in pmem", addr);
+  uint8_t *addr_in_pmem = pmem + addr - CONFIG_MBASE;
   word_t ret = *(word_t *)addr_in_pmem;
   return ret;
 }
 
 word_t vaddr_read(vaddr_t addr) { return paddr_read(addr); }
 
-void paddr_write(paddr_t pc, word_t data) {
-  uint8_t *addr_in_pmem = pmem + pc - CONFIG_MBASE;
+void paddr_write(paddr_t addr, word_t data) {
+  Assert(in_pmem(addr), "current pc %08x not in pmem", addr);
+  uint8_t *addr_in_pmem = pmem + addr - CONFIG_MBASE;
   *(word_t *)addr_in_pmem = data;
-  INFO("write data %08x into %p:%08x", data, addr_in_pmem,
-       *(word_t *)addr_in_pmem);
 }
 
 //  instructions defined

@@ -114,6 +114,7 @@ bool log_enable() {
 
 int sim_init();
 void init_mtrace();
+void init_device();
 void init_monitor(int argc, char *argv[]) {
   /* Parse arguments. */
   parse_args(argc, argv);
@@ -133,6 +134,10 @@ void init_monitor(int argc, char *argv[]) {
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();
   INFO("MEMORY INITIAL COMPLETED");
+
+  /* Init simulated device */
+  init_device();
+  INFO("DEVICE INITIAL COMPLETED");
 
   /* Open the elf file. */
   init_ftrace(elf_file);

@@ -16,12 +16,33 @@ int main(int argc, char *argv[]) {
 
   sim_exit();
 
-  if (halt_ret == 0) {
+  switch (halt_ret) {
+  case (0):
     print_ftrace_log();
     log_iringbuff();
     log_mem_trace();
+    Log("%s at pc = %08x",
+        ANSI_FMT(ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN), ANSI_BG_BLACK),
+        inst_decode.pc);
+    break;
+  case (1):
+    print_ftrace_log();
+    log_iringbuff();
+    log_mem_trace();
+    Log("%s at pc = %08x",
+        ANSI_FMT(ANSI_FMT("HIT BAD  TRAP", ANSI_FG_RED), ANSI_BG_BLACK),
+        inst_decode.pc);
+    return 1;
+    break;
+  default:
+    print_ftrace_log();
+    log_iringbuff();
+    log_mem_trace();
+    Log("%s at pc = %08x",
+        ANSI_FMT(ANSI_FMT("NOT YET DONE", ANSI_FG_YELLOW), ANSI_BG_CYAN),
+        inst_decode.pc);
+    break;
   }
-  Log("%s at pc = %08x", (halt_ret) ? "HIT BAD TRAP" : "HIT GOOD TRAP",
-      inst_decode.pc);
-  return halt_ret;
+
+  return 0;
 }

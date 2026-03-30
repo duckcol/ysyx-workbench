@@ -146,8 +146,8 @@ void print_ftrace_log() {
   Log("the function in elf file are as following");
   LIST_FOREACH(ftrace_log, first, next, cur) {
     func_log a_log = *(func_log *)cur->value;
-    _Log("Fn %s start at " FMT_PADDR " end at " FMT_PADDR "\n", a_log.name,
-         a_log.start, a_log.end);
+    _Log("start:" FMT_PADDR " end:" FMT_PADDR " Fn:%s\n", a_log.start,
+         a_log.end, a_log.name);
   }
   List_clear_destroy(ftrace_log);
 }

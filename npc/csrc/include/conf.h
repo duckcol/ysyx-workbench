@@ -8,12 +8,29 @@
 #define CONFIG_ISA_riscv 1
 #define CONFIG_RVE 1
 
-#define CONFIG_TRACE 1
+// #define CONFIG_TRACE 1
+
+// #define CONFIG_DEBUG_PRINT_INFO 1
+
+#ifdef CONFIG_TRACE
+
 #define CONFIG_MTRACE 1
-#define CONFIG_ITRACE 1
-#define CONFIG_FTRACE 1
-#define CONFIG_DIFFTEST 1
-
-#define CONFIG_DEBUG_PRINT_INFO 1
-
+#ifdef CONFIG_MTRACE
 #define CONFIG_DEBUG_PMEM 1
+// #define CONFIG_LOG_EVERY_MTRACE 1
+#endif
+
+#define CONFIG_ITRACE 1
+#ifdef CONFIG_ITRACE
+#define CONFIG_LOG_EVERY_ITRACE 1
+#endif
+
+#define CONFIG_FTRACE 1
+#ifdef CONFIG_FTRACE
+#define CONFIG_DEBUF_J_inst 1
+#define CONFIG_PRINT_FUNC_JMP 1
+#endif
+
+#endif
+
+// #define CONFIG_DIFFTEST 1

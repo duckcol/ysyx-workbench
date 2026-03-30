@@ -1,3 +1,4 @@
+#include "../riscv.h"
 #include <am.h>
 #include <klib-macros.h>
 
@@ -14,7 +15,7 @@ Area heap = RANGE(&_heap_start, PMEM_END);
 #endif
 static const char mainargs[] = MAINARGS;
 
-void putch(char ch) {}
+void putch(char ch) { outb(0xa00003f8, ch); }
 
 void halt(int code) {
   asm volatile("mv a0, %0; ebreak" : : "r"(code)); // add this line as nemu do
