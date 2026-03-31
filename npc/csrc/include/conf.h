@@ -6,7 +6,7 @@
 #define LLVM_VERSION_MAJOR 18
 
 #define CONFIG_ISA_riscv 1
-#define CONFIG_RVE 1
+#define CONFIG_RVE 2
 
 // #define CONFIG_TRACE 1
 
@@ -35,4 +35,18 @@
 
 // #define CONFIG_DIFFTEST 1
 
-// #define CONFIG_FST
+// #define CONFIG_FST 1
+
+// device setting
+/* vga */
+#define CONFIG_HAS_VGA 1
+#ifdef CONFIG_HAS_VGA
+
+// #define CONFIG_VGA_SIZE_800x600
+#ifndef CONFIG_VGA_SIZE_800x600
+#define CONFIG_VGA_SIZE_400x300 1
+#endif
+
+#define CONFIG_VGA_SHOW_SCREEN 1
+
+#endif

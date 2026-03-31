@@ -186,7 +186,15 @@ extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
   ftrace(inst, pc, dnpc, snpc);
 }
 
+/* functions for device */
 uint64_t get_time();
+uint32_t get_vga_ctl_info(int select);
+void change_vga_sync(uint32_t next_state);
+uint32_t get_fb_data(int addr_offset);
+void change_vga_fb(int addr_offset, uint32_t pixels);
+void vga_update_screen();
+
+/* read or write pmem or device mmio */
 int push_mem_trace(paddr_t addr, int type, word_t data);
 extern "C" int pmem_read(int raddr) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回
@@ -214,7 +222,26 @@ extern "C" int pmem_read(int raddr) {
     case (CONFIG_RTC_MMIO + 4):
       ret = (word_t)(get_time() >> 32);
       break;
+    case (CONFIG_VGA_CTL_MMIO):
+      //  screen width and height
+      ret = (word_t)(get_vga_ctl_info(1));
+      break;
+    case (CONFIG_VGA_CTL_MMIO + 4):
+      //  bool sync
+      ret = (word_t)(get_vga_ctl_info(1));
+      break;
+    // case (CONFIG_FB_ADDR):
+    // so far, do nothing
+    // break;
     default:
+      //  since FB_ADDR size is to huge to write case,
+      //  so using if else instead
+      if (CONFIG_FB_ADDR <= raddr_after_align &&
+          raddr_after_align < (CONFIG_FB_ADDR + get_vga_ctl_info(3))) {
+        ret = get_fb_data(raddr_after_align - CONFIG_FB_ADDR);
+        break;
+      }
+
       WARN("raddr " FMT_PADDR " < CONFIG_MBASE " FMT_PADDR
            " read in 0x8000000 data",
            raddr_after_align, CONFIG_MBASE);
@@ -282,9 +309,30 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
     case (CONFIG_SERIAL_MMIO):
       putchar((uint8_t)wdata);
       break;
+
     case (CONFIG_RTC_MMIO):
       Assert(0, "UPTIME REG is read only, can't write");
+      break;
+
+    case (CONFIG_VGA_CTL_MMIO):
+      //  screen width
+      Assert(0, "VGACTL[0] REG is read only, can't write");
+      break;
+
+    case (CONFIG_VGA_CTL_MMIO + 4):
+      //  bool sync
+      change_vga_sync(final_data);
+      break;
+
     default:
+      if (CONFIG_FB_ADDR <= waddr_after_align &&
+          waddr_after_align < (CONFIG_FB_ADDR + get_vga_ctl_info(3))) {
+        // write pixels buf into frame buf
+        change_vga_fb(waddr_after_align - CONFIG_FB_ADDR, final_data);
+        vga_update_screen();
+        break;
+      }
+
       Assert(0, "pmem write to a invalid addr");
     }
   }

@@ -36,7 +36,7 @@ DIFF_SO ?= $(YSYX_HOME)/nemu/build/riscv32-nemu-interpreter-so
 BIN_VERIALATOR_OUTPUT ?= $(NPC_DIR)/verilator-compilation-output
 
 CXXFLAGS += -DTOP_NAME="\"V$(TOPNAME)\"" -I$(NPC_DIR)/csrc/include/
-LDFLAGS += -lreadline
+LDFLAGS += -lreadline -lSDL2
 # to link lib llvm
 LLVM_RAW_FLAGS := $(shell llvm-config --cxxflags)
 # remove some old macros that will cause error
