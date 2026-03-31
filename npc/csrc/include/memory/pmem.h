@@ -2,6 +2,9 @@
 #define __PMEM_H__
 #include "common.h"
 
+#define CONFIG_SERIAL_MMIO 0xa00003f8
+#define CONFIG_RTC_MMIO 0xa0000048
+
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 
 void pmem_initial();

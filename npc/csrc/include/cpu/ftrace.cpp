@@ -1,4 +1,5 @@
 #include "ftrace.h"
+#include "common.h"
 #include "macro.h"
 
 List *ftrace_log = NULL;
@@ -104,12 +105,16 @@ void init_ftrace(const char *elf_file) {
   fclose(fp);
 }
 
-void search_func_name(paddr_t pc, char *name) {
+int search_func_name(paddr_t pc, paddr_t dnpc, char *name) {
   LIST_FOREACH(ftrace_log, first, next, cur) {
     func_log log = *(func_log *)cur->value;
-    if (log.start <= pc && pc < log.end) {
-      strncpy(name, log.name, 100 * sizeof(char));
-      return;
+    if (log.start <= dnpc && dnpc < log.end) {
+      if ((log.start <= pc && pc < log.end)) {
+        return 0;
+      } else {
+        strncpy(name, log.name, 100 * sizeof(char));
+        return 1;
+      }
     }
   }
   Assert(0, "NOT found func name");
@@ -127,13 +132,15 @@ void search_func_name(paddr_t pc, char *name) {
          log_write)(ANSI_FMT(format, ANSI_FG_BLUE) "\n", ##__VA_ARGS__)
 
 int level = 0;
-void add_ftrace(word_t target, bool is_ret) {
+void add_ftrace(word_t pc, word_t target, bool is_ret) {
   if (ftrace_flag == false)
     return;
   char name[100];
-  Log_start();
-  search_func_name(target, name);
+  if (!search_func_name(pc, target, name)) {
+    return;
+  }
 
+  Log_start();
   if (is_ret) {
     level--;
     for (int i = level; i > 0; i--)
@@ -163,6 +170,6 @@ void print_ftrace_log() {
 }
 #else
 void print_ftrace_log() { return; }
-void add_ftrace(word_t target, bool is_ret) { return; }
+void add_ftrace(word_t pc, word_t target, bool is_ret) { return; }
 void init_ftrace(const char *elf_file) { return; }
 #endif

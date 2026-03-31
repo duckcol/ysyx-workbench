@@ -3,11 +3,14 @@
 #include "common.h"
 #include "memory/pmem.h"
 #include "svdpi.h"
+#include <conf.h>
 #include <verilated.h>
 #include <verilated_fst_c.h>
 
 extern VerilatedContext *contextp;
+#ifdef CONFIG_FST
 extern VerilatedFstC *tfp;
+#endif
 extern TOP_NAME *top;
 
 int step_times(int n);

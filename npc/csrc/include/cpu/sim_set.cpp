@@ -3,21 +3,28 @@
 #include "cpu/decode.h"
 #include "ftrace.h"
 #include "macro.h"
+#include "memory/pmem.h"
 #include "reg.h"
 
 VerilatedContext *contextp = NULL;
+#ifdef CONFIG_FST
 VerilatedFstC *tfp = NULL;
+#endif
 
 //  TOP_NAME is ``Vantpc``, which is a macro defined by makefile
 TOP_NAME *top;
 
 int sim_init() {
   contextp = new VerilatedContext;
+#ifdef CONFIG_FST
   tfp = new VerilatedFstC;
+#endif
   top = new TOP_NAME;
   contextp->traceEverOn(true);
+#ifdef CONFIG_FST
   top->trace(tfp, 0);
   tfp->open("top.fst");
+#endif
 
   top->sys_rst_l = 0;
   top->clk = 0;
@@ -29,8 +36,10 @@ int sim_init() {
 
 int sim_exit() {
   step_and_dump_wave();
+#ifdef CONFIG_FST
   tfp->close();
   delete tfp;
+#endif
   delete top;
   delete contextp;
 
@@ -43,7 +52,9 @@ int step_and_dump_wave() {
   //   top->pmem_read_result = paddr_read(top->pmem_read_addr);
   // top->eval();
   contextp->timeInc(1);
+#ifdef CONFIG_FST
   tfp->dump(contextp->time());
+#endif
 
   return 0;
 };
@@ -147,7 +158,7 @@ void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc) {
     IFDEF(CONFIG_DEBUF_J_inst,
           _Log("jal  pc: " FMT_WORD " dnpc: " FMT_WORD " snpc: " FMT_WORD "\n",
                pc, dnpc, snpc);)
-    add_ftrace(dnpc, 0);
+    add_ftrace(pc, dnpc, 0);
   } else if (funct3 == 0x00 && opcode == 0b01100111) {
     IFDEF(CONFIG_DEBUF_J_inst,
           _Log("jalr pc: " FMT_WORD " dnpc: " FMT_WORD " snpc: " FMT_WORD "\n",
@@ -157,7 +168,7 @@ void ftrace(word_t inst, word_t pc, word_t dnpc, word_t snpc) {
     if (rs1 == 1 && offset == 0) {
       IFDEF(CONFIG_DEBUF_J_inst, _Log("this inst is a ret\n"););
     }
-    add_ftrace(dnpc, (rs1 == 1 && offset == 0));
+    add_ftrace(pc, dnpc, (rs1 == 1 && offset == 0));
   }
 }
 #else
@@ -175,6 +186,7 @@ extern "C" void trace_instruction(word_t inst, word_t pc, word_t dnpc,
   ftrace(inst, pc, dnpc, snpc);
 }
 
+uint64_t get_time();
 int push_mem_trace(paddr_t addr, int type, word_t data);
 extern "C" int pmem_read(int raddr) {
   // 总是读取地址为`raddr & ~0x3u`的4字节返回
@@ -192,17 +204,28 @@ extern "C" int pmem_read(int raddr) {
     push_mem_trace(raddr_after_align, 1, ret);
   } else {
     // deal with cases when raddr is not in pmem
-    WARN("raddr " FMT_PADDR " < CONFIG_MBASE " FMT_PADDR
-         " read in 0x8000000 data",
-         raddr_after_align, CONFIG_MBASE);
-    ret = paddr_read(CONFIG_MBASE);
+    switch (raddr_after_align) {
+    case (CONFIG_SERIAL_MMIO):
+      ret = 0;
+      break;
+    case (CONFIG_RTC_MMIO):
+      ret = (word_t)get_time();
+      break;
+    case (CONFIG_RTC_MMIO + 4):
+      ret = (word_t)(get_time() >> 32);
+      break;
+    default:
+      WARN("raddr " FMT_PADDR " < CONFIG_MBASE " FMT_PADDR
+           " read in 0x8000000 data",
+           raddr_after_align, CONFIG_MBASE);
+      ret = paddr_read(CONFIG_MBASE);
+      break;
+    }
   }
 
   return ret;
 }
 
-#define CONFIG_SERIAL_MMIO 0xa00003f8
-int last_waddr = 0, last_wdata = 0;
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
@@ -246,14 +269,8 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
     //  calculate new data accroding to wmask and original_data and wdata
     for (int i = 0; i < 4; i++) {
       if (wmask & (1 << i)) {
-        // 该字节需要更新
-        // 1. 从 wdata 中提取第 i 个字节
-        // 2. 放到 final_data 的第 i 个字节位置
         final_data |= ((wdata >> (i * 8)) & 0xFF) << (i * 8);
       } else {
-        // 该字节保持不变
-        // 1. 从 original_data 中提取第 i 个字节
-        // 2. 必须左移回第 i 个字节的位置！
         final_data |= ((original_data >> (i * 8)) & 0xFF) << (i * 8);
       }
     }
@@ -265,8 +282,10 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
     case (CONFIG_SERIAL_MMIO):
       putchar((uint8_t)wdata);
       break;
+    case (CONFIG_RTC_MMIO):
+      Assert(0, "UPTIME REG is read only, can't write");
     default:
-      Assert(1, "pmem write to a invalid addr");
+      Assert(0, "pmem write to a invalid addr");
     }
   }
 }
