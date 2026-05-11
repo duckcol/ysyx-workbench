@@ -28,6 +28,48 @@ const char *regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
                       "a6", "a7", "s2",  "s3",  "s4", "s5", "s6", "s7",
                       "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 #endif
+
+//  csr regs for pa
+//  mstatus is initial as 0x1800 to compatible with difftest
+static word_t mepc = 0, mstatus = 0x1800, mcause = 0, mtvec = 0;
+word_t csr_read(word_t csr_num) {
+  switch (csr_num) {
+  case 0x300:
+    return mstatus; // mstatus
+  case 0x305:
+    return mtvec; // mtvec
+  case 0x341:
+    return mepc; // mepc
+  case 0x342:
+    return mcause; // mcause
+  // ... 更多 CSR
+  default:
+    Assert(0, "no match csr read");
+    return 0;
+  }
+}
+
+void csr_write(word_t csr_num, word_t wdata) {
+  switch (csr_num) {
+  case 0x300:
+    mstatus = wdata; // mstatus
+    break;
+  case 0x305:
+    mtvec = wdata; // mtvec
+    break;
+  case 0x341:
+    mepc = wdata; // mepc
+    break;
+  case 0x342:
+    mcause = wdata; // mcause
+    break;
+  // ... 更多 CSR
+  default:
+    Assert(0, "no match csr write");
+    return;
+  }
+}
+
 char *isa_reg_name(int i) {
   Assert((i >= 0 && i <= MUXDEF(CONFIG_RVE, 15, 31)), "i %d out of reg bound",
          i);

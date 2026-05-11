@@ -26,6 +26,8 @@
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
+#define CSRr csr_read
+#define CSRw csr_write
 
 #define FMT_64 "0x%016" PRIx64
 
@@ -36,6 +38,8 @@ enum {
   TYPE_S,
   TYPE_B,
   TYPE_J,
+  TYPE_csr,
+  TYPE_csr_i,
   TYPE_N, // none
 };
 
@@ -70,6 +74,10 @@ enum {
            (BITS(i, 20, 20) << 11) | (BITS(i, 30, 25) << 5) |                  \
            (BITS(i, 24, 21) << 1);                                             \
   } while (0)
+#define src1_csr_i()                                                           \
+  do {                                                                         \
+    *src1 = BITS(i, 19, 15);                                                   \
+  } while (0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
                            word_t *imm, int type) {
@@ -101,6 +109,18 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
     break;
   case TYPE_J:
     immJ();
+    break;
+  // for csr, immI() is the address of csr
+  case TYPE_csr:
+    src1R();
+    immI();
+    break;
+  // for csr_i, immI() is the address of csr
+  // but src1R is zero-extended imm[4:0],
+  // which correspond to inst[19:15]
+  case TYPE_csr_i:
+    src1_csr_i();
+    immI();
     break;
   }
 }
@@ -158,12 +178,12 @@ static int decode_exec(Decode *s) {
   //  Integer Computational instructions
   //  Integer Register-Immediate Instructions
   INSTPAT("??????? ????? ????? 010 ????? 00100 11", slti, I,
-          WARN("exec inst \"slti\": convert src1 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src1, (int32_t)src1);
-          WARN("exec inst \"slti\": convert imm uint32_t " FMT_WORD
-               " to int32_t %d",
-               imm, (int32_t)imm);
+          // WARN("exec inst \"slti\": convert src1 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src1, (int32_t)src1);
+          // WARN("exec inst \"slti\": convert imm uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      imm, (int32_t)imm);
           R(rd) = ((int32_t)src1 < (int32_t)imm));
   INSTPAT("??????? ????? ????? 011 ????? 00100 11", sltiu, I,
           R(rd) = (src1 < imm));
@@ -176,14 +196,14 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 001 ????? 00100 11", slli, I,
           R(rd) = (src1 << imm));
   INSTPAT("0100000 ????? ????? 101 ????? 00100 11", srai, I,
-          WARN("exec inst \"srai\": convert src1 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src1, (int32_t)src1);
-          WARN("exec inst \"srai\": convert imm uint32_t " FMT_WORD
-               " to int32_t %d",
-               (word_t)BITS(imm, 4, 0), (int32_t)BITS(imm, 4, 0));
-          WARN("exec inst \"srai\": the result is " FMT_WORD "",
-               (word_t)((int32_t)src1 >> (int32_t)BITS(imm, 4, 0)));
+          // WARN("exec inst \"srai\": convert src1 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src1, (int32_t)src1);
+          // WARN("exec inst \"srai\": convert imm uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      (word_t)BITS(imm, 4, 0), (int32_t)BITS(imm, 4, 0));
+          // WARN("exec inst \"srai\": the result is " FMT_WORD "",
+          //      (word_t)((int32_t)src1 >> (int32_t)BITS(imm, 4, 0)));
           R(rd) = (word_t)((int32_t)src1 >> (int32_t)BITS(imm, 4, 0)));
   INSTPAT("0000000 ????? ????? 101 ????? 00100 11", srli, I,
           R(rd) = (src1 >> imm));
@@ -193,12 +213,12 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add, R,
           R(rd) = src1 + src2);
   INSTPAT("0000000 ????? ????? 010 ????? 01100 11", slt, R,
-          WARN("exec inst \"slt\": convert src1 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src1, (int32_t)src1);
-          WARN("exec inst \"slt\": convert src2 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src2, (int32_t)src2);
+          // WARN("exec inst \"slt\": convert src1 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src1, (int32_t)src1);
+          // WARN("exec inst \"slt\": convert src2 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src2, (int32_t)src2);
           R(rd) = ((int32_t)src1 < (int32_t)src2));
   INSTPAT("0000000 ????? ????? 011 ????? 01100 11", sltu, R,
           R(rd) = (src1 < src2));
@@ -209,9 +229,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 110 ????? 01100 11", or, R,
           R(rd) = (src1 | src2));
   INSTPAT("0000000 ????? ????? 001 ????? 01100 11", sll, R,
-          WARN("exec inst \"sll\": src2 " FMT_WORD
-               " only use lowwer 5 bits " FMT_WORD "",
-               src2, (word_t)BITS(src2, 4, 0));
+          // WARN("exec inst \"sll\": src2 " FMT_WORD
+          //      " only use lowwer 5 bits " FMT_WORD "",
+          //      src2, (word_t)BITS(src2, 4, 0));
           R(rd) = (src1 << (word_t)BITS(src2, 4, 0)));
   INSTPAT("0000000 ????? ????? 101 ????? 01100 11", srl, R,
           WARN("exec inst \"srl\": src2 " FMT_WORD
@@ -219,12 +239,12 @@ static int decode_exec(Decode *s) {
                src2, (word_t)BITS(src2, 4, 0));
           R(rd) = (src1 >> (word_t)BITS(src2, 4, 0)));
   INSTPAT("0100000 ????? ????? 101 ????? 01100 11", sra, R,
-          WARN("exec inst \"sra\": convert src1 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src1, (int32_t)src1);
-          WARN("exec inst \"sra\": src2 " FMT_WORD
-               " only use lowwer 5 bits " FMT_WORD "",
-               src2, (word_t)BITS(src2, 4, 0));
+          // WARN("exec inst \"sra\": convert src1 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src1, (int32_t)src1);
+          // WARN("exec inst \"sra\": src2 " FMT_WORD
+          //      " only use lowwer 5 bits " FMT_WORD "",
+          //      src2, (word_t)BITS(src2, 4, 0));
           R(rd) = (word_t)((int32_t)src1 >> (word_t)BITS(src2, 4, 0)));
   INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub, R,
           R(rd) = (src1 - src2));
@@ -279,22 +299,22 @@ static int decode_exec(Decode *s) {
   INSTPAT("? ?????? ????? ????? 111 ???? ? 11000 11", bgeu, B,
           if (src1 >= src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 101 ???? ? 11000 11", bge, B,
-          WARN("exec inst \"bge\": convert src1 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src1, (int32_t)src1);
-          WARN("exec inst \"bge\": convert src2 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src2, (int32_t)src2);
+          // WARN("exec inst \"bge\": convert src1 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src1, (int32_t)src1);
+          // WARN("exec inst \"bge\": convert src2 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src2, (int32_t)src2);
           if ((int32_t)src1 >= (int32_t)src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 110 ???? ? 11000 11", bltu, B,
           if (src1 < src2) s->dnpc = s->pc + imm);
   INSTPAT("? ?????? ????? ????? 100 ???? ? 11000 11", blt, B,
-          WARN("exec inst \"blt\": convert src1 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src1, (int32_t)src1);
-          WARN("exec inst \"blt\": convert src2 uint32_t " FMT_WORD
-               " to int32_t %d",
-               src2, (int32_t)src2);
+          // WARN("exec inst \"blt\": convert src1 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src1, (int32_t)src1);
+          // WARN("exec inst \"blt\": convert src2 uint32_t " FMT_WORD
+          //      " to int32_t %d",
+          //      src2, (int32_t)src2);
           if ((int32_t)src1 < (int32_t)src2) s->dnpc = s->pc + imm);
 
   //  Load and Store instructions
@@ -310,10 +330,51 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 001 ????? 01000 11", sh, S,
           Mw(src1 + imm, 2, src2));
 
+  //  necessary csr instructions
+  INSTPAT(
+      "??????? ????? ????? 001 ????? 11100 11", csrrw, csr,
+      if (rd) {
+        R(rd) = CSRr(imm);
+        CSRw(imm, src1);
+      } else {
+        //  when rd == 0; manual define that cpu should not read csr
+        CSRw(imm, src1);
+      });
+  INSTPAT(
+      "??????? ????? ????? 010 ????? 11100 11", csrrs, csr,
+      if (src1) {
+        word_t tmp = CSRr(imm);
+        CSRw(imm, src1 | tmp);
+        R(rd) = tmp;
+      } else {
+        //  when src1 == 0, manual define that cpu should not write csr
+        //  since csr_value(old) | 0 == csr_value(old),
+        //  so there is no need to write csr
+        R(rd) = CSRr(imm);
+      });
+  INSTPAT(
+      "??????? ????? ????? 011 ????? 11100 11", csrrc, csr,
+      if (src1) {
+        word_t tmp = CSRr(imm);
+        CSRw(imm, (~src1) & tmp);
+        R(rd) = tmp;
+      } else {
+        //  when src1 == 0, manual define that cpu should not write csr
+        //  since csr_value(old) & (~0) == csr_value(old),
+        //  so there is no need to write csr
+        R(rd) = CSRr(imm);
+      });
+
   //  ending instructions
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N, INV(s->pc));
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N,
+          //  m mode ecall's NO is 0......11
+          s->dnpc = isa_raise_intr(11, s->pc));
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N,
+          word_t ret = CSRr(0x341);
+          IFDEF(CONFIG_ETRACE, _Log("\n[etrace] ret to " FMT_WORD "\n", ret));
+          s->dnpc = ret);
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv, N, INV(s->pc));
   INSTPAT_END();
 
