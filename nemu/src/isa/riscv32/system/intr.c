@@ -26,8 +26,8 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   csr_write(0x342, NO);  // set mcause
   word_t mtvec_addr = csr_read(0x305);
 #ifdef CONFIG_ETRACE
-  _Log("[etrace] mepc = " FMT_WORD "; mcause = " FMT_WORD "; mtvec = " FMT_WORD
-       "",
+  _Log("\n[etrace] mepc = " FMT_WORD "; mcause = " FMT_WORD
+       "; mtvec = " FMT_WORD "\n",
        epc, NO, mtvec_addr);
 #endif
   return mtvec_addr; // return mtvec for JMP

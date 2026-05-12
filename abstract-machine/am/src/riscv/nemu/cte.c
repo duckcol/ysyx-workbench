@@ -32,7 +32,19 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  return NULL;
+  // set kc as the position of end - sizeof(Context)
+  Context *kc = (Context *)kstack.end - 1;
+  // set mstatus to let difftest work
+  kc->mstatus = 0x1800;
+  // since in __am_irq_handle the Context c after user_handler
+  // will add 4 to c->mepc, so let entry - 4 to get the real start of entry
+  // and be compatible with software +4 when inst mret let cpu.dnpc <- mepc + 4
+  kc->mepc = (uintptr_t)entry - 4;
+  // set args
+  // TODO: consider multiple args
+  kc->gpr[10] = (uintptr_t)arg;
+  kstack.start = kc;
+  return kc;
 }
 
 void yield() {

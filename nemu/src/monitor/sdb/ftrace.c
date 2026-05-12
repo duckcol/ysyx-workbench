@@ -104,16 +104,17 @@ void search_func_name(paddr_t pc, char *name) {
   LIST_FOREACH(ftrace_log, first, next, cur) {
     func_log log = *(func_log *)cur->value;
     if (log.start <= pc && pc < log.end) {
-      strncpy(name, log.name, 50 * sizeof(char));
+      // strncpy(name, log.name, 50 * sizeof(char));
+      sprintf(name, "%s(" FMT_PADDR ")", log.name, pc);
       return;
     }
   }
-  Assert(0, "NOT found func name");
+  snprintf(name, 50 * sizeof(char), "unknown func(" FMT_PADDR ")", pc);
+  // Assert(0, "NOT found func name");
 }
 
 #define Log_start(format, ...)                                                 \
-  _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "", __FILE__, __LINE__,    \
-       __func__, ##__VA_ARGS__)
+  _Log(ANSI_FMT("[ftrace] " format, ANSI_FG_BLUE) "", ##__VA_ARGS__)
 #define Log_blank(format, ...)                                                 \
   _Log(ANSI_FMT(format, ANSI_FG_BLUE), ##__VA_ARGS__)
 #define Log_ftrace(format, ...)                                                \
