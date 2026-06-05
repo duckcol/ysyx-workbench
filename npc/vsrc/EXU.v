@@ -1,9 +1,12 @@
+`include "vsrc/vsrc_conf.h.v"
+
 module EXU #(
     parameter integer INST_LEN = 32,
     parameter integer REG_LEN = 5,
     parameter integer OPCODE_LEN = 7
 ) (
     input clk,
+    input rst,
     input [OPCODE_LEN-1:0] opcode,
     input [2:0] funct3,
     input [6:0] funct7,
@@ -20,12 +23,6 @@ module EXU #(
     input [REG_LEN-1:0] debug_reg_addr,
     output [INST_LEN-1:0] debug_reg_data
 );
-
-  //  so far it only execute inst:
-  //  addi, auipc, jal, jalr, ebreak, sw(do nothing)
-
-  //  CULCULATE datain
-  //  which is different because of different inst
   //  NOTE:
   //  pc_addr is the current running inst's pc + ４
   wire [INST_LEN-1:0] pc = pc_addr - {{(INST_LEN - 3) {1'b0}}, 3'd4};
@@ -64,7 +61,10 @@ module EXU #(
   // inst_B,
   // inst_jal,
   // inst_jalr,
-  parameter integer INST_CTRL = 9;
+  // inst_ecall,
+  // inst_mret,
+  // inst_csr
+  parameter integer INST_CTRL = 12;
   parameter integer ALUOP_LEN = 4;
   wire [INST_CTRL-1:0] inst_ctrl;
   wire [ALUOP_LEN-1:0] alu_sel;
@@ -78,16 +78,45 @@ module EXU #(
       .funct3           (funct3),
       .funct7           (funct7),
       .alu_sel          (alu_sel),
-      .inst_L           (inst_ctrl[8]),
-      .inst_S           (inst_ctrl[7]),
-      .inst_commpute_imm(inst_ctrl[6]),
-      .inst_commpute_reg(inst_ctrl[5]),
-      .inst_lui         (inst_ctrl[4]),
-      .inst_auipc       (inst_ctrl[3]),
-      .inst_B           (inst_ctrl[2]),
-      .inst_jal         (inst_ctrl[1]),
-      .inst_jalr        (inst_ctrl[0]),
+      .inst_L           (inst_ctrl[11]),
+      .inst_S           (inst_ctrl[10]),
+      .inst_commpute_imm(inst_ctrl[9]),
+      .inst_commpute_reg(inst_ctrl[8]),
+      .inst_lui         (inst_ctrl[7]),
+      .inst_auipc       (inst_ctrl[6]),
+      .inst_B           (inst_ctrl[5]),
+      .inst_jal         (inst_ctrl[4]),
+      .inst_jalr        (inst_ctrl[3]),
+      .inst_ecall       (inst_ctrl[2]),
+      .inst_mret        (inst_ctrl[1]),
+      .inst_csr         (inst_ctrl[0]),
       .inst_illegal     (inst_illegal)
+  );
+
+  // CSR
+  // NOTE:
+  // so far, only support csrrw, csrrc and csrrs
+  // CSR's addr is from TYPE_I imm[11:0]
+  wire [11:0] csr_addr = imm[11:0];
+  wire [INST_LEN-1:0] csr_val;
+  wire [INST_LEN-1:0] csr_mtvec;
+  wire [INST_LEN-1:0] csr_mepc;
+  CSRctrl #(
+      .DATA_LEN(INST_LEN),
+      .ADDR_LEN(`NPC_CSR_ADDR_LEN)
+  ) EXU_CSR_ctrl (
+      .csr_addr  (csr_addr),
+      .rs1       (rs1),
+      .pc        (pc),
+      .csr_val   (csr_val),
+      .mtvec_val (csr_mtvec),
+      .mepc_val  (csr_mepc),
+      .clk       (clk),
+      .rst       (rst),
+      .inst_ecall(inst_ctrl[2]),
+      .inst_mret (inst_ctrl[1]),
+      .inst_csr  (inst_ctrl[0]),
+      .csr_funct3(funct3)
   );
 
   // AluInCtrl control which two data
@@ -102,6 +131,7 @@ module EXU #(
       .imm      (imm),
       .rs2      (rs2),
       .rs1      (rs1),
+      .csr      (csr_val),
       .pc_addr  (pc_addr),
       .pc       (pc),
       .inst_ctrl(inst_ctrl),
@@ -124,8 +154,13 @@ module EXU #(
 
   // TargetAddrCtrl will compute target_addr
   // when inst_J or inst_B is effctive
-  wire inst_B_effect = inst_ctrl[2] & alu_out[0];
-  assign cur_inst_j_or_b = (inst_ctrl[1] | inst_ctrl[0] | inst_B_effect);
+  wire inst_B_effect = inst_ctrl[5] & alu_out[0];
+  assign cur_inst_j_or_b = (inst_ctrl[1] |  // mret
+      inst_ctrl[2] |  // ecall
+      inst_B_effect |  // Branch
+      inst_ctrl[3] |  // jalr
+      inst_ctrl[4]);  // jal
+
 `ifdef DEBUG_inst_j_or_b
   always_comb begin
     if (cur_inst_j_or_b) begin
@@ -138,25 +173,29 @@ module EXU #(
       .ADDR_WIDTH(INST_LEN)
   ) EXU_target_addr_computer (
       .clk               (clk),
-      .inst_jal          (inst_ctrl[1]),
-      .inst_jalr         (inst_ctrl[0]),
+      .inst_jal          (inst_ctrl[4]),
+      .inst_jalr         (inst_ctrl[3]),
       .inst_B_effect     (inst_B_effect),
+      .inst_ecall        (inst_ctrl[2]),
+      .inst_mret         (inst_ctrl[1]),
       .pc                (pc),
       .rs1               (rs1),
       .imm               (imm),
+      .mtvec             (csr_mtvec),
+      .mepc              (csr_mepc),
       // .cur_inst_j_or_b   (cur_inst_j_or_b),
       .j_or_b_target_addr(j_or_b_target_addr)
   );
 
-  // MemCtrl will handle pmem read ans write
+  // MemCtrl will handle pmem read and write
   wire [INST_LEN-1:0] MemCtrlRead;
   MemCtrl #(
       .DATA_LEN(INST_LEN)
   ) EXU_MemCtrl (
       .alu_result_addr(alu_out),
       .rs2            (rs2),
-      .inst_L         (inst_ctrl[8]),
-      .inst_S         (inst_ctrl[7]),
+      .inst_L         (inst_ctrl[11]),
+      .inst_S         (inst_ctrl[10]),
       .funct3         (funct3),
       .read_result    (MemCtrlRead)
   );
@@ -169,6 +208,7 @@ module EXU #(
   ) EXU_RdCtrl (
       .mem_read_result(MemCtrlRead),
       .alu_result     (alu_out),
+      .csr_val        (csr_val),
       .inst_ctrl      (inst_ctrl),
       .data_to_rd     (rd),
       .reg_write_en   (rd_write_en)

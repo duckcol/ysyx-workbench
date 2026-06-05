@@ -14,7 +14,7 @@
 
 #ifdef CONFIG_TRACE
 
-#define CONFIG_MTRACE 1
+// #define CONFIG_MTRACE 1
 #ifdef CONFIG_MTRACE
 #define CONFIG_DEBUG_PMEM 1
 // #define CONFIG_LOG_EVERY_MTRACE 1

@@ -10,7 +10,7 @@ size_t strlen(const char *s) {
   }
   return i;
 }
-size_t strnlen(const char *s, size_t maxlen) {
+static size_t strnlen(const char *s, size_t maxlen) {
   if (strlen(s) <= maxlen)
     return strlen(s);
   else

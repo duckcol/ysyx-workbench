@@ -1,10 +1,12 @@
+`include "vsrc/vsrc_conf.h.v"
+
 // antpc is an toy process core
 module antpc #(
-    parameter integer ADDR_LEN = 32,
-    parameter integer INST_LEN = 32,
-    parameter integer REG_LEN = 5,
-    parameter integer OPCODE_LEN = 7,
-    parameter integer MEM_BASE = 32'h80000000
+    parameter integer ADDR_LEN = `NPC_ADDR_LEN,
+    parameter integer INST_LEN = `NPC_INST_LEN,
+    parameter integer REG_LEN = `NPC_REG_ADDR_LEN,
+    parameter integer OPCODE_LEN = `OPCODE_LEN,
+    parameter integer MEM_BASE = `NPC_MEM_BASE
 ) (
     input clk,
     input sys_rst_l,
@@ -73,6 +75,7 @@ module antpc #(
       .OPCODE_LEN(OPCODE_LEN)
   ) inst_execute_unit1 (
       .clk(clk),
+      .rst(~sys_rst_l),
       .opcode(inst_opcode),
       .funct3(inst_funct3),
       .funct7(inst_funct7),

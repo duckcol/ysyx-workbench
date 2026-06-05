@@ -1,6 +1,8 @@
+`include "vsrc/vsrc_conf.h.v"
+
 module Program_Counter #(
-    parameter integer ADDR_LEN = 32,
-    parameter integer MEM_BASE = 32'h80000000
+    parameter integer ADDR_LEN = `NPC_ADDR_LEN,
+    parameter integer MEM_BASE = `NPC_MEM_BASE
 ) (
     input sys_clk,
     input pc_rst_l,

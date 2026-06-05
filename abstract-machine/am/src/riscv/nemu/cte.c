@@ -8,14 +8,16 @@ Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) {
-      case 0xb: ev.event = EVENT_YIELD; break;
+      case 0x11:
+        ev.event = EVENT_YIELD;
+        c->mepc += 4;
+      break;
       default: ev.event = EVENT_ERROR; break;
     }
 
     c = user_handler(ev, c);
     assert(c != NULL);
   }
-  c->mepc += 4;
   return c;
 }
 
@@ -36,10 +38,8 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   Context *kc = (Context *)kstack.end - 1;
   // set mstatus to let difftest work
   kc->mstatus = 0x1800;
-  // since __am_irq_handle the Context c after user_handler
-  // will add 4 to c->mepc, so let entry - 4 to get the real start of entry
-  // and be compatible with software +4 when inst mret let cpu.dnpc <- mepc + 4
-  kc->mepc = (uintptr_t)entry - 4;
+  // set mepc to jmp to expected position after mret
+  kc->mepc = (uintptr_t)entry;
   // set args
   // TODO: consider multiple args
   kc->gpr[10] = (uintptr_t)arg;

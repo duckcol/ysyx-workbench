@@ -117,7 +117,9 @@ int search_func_name(paddr_t pc, paddr_t dnpc, char *name) {
       }
     }
   }
-  Assert(0, "NOT found func name");
+  strncpy(name, "unknown function", 100 * sizeof(char));
+  return 0;
+  // Assert(0, "NOT found func name");
 }
 
 #define Log_start(format, ...)                                                 \
@@ -143,13 +145,13 @@ void add_ftrace(word_t pc, word_t target, bool is_ret) {
   Log_start();
   if (is_ret) {
     level--;
-    for (int i = level; i > 0; i--)
-      Log_blank(" ");
+    // for (int i = level; i > 0; i--)
+    //   Log_blank(" ");
     Log_ftrace("layer %d:ret to %s", level, name);
   } else {
     level++;
-    for (int i = level; i > 0; i--)
-      Log_blank(" ");
+    // for (int i = level; i > 0; i--)
+    //   Log_blank(" ");
     Log_ftrace("layer %d:jmp to %s", level, name);
   }
 }

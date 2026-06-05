@@ -1,7 +1,9 @@
 #include <common.h>
 #include <sys/time.h>
 
+/******************/
 /* for uptime reg */
+/******************/
 static uint64_t boot_time = 0;
 
 static uint64_t get_time_internal() {
@@ -18,7 +20,9 @@ uint64_t get_time() {
   return now - boot_time;
 }
 
+/***************/
 /* for vga reg */
+/***************/
 #define SCREEN_W (MUXDEF(CONFIG_VGA_SIZE_800x600, 800, 400))
 #define SCREEN_H (MUXDEF(CONFIG_VGA_SIZE_800x600, 600, 300))
 

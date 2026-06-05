@@ -1,3 +1,5 @@
+`include "vsrc/vsrc_conf.h.v"
+
 module MemCtrl #(
     parameter integer DATA_LEN = 32
 ) (

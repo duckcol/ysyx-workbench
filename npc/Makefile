@@ -4,6 +4,7 @@ NPC_DIR := $(YSYX_HOME)/npc
 CPP_CODE := $(shell find csrc -type f \( -name "*.cpp" -o -name "*.c" \))
 HEAD_CODE := $(shell find csrc -type f -name "*.h")
 VLOG_CODE := $(sort $(shell find vsrc -type f -name "*.v"))
+VHEADER = vsrc/vsrc_conf.h.v
 WAVEFORM_FILE=$(wildcard *.fst *.vcd)
 
 # IMG_PATH := $(YSYX_HOME)/am-kernels/tests/cpu-tests/build
@@ -14,6 +15,7 @@ VERILATOR_CFLAGS += --cc --MMD --build -j 0 \
 										--x-assign fast \
 										--x-initial fast \
 										-O3 --noassert \
+										-I$(VHEADER) \
 										--trace-fst
 #-Wall
 

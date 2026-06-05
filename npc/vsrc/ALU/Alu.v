@@ -1,3 +1,5 @@
+`include "vsrc/vsrc_conf.h.v"
+
 module Alu #(
     parameter integer DATA_LEN = 32,  // 建议默认 32
     parameter integer OPLEN = 4

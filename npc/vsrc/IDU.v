@@ -1,3 +1,5 @@
+`include "vsrc/vsrc_conf.h.v"
+
 module IDU #(
     parameter integer INST_LEN = 32,
     parameter integer REG_LEN = 5,
@@ -60,6 +62,9 @@ module IDU #(
         7'h67,
         TYPE_I,
         // system call
+        // NOTE: mret is TYPE_R
+        // but it does not use decode imm and reg
+        // so treat it as TYPE_I is ok
         7'h73,
         TYPE_I
       })
@@ -90,7 +95,7 @@ module IDU #(
 
   //  ebreak
   import "DPI-C" function void trigger_ebreak();
-  always @(posedge sys_clk) begin
+  always @(*) begin
     if (opcode == 7'b1110011 && funct3 == 3'b000 && imm == 32'd1) begin
       $display("[Time=%05t] trigger ebreak", $time);
       trigger_ebreak();
@@ -115,7 +120,7 @@ module IDU #(
   always @(posedge sys_clk or negedge rst_l) begin
     if (!rst_l) begin
       // 可选：复位时打印提示
-      $display("[Time=%05t] [RESET] IDU reset asserted", $time);
+      $display("[Time=%05t] [IDU] reset asserted", $time);
     end else begin
       if (inst == 32'd0) begin
         $display("[Time=%05t] [IDU] ALL ZERO instruction", $time);

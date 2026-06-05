@@ -1,11 +1,14 @@
+`include "vsrc/vsrc_conf.h.v"
+
 module AluInCtrl #(
     parameter integer DATA_LEN  = 32,
-    parameter integer INST_CTRL = 9
+    parameter integer INST_CTRL = 12
 ) (
     input                  clk,
     input  [ DATA_LEN-1:0] imm,
     input  [ DATA_LEN-1:0] rs1,
     input  [ DATA_LEN-1:0] rs2,
+    input  [ DATA_LEN-1:0] csr,
     input  [ DATA_LEN-1:0] pc_addr,
     input  [ DATA_LEN-1:0] pc,
     input  [INST_CTRL-1:0] inst_ctrl,
@@ -22,6 +25,9 @@ module AluInCtrl #(
   // inst_B,
   // inst_jal,
   // inst_jalr,
+  // inst_ecall,
+  // inst_mret,
+  // inst_csr,
 
   // since the pc_addr is actually current running inst's pc + 4
   // so I need to -4 to get pc = pc_addr - 4 in EXU
@@ -38,48 +44,62 @@ module AluInCtrl #(
 
         // 1. inst_L (Load): RS1 + imm
         {
-          9'b100_000_000, rs1, imm
+          12'b100_000_000_000, rs1, imm
         },
 
         // 2. inst_S (Store): RS1 + imm
         {
-          9'b010_000_000, rs1, imm
+          12'b010_000_000_000, rs1, imm
         },
 
         // 3. inst_compute_imm: RS1 + imm
         {
-          9'b001_000_000, rs1, imm
+          12'b001_000_000_000, rs1, imm
         },
 
         // 4. inst_compute_reg: RS1 + RS2
         {
-          9'b000_100_000, rs1, rs2
+          12'b000_100_000_000, rs1, rs2
         },
 
         // 5. inst_lui: 0 + imm (或者直接输出 imm，看你 ALU 0 选通逻辑)
         {
-          9'b000_010_000, {DATA_LEN{1'b0}}, imm
+          12'b000_010_000_000, {DATA_LEN{1'b0}}, imm
         },
 
         // 6. inst_auipc: PC + imm
         {
-          9'b000_001_000, pc, imm
+          12'b000_001_000_000, pc, imm
         },
 
         // 7. inst_b (Branch): RS1 vs RS2 (ALU 做减法或比较)
         {
-          9'b000_000_100, rs1, rs2
+          12'b000_000_100_000, rs1, rs2
         },
 
         // 8. inst_jal: PC + 4 (用于计算返回地址写入寄存器，或 PC + imm 计算目标)
-        // 注意：根据你的表格，此处为 PC + 4
         {
-          9'b000_000_010, pc_addr, {(DATA_LEN) {1'b0}}
+          12'b000_000_010_000, pc_addr, {(DATA_LEN) {1'b0}}
         },
 
         // 9. inst_jalr: PC + 4
         {
-          9'b000_000_001, pc_addr, {(DATA_LEN) {1'b0}}
+          12'b000_000_001_000, pc_addr, {(DATA_LEN) {1'b0}}
+        },
+
+        // 10. inst_ecall, it does not calculate in ALU
+        {
+          12'b000_000_000_100, {(DATA_LEN) {1'b0}}, {(DATA_LEN) {1'b0}}
+        },
+
+        // 11. inst_mret, it does not calculate in ALU
+        {
+          12'b000_000_000_010, {(DATA_LEN) {1'b0}}, {(DATA_LEN) {1'b0}}
+        },
+
+        // 12. inst_csr, it pass csr value through ALU to write to RD
+        {
+          12'b000_000_000_001, {(DATA_LEN) {1'b0}}, csr
         }
       })
   );
@@ -90,16 +110,19 @@ module AluInCtrl #(
       $write("[Time=%05t] [ALU_IN_CTRL]: ", $time);
 
       case (1'b1)
-        inst_ctrl[8]: $write("[LOAD  ] ");
-        inst_ctrl[7]: $write("[STORE ] ");
-        inst_ctrl[6]: $write("[I-TYPE] ");
-        inst_ctrl[5]: $write("[R-TYPE] ");
-        inst_ctrl[4]: $write("[LUI   ] ");
-        inst_ctrl[3]: $write("[AUIPC ] ");
-        inst_ctrl[2]: $write("[BRANCH] ");
-        inst_ctrl[1]: $write("[JAL   ] ");
-        inst_ctrl[0]: $write("[JALR  ] ");
-        default:      $write("[UNKOWN] ");
+        inst_ctrl[11]: $write("[LOAD  ] ");
+        inst_ctrl[10]: $write("[STORE ] ");
+        inst_ctrl[9]:  $write("[I-TYPE] ");
+        inst_ctrl[8]:  $write("[R-TYPE] ");
+        inst_ctrl[7]:  $write("[LUI   ] ");
+        inst_ctrl[6]:  $write("[AUIPC ] ");
+        inst_ctrl[5]:  $write("[BRANCH] ");
+        inst_ctrl[4]:  $write("[JAL   ] ");
+        inst_ctrl[3]:  $write("[JALR  ] ");
+        inst_ctrl[2]:  $write("[ECALL ] ");
+        inst_ctrl[1]:  $write("[MRET  ] ");
+        inst_ctrl[0]:  $write("[CSR   ] ");
+        default:       $write("[UNKOWN] ");
       endcase
 
       // 重点排列：输出结果 -> 核心输入参数

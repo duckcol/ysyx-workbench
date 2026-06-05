@@ -8,6 +8,10 @@ Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) {
+      case 0x11:
+        ev.event = EVENT_YIELD;
+        c->mepc += 4;
+      break;
       default: ev.event = EVENT_ERROR; break;
     }
 
@@ -31,7 +35,17 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  return NULL;
+  // set kc as the position of end - sizeof(Context)
+  Context *kc = (Context *)kstack.end - 1;
+  // set mstatus to let difftest work
+  kc->mstatus = 0x1800;
+  // set mepc to jmp to expected position after mret
+  kc->mepc = (uintptr_t)entry;
+  // set args
+  // TODO: consider multiple args
+  kc->gpr[10] = (uintptr_t)arg;
+  // kstack.start = kc;
+  return kc;
 }
 
 void yield() {

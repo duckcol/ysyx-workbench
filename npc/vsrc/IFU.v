@@ -1,3 +1,5 @@
+`include "vsrc/vsrc_conf.h.v"
+
 module IFU #(
     parameter integer ADDR_LEN = 32,
     parameter integer INST_LEN = 32
@@ -19,7 +21,7 @@ module IFU #(
   assign pmem_read_inst = pmem_read(pmem_read_addr);
   Reg #(
       .WIDTH(INST_LEN),
-      .RESET_VAL(32'h000000013)
+      .RESET_VAL(`NPC_IR_RST_VAL)
   ) IR (
       .clk (clk),
       .rst (~rst_l),
