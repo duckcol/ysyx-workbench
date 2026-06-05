@@ -1,0 +1,194 @@
+# config_items.yaml — NPC 编译期配置项定义
+#
+# 添加新选项：复制下方任意一段，填写字段即可。
+# 字段说明：
+#   name:          宏名称 (必填)
+#   type:          类型 — bool | choice | int (默认 bool)
+#   default:       默认值 (bool: true/false, int: 十六进制数)
+#   desc:          在 TUI 中显示的描述文字
+#   category:      分组名称，相同 category 的项目聚在一起
+#   depends:       依赖的父项名称 (父项关闭时本项自动灰掉)
+#   hidden:        不在 TUI 显示，值完全跟随父项 (默认 false)
+#   choice_group:  互斥组名，同组内只能选一个 (仅 type=choice)
+#   target:        生成目标 — c (conf.h) | v (vsrc_conf.h.v) | both (默认 c)
+#   fmt:           int 类型的显示格式 (如 "0x{:08x}")
+#   vmin:          int 类型的最小值 (十六进制, 0=不限制)
+#   vmax:          int 类型的最大值 (十六进制, 0=不限制)
+#
+# 编辑后运行: make menuconfig
+
+items:
+  # ===== Trace ================================================
+  - name: CONFIG_TRACE
+    default: false
+    desc: 启用追踪基础设施 (总开关)
+    category: Trace
+
+  - name: CONFIG_ITRACE
+    default: true
+    desc: 记录每条执行的指令到 ringbuffer
+    category: Trace
+    depends: CONFIG_TRACE
+
+  - name: CONFIG_LOG_EVERY_ITRACE
+    default: true
+    desc: 同步打印指令追踪到 stdout (较慢)
+    category: Trace
+    depends: CONFIG_ITRACE
+
+  - name: CONFIG_FTRACE
+    default: true
+    desc: 函数调用/返回追踪 (依赖 ELF 符号表)
+    category: Trace
+    depends: CONFIG_TRACE
+
+  - name: CONFIG_DEBUF_J_inst
+    default: true
+    desc: 调试 JAL/JALR 指令细节
+    category: Trace
+    depends: CONFIG_FTRACE
+
+  - name: CONFIG_PRINT_FUNC_JMP
+    default: true
+    desc: 打印函数跳转目标地址
+    category: Trace
+    depends: CONFIG_FTRACE
+
+  - name: CONFIG_MTRACE
+    default: false
+    desc: 内存访问追踪 (load/store)
+    category: Trace
+    depends: CONFIG_TRACE
+
+  - name: CONFIG_DEBUG_PMEM
+    default: true
+    desc: 物理内存读写调试
+    category: Trace
+    depends: CONFIG_MTRACE
+    hidden: true
+
+  - name: CONFIG_LOG_EVERY_MTRACE
+    default: false
+    desc: 同步打印内存追踪到 stdout
+    category: Trace
+    depends: CONFIG_MTRACE
+
+  # ===== Debug ================================================
+  - name: CONFIG_DEBUG_PRINT_INFO
+    default: false
+    desc: 打印详细 INFO/WARN 调试信息
+    category: Debug
+
+  # ===== Differential Testing =================================
+  - name: CONFIG_DIFFTEST
+    default: false
+    desc: 差分测试 (对比 NEMU 参考实现)
+    category: Differential
+
+  # ===== Waveform =============================================
+  - name: CONFIG_FST
+    default: false
+    desc: 生成 FST 波形文件 (GTKWave 查看)
+    category: Waveform
+
+  # ===== Device ===============================================
+  - name: CONFIG_HAS_VGA
+    default: true
+    desc: 启用 VGA 显示输出
+    category: Device
+
+  - name: CONFIG_VGA_SHOW_SCREEN
+    default: true
+    desc: 显示 SDL2 屏幕窗口
+    category: Device
+    depends: CONFIG_HAS_VGA
+
+  - name: CONFIG_VGA_SIZE_800x600
+    type: choice
+    default: false
+    desc: "800 x 600 分辨率"
+    category: Device
+    depends: CONFIG_HAS_VGA
+    choice_group: vga_size
+
+  - name: CONFIG_VGA_SIZE_400x300
+    type: choice
+    default: true
+    desc: "400 x 300 分辨率"
+    category: Device
+    depends: CONFIG_HAS_VGA
+    choice_group: vga_size
+
+  # ===== Memory ===============================================
+  - name: CONFIG_MSIZE
+    type: int
+    default: 0x8000000
+    desc: 物理内存大小
+    category: Memory
+    fmt: "0x{:08x}"
+    vmin: 0x1000
+    vmax: 0x10000000
+
+  - name: CONFIG_MBASE
+    type: int
+    default: 0x80000000
+    desc: 内存基址 (即 RESET_VECTOR)
+    category: Memory
+    fmt: "0x{:08x}"
+    vmin: 0x10000000
+    vmax: 0xFFFFFFFF
+
+  # ===== Verilog Debug ========================================
+  - name: DEBUG_IFU
+    default: false
+    desc: 取指单元 (IFU) 调试
+    category: Verilog Debug
+    target: v
+
+  - name: DEBUG_IDU
+    default: false
+    desc: 译码单元 (IDU) 调试
+    category: Verilog Debug
+    target: v
+
+  - name: DEBUG_CSR
+    default: false
+    desc: CSR 控制调试
+    category: Verilog Debug
+    target: v
+
+  - name: DEBUG_ALUOPCTRL
+    default: false
+    desc: ALU 操作选择调试
+    category: Verilog Debug
+    target: v
+
+  - name: DEBUG_ALUINCTRL
+    default: false
+    desc: ALU 输入选择调试
+    category: Verilog Debug
+    target: v
+
+  - name: DEBUG_ALU
+    default: false
+    desc: ALU 运算调试
+    category: Verilog Debug
+    target: v
+
+  - name: DEBUG_inst_j_or_b
+    default: false
+    desc: 跳转/分支检测调试
+    category: Verilog Debug
+    target: v
+
+  - name: DEBUG_TARGET_ADDR_CTRL
+    default: false
+    desc: 目标地址计算调试
+    category: Verilog Debug
+    target: v
+
+  - name: DEBUG_MEMCTRL
+    default: false
+    desc: 内存控制调试 (DPI-C 调用)
+    category: Verilog Debug
+    target: v

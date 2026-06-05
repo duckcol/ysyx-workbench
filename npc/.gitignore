@@ -9,7 +9,13 @@
 !*.cpp
 !.gitignore
 !README.md
+!*.py
+!*.yaml
 build/
 obj_dir/
 compile_commands.json
 claude.md
+.config.json
+*.bak
+csrc/include/conf.h
+vsrc/vsrc_conf.h.v

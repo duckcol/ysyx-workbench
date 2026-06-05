@@ -100,6 +100,9 @@ run: run-env
 gdb: run-env
 	gdb $(BIN)
 
+menuconfig:
+	python3 scripts/menuconfig.py
+
 check_waveform: $(WAVEFORM_FILE)
 	@gtkwave $(WAVEFORM_FILE) --dark
 
