@@ -51,13 +51,14 @@ int strcmp(const char *s1, const char *s2) {
   /*  compare the first difference byte (or char)
    *  in the same position of s1 and s2
    */
-  for (const unsigned char *p1 = (unsigned char *)s1, *p2 = (unsigned char *)s2;
-       *p1 && *p2; p1++, p2++) {
+  const unsigned char *p1, *p2;
+  for (p1 = (unsigned char *)s1, p2 = (unsigned char *)s2; *p1 && *p2;
+       p1++, p2++) {
     if (*p1 != *p2) {
       return (int)(*p1 - *p2);
     }
   }
-  return 0;
+  return (int)(*p1 - *p2);
 }
 
 int strncmp(const char *s1, const char *s2, size_t n) {

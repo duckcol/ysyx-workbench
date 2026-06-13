@@ -49,14 +49,14 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
     // set nemu's registerfile to be what passed in the function
     for (int i = 0; i < RISCV_GPR_NUM; i++) {
       gpr(i) = (word_t)(dut_cpu->gpr[i]);
-      cpu.pc = (word_t)(dut_cpu->pc);
     }
+    cpu.pc = (word_t)(dut_cpu->pc);
   } else if (direction == DIFFTEST_TO_DUT) {
     // set dut to be what nemu's registerfile is
     for (int i = 0; i < RISCV_GPR_NUM; i++) {
       dut_cpu->gpr[i] = gpr(i);
-      dut_cpu->pc = cpu.pc;
     }
+    dut_cpu->pc = cpu.pc;
   } else {
     assert(0);
   }

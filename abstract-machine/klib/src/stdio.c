@@ -53,7 +53,19 @@ static void put_padding(char **p, char *end, char ch, int count) {
 static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
                           int count_only) {
   char *p = out;
-  char *end = (size > 0 && !count_only) ? (out + size - 1) : NULL;
+  char *end;
+  // overflow check
+  if (size > 0 && !count_only) {
+    uintptr_t addr = (uintptr_t)out;
+    if (size - 1 > (uintptr_t)(-1) - addr)
+      // (out + size) overflow total mem
+      end = (char *)(uintptr_t)(-1);
+    else
+      // (out + size) is safe
+      end = out + size - 1;
+  } else {
+    end = NULL;
+  }
   int total_len = 0;
 
   while (*fmt) {
@@ -231,7 +243,7 @@ static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
     }
   }
 
-  if (!count_only && end != NULL && p < end + 1)
+  if (!count_only && end != NULL && p <= end)
     *p = '\0';
   return total_len;
 }

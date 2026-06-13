@@ -194,6 +194,9 @@ uint32_t get_fb_data(int addr_offset);
 void change_vga_fb(int addr_offset, uint32_t pixels);
 void vga_update_screen();
 
+/* functions for difftest */
+void difftest_skip_ref();
+
 /* read or write pmem or device mmio */
 int push_mem_trace(paddr_t addr, int type, word_t data);
 extern "C" int pmem_read(int raddr) {
@@ -211,6 +214,11 @@ extern "C" int pmem_read(int raddr) {
                raddr, raddr_after_align, ret);)
     push_mem_trace(raddr_after_align, 1, ret);
   } else {
+
+    // nemu_ref will r/w device which is not available
+    // so we need to skip this kind of r/w instrutions
+    difftest_skip_ref();
+
     // deal with cases when raddr is not in pmem
     switch (raddr_after_align) {
     case (CONFIG_SERIAL_MMIO):
@@ -290,6 +298,11 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
                original_data, final_data);)
     push_mem_trace(waddr, 0, final_data);
   } else {
+
+    // nemu_ref will r/w device which is not available
+    // so we need to skip this kind of r/w instrutions
+    difftest_skip_ref();
+
     // deal with cases when raddr is not in pmem, such as device
     word_t original_data = 0;
     word_t final_data = 0;
