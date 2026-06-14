@@ -102,6 +102,8 @@ gdb: run-env
 
 menuconfig:
 	python3 scripts/menuconfig.py
+	-@echo "# AutoRun make after menuconfig"
+	make
 
 check_waveform: $(WAVEFORM_FILE)
 	@gtkwave $(WAVEFORM_FILE) --dark

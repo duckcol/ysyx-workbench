@@ -92,7 +92,7 @@ void isa_reg_display() {
       printf("%s\t0x%-8x\t0x%-8x\n", regs[i], gpr(i), gpr(i));
     }
   }
-  printf("pc\t0x%x\t0x%x\n", cpu.pc, cpu.pc);
+  printf("pc\t0x%-8x\t0x%-8x\n", cpu.pc, cpu.pc);
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {

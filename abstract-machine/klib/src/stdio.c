@@ -119,6 +119,9 @@ static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
         total_len += (width > 0) ? width : content_len;
 
         if (!count_only && end != NULL) {
+          // right-align: spaces go before everything
+          if (!zero_pad)
+            put_padding(&p, end, ' ', pad_len);
           if (zero_pad && !sign_len)
             put_padding(&p, end, '0', pad_len);
           if (sign_len && p < end) {
@@ -130,8 +133,6 @@ static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
           int digits_len = num_len - sign_len;
           for (int i = 0; i < digits_len && p < end; i++)
             *p++ = num_start[i];
-          if (!zero_pad)
-            put_padding(&p, end, ' ', pad_len);
         }
         break;
       }
@@ -143,12 +144,12 @@ static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
         int pad_len = (width > num_len) ? (width - num_len) : 0;
         total_len += (width > 0) ? width : num_len;
         if (!count_only && end != NULL) {
+          if (!zero_pad)
+            put_padding(&p, end, ' ', pad_len);
           if (zero_pad)
             put_padding(&p, end, '0', pad_len);
           for (int i = 0; i < num_len && p < end; i++)
             *p++ = num_buf[i];
-          if (!zero_pad)
-            put_padding(&p, end, ' ', pad_len);
         }
         break;
       }
@@ -166,12 +167,12 @@ static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
         int pad_len = (width > num_len) ? (width - num_len) : 0;
         total_len += (width > 0) ? width : num_len;
         if (!count_only && end != NULL) {
+          if (!zero_pad)
+            put_padding(&p, end, ' ', pad_len);
           if (zero_pad)
             put_padding(&p, end, '0', pad_len);
           for (int i = 0; i < num_len && p < end; i++)
             *p++ = num_buf[i];
-          if (!zero_pad)
-            put_padding(&p, end, ' ', pad_len);
         }
         break;
       }
@@ -183,12 +184,12 @@ static int vsnprintf_core(char *out, size_t size, const char *fmt, va_list ap,
         int pad_len = (width > num_len) ? (width - num_len) : 0;
         total_len += (width > 0) ? width : num_len;
         if (!count_only && end != NULL) {
+          if (!zero_pad)
+            put_padding(&p, end, ' ', pad_len);
           if (zero_pad)
             put_padding(&p, end, '0', pad_len);
           for (int i = 0; i < num_len && p < end; i++)
             *p++ = num_buf[i];
-          if (!zero_pad)
-            put_padding(&p, end, ' ', pad_len);
         }
         break;
       }
