@@ -70,7 +70,7 @@ module CSRctrl #(
   assign mtvec_din = (mtvec_wen) ? csr_din : {DATA_LEN{1'b0}};
   assign mstatus_din = (mstatus_wen) ? csr_din : {DATA_LEN{1'b0}};
   assign mepc_din = (mepc_wen_csr) ? csr_din : (inst_ecall) ? pc : {DATA_LEN{1'b0}};
-  assign mcause_din = (mcause_wen_csr) ? csr_din : (inst_ecall) ? 32'h11 : {DATA_LEN{1'b0}};
+  assign mcause_din = (mcause_wen_csr) ? csr_din : (inst_ecall) ? 32'hb : {DATA_LEN{1'b0}};
 
   Reg #(
       .WIDTH    (DATA_LEN),

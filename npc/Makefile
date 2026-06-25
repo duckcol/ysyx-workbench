@@ -46,6 +46,9 @@ LLVM_SAFE_FLAGS := $(filter-out -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS 
 CXXFLAGS += $(LLVM_SAFE_FLAGS) -fPIE
 LIBS += $(shell llvm-config --libs)
 LDFLAGS += $(LIBS)
+# some FLAGS for address sanitizer
+# CXXFLAGS += -fsanitize=address
+# LDFLAGS += -fsanitize=address
 
 # verilog display macros
 # BE CAUTIONS!

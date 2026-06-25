@@ -40,9 +40,9 @@ static uint32_t *vgactl_port_base = NULL;
 
 static SDL_Renderer *renderer = NULL;
 static SDL_Texture *texture = NULL;
+static SDL_Window *window = NULL;
 
 static void init_screen() {
-  SDL_Window *window = NULL;
   char title[128];
   sprintf(title, "%s-NEMU", str(__GUEST_ISA__));
   SDL_Init(SDL_INIT_VIDEO);
@@ -62,13 +62,35 @@ static inline void update_screen() {
   SDL_RenderCopy(renderer, texture, NULL, NULL);
   SDL_RenderPresent(renderer);
 }
+
+void free_screen() {
+  if (texture) {
+    SDL_DestroyTexture(texture);
+    texture = NULL;
+  }
+  if (renderer) {
+    SDL_DestroyRenderer(renderer);
+    renderer = NULL;
+  }
+  if (window) {
+    SDL_DestroyWindow(window);
+    window = NULL;
+  }
+  SDL_Quit();
+}
+
 #else
 static void init_screen() {}
 
 static inline void update_screen() {
   io_write(AM_GPU_FBDRAW, 0, 0, vmem, screen_width(), screen_height(), true);
 }
+
+void free_screen() {}
 #endif
+#else
+void free_screen();
+void update_screen();
 #endif
 
 void vga_update_screen() {
@@ -95,4 +117,15 @@ void init_vga() {
                (io_callback_t)vga_update_screen);
   IFDEF(CONFIG_VGA_SHOW_SCREEN, init_screen());
   IFDEF(CONFIG_VGA_SHOW_SCREEN, memset(vmem, 0, screen_size()));
+  atexit(free_screen);
 }
+
+#ifdef CONFIG_CC_ASAN
+//  supress nvidia address sanitizer error
+__attribute__((used)) const char *__lsan_default_suppressions(void);
+
+const char *__lsan_default_suppressions(void) {
+  return "leak:libnvidia-glcore.so\n"
+         "leak:libGL.so\n";
+}
+#endif

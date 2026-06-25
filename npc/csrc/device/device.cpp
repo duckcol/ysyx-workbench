@@ -49,6 +49,7 @@ static uint32_t vgactl_port_base[2];
 
 static SDL_Renderer *renderer = NULL;
 static SDL_Texture *texture = NULL;
+static SDL_Window *window = NULL;
 
 static void init_screen() {
   SDL_Window *window = NULL;
@@ -88,6 +89,9 @@ void vga_update_screen() {
   }
 }
 
+#else
+void vga_update_screen() {};
+void init_screen() {};
 #endif
 
 void init_vga() {
@@ -142,3 +146,12 @@ void init_device() {
   IFDEF(CONFIG_HAS_VGA, init_vga());
   Log("device init end");
 }
+//
+// // for address sanitizer to skip checking libnvidia-glcore
+// extern "C" {
+// __attribute__((used)) const char *__lsan_default_suppressions(void) {
+//   return "leak:libnvidia-glcore.so\n"
+//          "leak:libGLX_nvidia.so\n"
+//          "leak:libGL.so\n";
+// }
+// }

@@ -179,7 +179,6 @@ def generate_conf_h(eff: Dict[str, Any], items: List[ConfigItem]):
         "#define LLVM_VERSION_MAJOR 18",
         "",
         "#define CONFIG_ISA_riscv 1",
-        "#define CONFIG_RVE 2",
         "",
     ]
 

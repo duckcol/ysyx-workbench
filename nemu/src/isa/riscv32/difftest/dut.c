@@ -18,13 +18,16 @@
 #include <isa.h>
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
+  bool result = true;
   for (int i = 0; i < RISCV_GPR_NUM; i++) {
     if (ref_r->gpr[i] != gpr(i)) {
       pc = ref_r->pc;
-      return false;
+      result = false;
+      Log("gpr[%d] differs! dut=" FMT_WORD " ref=" FMT_WORD "", i, gpr(i),
+          ref_r->gpr[i]);
     }
   }
-  return true;
+  return result;
 }
 
 void isa_difftest_attach() {}

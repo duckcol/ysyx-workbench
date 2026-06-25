@@ -369,8 +369,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N,
           NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N,
-          //  m mode ecall's NO is 0......11
-          word_t target = isa_raise_intr(0x11, s->pc);
+          //  m mode ecall's NO is 11(decimal, hex is 0xb)
+          word_t target = isa_raise_intr(0xb, s->pc);
           add_ftrace(target, 0); s->dnpc = target;);
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N,
           // dnpc <- mepc

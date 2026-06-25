@@ -119,6 +119,12 @@ items:
     depends: CONFIG_HAS_VGA
     choice_group: vga_size
 
+  # ===== ISA ==================================================
+  - name: CONFIG_RVE
+    default: true
+    desc: RV32E 模式 (16 寄存器 x0-x15). 关闭则为 RV32 (32 寄存器)
+    category: ISA
+
   # ===== Memory ===============================================
   - name: CONFIG_MSIZE
     type: int
