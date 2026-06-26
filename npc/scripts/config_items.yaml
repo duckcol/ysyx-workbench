@@ -94,14 +94,8 @@ items:
   # ===== Device ===============================================
   - name: CONFIG_HAS_VGA
     default: true
-    desc: 启用 VGA 显示输出
+    desc: 启用 VGA 显示输出 (SDL2 屏幕窗口)
     category: Device
-
-  - name: CONFIG_VGA_SHOW_SCREEN
-    default: true
-    desc: 显示 SDL2 屏幕窗口
-    category: Device
-    depends: CONFIG_HAS_VGA
 
   - name: CONFIG_VGA_SIZE_800x600
     type: choice

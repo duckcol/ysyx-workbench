@@ -72,6 +72,7 @@ int step_times(int n) {
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc);
+void device_update();
 void cpu_exec(uint64_t n) {
   for (; n > 0; n--) {
     if (ebreak_flag == 1) {
@@ -86,6 +87,7 @@ void cpu_exec(uint64_t n) {
       difftest_step(inst_decode.pc,
                     (inst_decode.dnpc ? inst_decode.snpc : inst_decode.dnpc));
 #endif
+    device_update();
   }
 }
 

@@ -43,8 +43,7 @@ static uint32_t screen_size() {
 static void *vmem = NULL;
 static uint32_t vgactl_port_base[2];
 
-#ifdef CONFIG_VGA_SHOW_SCREEN
-#ifndef CONFIG_TARGET_AM
+#ifdef CONFIG_HAS_VGA
 #include <SDL2/SDL.h>
 
 static SDL_Renderer *renderer = NULL;
@@ -72,13 +71,6 @@ static inline void update_screen() {
   SDL_RenderCopy(renderer, texture, NULL, NULL);
   SDL_RenderPresent(renderer);
 }
-#else
-static void init_screen() {}
-
-static inline void update_screen() {
-  io_write(AM_GPU_FBDRAW, 0, 0, vmem, screen_width(), screen_height(), true);
-}
-#endif
 
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
@@ -105,8 +97,8 @@ void init_vga() {
     Assert(0, "vmem assign error");
 
   // init SDL windows and set vmem to be 0
-  IFDEF(CONFIG_VGA_SHOW_SCREEN, init_screen());
-  IFDEF(CONFIG_VGA_SHOW_SCREEN, memset(vmem, 0, screen_size()));
+  IFDEF(CONFIG_HAS_VGA, init_screen());
+  IFDEF(CONFIG_HAS_VGA, memset(vmem, 0, screen_size()));
 }
 
 uint32_t get_vga_ctl_info(int select) {
@@ -146,7 +138,34 @@ void init_device() {
   IFDEF(CONFIG_HAS_VGA, init_vga());
   Log("device init end");
 }
-//
+
+/* auto update device */
+extern int ebreak_flag;
+void device_update() {
+  static uint64_t last = 0;
+  uint64_t now = get_time();
+  if (now - last < 1000000 / 60) {
+    return;
+  }
+  last = now;
+
+  IFDEF(CONFIG_HAS_VGA, vga_update_screen());
+
+#ifdef CONFIG_HAS_VGA
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+    switch (event.type) {
+    case SDL_QUIT:
+      // nemu_state.state = NEMU_QUIT;
+      ebreak_flag = 1;
+      break;
+    default:
+      break;
+    }
+  }
+#endif
+}
+
 // // for address sanitizer to skip checking libnvidia-glcore
 // extern "C" {
 // __attribute__((used)) const char *__lsan_default_suppressions(void) {
